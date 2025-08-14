@@ -28,7 +28,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-// --- Reusable UI Components ---
+
 
 const Header = ({ currentPage, setCurrentPage }) => {
   return (
@@ -53,7 +53,7 @@ const Header = ({ currentPage, setCurrentPage }) => {
   );
 };
 
-// --- Data Display Components ---
+
 
 const HappeningNow = ({ events }) => {
   const now = new Date();
