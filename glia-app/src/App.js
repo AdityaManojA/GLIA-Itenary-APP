@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Import the traditional CSS file
+import './App.css'; 
 
-// --- Firebase Configuration ---
-// Make sure you have a firebase.js file or place your config here
+
 import { initializeApp } from 'firebase/app';
 import { 
     getFirestore, collection, onSnapshot, query, orderBy, addDoc, Timestamp 
