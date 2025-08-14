@@ -349,8 +349,6 @@ const EventForm = ({ user, onLogout, onSubmit }) => {
   );
 };
 
-// --- Main App Component ---
-
 function App() {
   const [currentPage, setCurrentPage] = useState('schedule');
   return (
