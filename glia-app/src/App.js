@@ -137,7 +137,7 @@ const FullSchedule = ({ events }) => {
   );
 };
 
-// --- Page Components ---
+
 
 const SchedulePage = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -236,7 +236,7 @@ const AdminPage = () => {
   );
 };
 
-// --- Admin Sub-Components ---
+
 
 const LoginForm = ({ onLogin, error }) => {
   const [email, setEmail] = useState('');
