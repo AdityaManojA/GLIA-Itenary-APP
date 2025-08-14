@@ -1,4 +1,4 @@
-/* General Body & App Container Styles */
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -56,7 +56,6 @@ body {
 }
 
 
-/* Header */
 .app-header {
     background-color: #4f46e5;
     color: #ffffff;
@@ -103,7 +102,7 @@ body {
     color: #4f46e5;
 }
 
-/* Tabs */
+
 .tabs-nav {
     border-bottom: 1px solid #e5e7eb;
     margin-bottom: 1.5rem;
@@ -132,7 +131,7 @@ body {
     color: #4f46e5;
 }
 
-/* Card Base Style */
+
 .card {
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
@@ -141,7 +140,7 @@ body {
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-/* Happening Now Event Card */
+
 .event-card-now {
     text-align: center;
 }
@@ -181,7 +180,7 @@ body {
     margin-top: 0.5rem;
 }
 
-/* Full Schedule List */
+
 .schedule-container {
     display: flex;
     flex-direction: column;
@@ -255,7 +254,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* Admin Page & Forms */
+
 .login-container {
     max-width: 400px;
     margin: 2.5rem auto;
