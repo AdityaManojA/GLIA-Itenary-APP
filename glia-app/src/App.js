@@ -1,8 +1,7 @@
-
+// src/App.js
 
 import React, { useState } from 'react';
 import './App.css';
-
 
 import Header from './components/Header';
 import SchedulePage from './pages/SchedulePage';
@@ -16,9 +15,13 @@ function App() {
     <div className="app-container">
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} />
       
-      {currentPage === 'schedule' && <SchedulePage />}
-      {currentPage === 'admin' && <AdminPage />}
-      {currentPage === 'home' && <HomePage/>}
+      
+      <div className="app-main">
+        {currentPage === 'schedule' && <SchedulePage />}
+        {currentPage === 'admin' && <AdminPage />}
+        {currentPage === 'home' && <HomePage />}
+      </div>
+      
     </div>
   );
 }

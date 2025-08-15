@@ -33,11 +33,11 @@ const AdminPage = () => {
   return (
     <main className="app-main">
       <div className="tabs-nav">
-        <button onClick={() => setActiveTab('home')} className={activeTab === 'home' ? 'tab-active' : ''}>Happening Now</button>
-        <button onClick={() => setActiveTab('schedule')} className={activeTab === 'schedule' ? 'tab-active' : ''}>Full Schedule</button>
+        <button onClick={() => setActiveTab('home')} className={activeTab === 'home' ? 'tab-active' : ''}>Admin only</button>
+        <button onClick={() => setActiveTab('schedule')} className={activeTab === 'schedule' ? 'tab-active' : ''}>admine</button>
       </div>
       {loading ? (
-        <div className="text-center"><p>Loading schedule...</p></div>
+        <div className="text-center"><p>Admin panel only</p></div>
       ) : (
         <div>
           {activeTab === 'home' && <HappeningNow events={events} />}
