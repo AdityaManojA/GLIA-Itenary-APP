@@ -29,7 +29,6 @@ body {
 /* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
 .app-container {
   background-color: transparent;
-  min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
 }
@@ -105,12 +104,11 @@ body {
 
 /* --- AUTH FORMS (DEFINITIVE FIX) --- */
 .auth-page-background {
-  /* This container now forces its content to be centered in the viewport */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
+  /* This is the most reliable way to center a single item */
+  display: grid;
+  place-items: center;
   min-height: 100vh;
+  width: 100%;
   padding: 1rem;
   box-sizing: border-box;
 }
