@@ -10,21 +10,27 @@
   --font-dark: #051F20;
 }
 
-/* --- GLOBAL STYLES & BACKGROUND --- */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  
+/* This pseudo-element will hold the blurred background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1; /* Position it behind everything else */
+
   background-image: url('../public/v1.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
-  color: var(--font-light);
+  
+  /* This is the blur effect */
+  
+  filter:brightness(50%) blur(9px);
+  /* The transform slightly enlarges the image to hide the blurry edges */
+  transform: scale(1.05);
 }
+
 
 /* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
 .app-container {
@@ -115,16 +121,17 @@ body {
 
 .auth-form-container {
   width: 100%;
+  display: flex;
   max-width: 420px;
-  /* REMOVED the manual transform */
+  
 }
 
 .glass-form {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 15px;
-  border: 1px solid rgba(142, 182, 155, 0.2);
+  border-radius: 20px;
+  border: 1.5px solid rgba(142, 182, 155, 0.2);
   padding: 3rem 2.5rem;
   width: 100%;
   color: var(--font-light);
