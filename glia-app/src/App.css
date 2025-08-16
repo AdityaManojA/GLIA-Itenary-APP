@@ -18,21 +18,21 @@ body::before {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: -1; /* Position it behind everything else */
+  z-index: -1;
 
   background-image: url('../public/v1.jpg');
   background-size: cover;
   background-position: center;
   
-  /* This is the blur effect */
+
   
   filter:brightness(50%) blur(9px);
-  /* The transform slightly enlarges the image to hide the blurry edges */
+
   transform: scale(1.05);
 }
 
 
-/* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
+
 .app-container {
   background-color: transparent;
   width: 100%;
@@ -45,7 +45,7 @@ body::before {
   margin: 0 auto;
 }
 
-/* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
+
 .glass-effect {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
