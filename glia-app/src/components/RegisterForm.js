@@ -1,67 +1,81 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase/config';
-import LoginForm from '../components/LoginForm';
-import RegisterForm from '../components/RegisterForm';
 
-const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(false); // Start on register page
-  const [error, setError] = useState('');
+const RegisterForm = ({ onRegister, error, onSwitchToLogin }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  // State to handle the "passwords do not match" error locally
+  const [passwordError, setPasswordError] = useState('');
 
-  const handleLogin = async (email, password) => {
-    setError('');
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      // Provide a generic, clean error for login
-      setError("Invalid email or password. Please try again.");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Always clear the local password eraror on a new submission
+    setPasswordError('');
+
+    // Check if passwords match. If not, set the local error and stop.
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match!");
+      return; 
     }
-  };
-
-  const handleRegister = async (email, password) => {
-    setError('');
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const newUser = userCredential.user;
-
-      await setDoc(doc(db, "users", newUser.uid), {
-        email: newUser.email,
-        uid: newUser.uid,
-        createdAt: new Date() 
-      });
-
-    } catch (err) {
-      // This is the updated error handling logic
-      if (err.code === 'auth/email-already-in-use') {
-        setError('This email address is already in use.');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Password should be at least 6 characters long.');
-      } else {
-        setError('Failed to create an account. Please try again.');
-      }
-    }
+    
+    // If passwords match, proceed with the registration function from the parent
+    onRegister(email, password);
   };
 
   return (
-    <div className="auth-page-background">
-      <div className="auth-form-container">
-        {isLogin ? (
-          <LoginForm 
-            onLogin={handleLogin} 
-            error={error} 
-            onSwitchToRegister={() => setIsLogin(false)}
+    <div className="auth-form-container">
+      <form onSubmit={handleSubmit} className="glass-form">
+        <h1>Register</h1>
+        
+        <div className="input-group">
+          <label htmlFor="email">Email</label>
+          <input 
+            id="email"
+            type="email" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+            placeholder="Enter your email" 
+            required 
           />
-        ) : (
-          <RegisterForm 
-            onRegister={handleRegister} 
-            error={error}
-            onSwitchToLogin={() => setIsLogin(true)}
+        </div>
+        
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <input 
+            id="password"
+            type="password" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            placeholder="Create a password" 
+            required 
           />
-        )}
-      </div>
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="confirm-password">Confirm Password</label>
+          <input 
+            id="confirm-password"
+            type="password" 
+            value={confirmPassword} 
+            onChange={e => setConfirmPassword(e.target.value)} 
+            placeholder="Confirm your password" 
+            required 
+          />
+        </div>
+        
+        <button type="submit" className="auth-button">Register</button>
+        
+        {/* This is the stable way to display errors without causing a loop */}
+        {passwordError && <p className="error-text" style={{ color: '#ff9a9a' }}>{passwordError}</p>}
+        {error && <p className="error-text" style={{ color: '#ff9a9a' }}>{error}</p>}
+        
+        <div className="form-switch-link">
+          <p>Already have an account? <button type="button" onClick={onSwitchToLogin}>Login</button></p>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default AuthPage;
+export default RegisterForm;
