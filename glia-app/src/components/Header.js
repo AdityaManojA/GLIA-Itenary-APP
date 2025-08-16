@@ -42,7 +42,8 @@ const Header = ({ user, setCurrentPage, className }) => {
           </button>
           {/* The user email is now here, styled to be smaller */}
           <p style={{ margin: '0.5rem 0 0', opacity: '0.8', fontSize: '0.8rem' }}>
-           <p>Logged in as : </p> {user.email}
+            {/* CORRECTED: Changed the inner <p> to a <span> */}
+            <span>Logged in as: </span>{user.email}
           </p>
         </div>
       )}
