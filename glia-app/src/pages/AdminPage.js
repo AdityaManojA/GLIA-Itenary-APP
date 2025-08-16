@@ -1,15 +1,14 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { db } from '../firebase/config'; 
-import HappeningNow from '../components/LoginForm'; 
-import FullSchedule from '../components/EventForm'; 
+import { db } from '../firebase/config';
+// Changed: Corrected the component imports to be semantically accurate
+import EventForm from '../components/EventForm'; 
+import FullSchedule from '../components/FullSchedule'; 
 import Scanner from '../components/Scanner';
 
 const AdminPage = () => {
-
-  const [activeTab, setActiveTab] = useState('home');
+  // Changed: Updated initial tab state to be more descriptive
+  const [activeTab, setActiveTab] = useState('addEvent');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,17 +33,20 @@ const AdminPage = () => {
   return (
     <main className="app-main">
       <div className="tabs-nav">
-        <button onClick={() => setActiveTab('home')} className={activeTab === 'home' ? 'tab-active' : ''}>Admin only</button>
-        <button onClick={() => setActiveTab('schedule')} className={activeTab === 'schedule' ? 'tab-active' : ''}>admin</button>
-        <button onClick={() => setActiveTab('scanner')} className={activeTab === 'schedule' ? 'tab-active' : ''}>Scanner</button>
+        {/* Changed: Updated tab names and state values for clarity */}
+        <button onClick={() => setActiveTab('addEvent')} className={activeTab === 'addEvent' ? 'tab-active' : ''}>Add Event</button>
+        <button onClick={() => setActiveTab('viewSchedule')} className={activeTab === 'viewSchedule' ? 'tab-active' : ''}>View Schedule</button>
+        {/* Changed (Bug Fix): Corrected the className condition for the Scanner tab */}
+        <button onClick={() => setActiveTab('scanner')} className={activeTab === 'scanner' ? 'tab-active' : ''}>Scanner</button>
       </div>
       {loading ? (
-        <div className="text-center"><p>Admin panel only</p></div>
+        <div className="text-center"><p>Loading Admin Panel...</p></div>
       ) : (
         <div>
-          {activeTab === 'home' && <HappeningNow events={events} />}
-          {activeTab === 'schedule' && <FullSchedule events={events} />}
-          {activeTab === 'scanner' && <Scanner events = {events} />}
+          {/* Changed: Render the correct components for each tab */}
+          {activeTab === 'addEvent' && <EventForm />}
+          {activeTab === 'viewSchedule' && <FullSchedule events={events} />}
+          {activeTab === 'scanner' && <Scanner events={events} />}
         </div>
       )}
     </main>

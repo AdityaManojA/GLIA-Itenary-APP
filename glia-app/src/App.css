@@ -141,3 +141,4 @@ button[type="submit"] {
 }
 button[type="submit"]:hover { background-color: var(--primary-darker); }
 button[type="submit"]:disabled { background-color: #ced4da; cursor: not-allowed; }
+
