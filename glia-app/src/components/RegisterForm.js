@@ -1,79 +1,67 @@
 import React, { useState } from 'react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
+import LoginForm from '../components/LoginForm';
+import RegisterForm from '../components/RegisterForm';
 
-const RegisterForm = ({ onRegister, error, onSwitchToLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  // New state to handle errors generated within this form
-  const [formError, setFormError] = useState('');
+const AuthPage = () => {
+  const [isLogin, setIsLogin] = useState(false); // Start on register page
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Clear previous form-specific errors
-    setFormError('');
-
-    // Check if passwords match and set the new formError if they don't
-    if (password !== confirmPassword) {
-      setFormError("Passwords do not match!");
-      return;
+  const handleLogin = async (email, password) => {
+    setError('');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      // Provide a generic, clean error for login
+      setError("Invalid email or password. Please try again.");
     }
-    // This calls the function in AuthPage.js that actually talks to Firebase.
-    onRegister(email, password);
+  };
+
+  const handleRegister = async (email, password) => {
+    setError('');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const newUser = userCredential.user;
+
+      await setDoc(doc(db, "users", newUser.uid), {
+        email: newUser.email,
+        uid: newUser.uid,
+        createdAt: new Date() 
+      });
+
+    } catch (err) {
+      // This is the updated error handling logic
+      if (err.code === 'auth/email-already-in-use') {
+        setError('This email address is already in use.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters long.');
+      } else {
+        setError('Failed to create an account. Please try again.');
+      }
+    }
   };
 
   return (
-    <div className="auth-form-container">
-      <form onSubmit={handleSubmit} className="glass-form">
-        <h1>Register</h1>
-        
-        <div className="input-group">
-          <label htmlFor="email">Email</label>
-          <input 
-            id="email"
-            type="email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            placeholder="Enter your email" 
-            required 
+    <div className="auth-page-background">
+      <div className="auth-form-container">
+        {isLogin ? (
+          <LoginForm 
+            onLogin={handleLogin} 
+            error={error} 
+            onSwitchToRegister={() => setIsLogin(false)}
           />
-        </div>
-        
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input 
-            id="password"
-            type="password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            placeholder="Create a password" 
-            required 
+        ) : (
+          <RegisterForm 
+            onRegister={handleRegister} 
+            error={error}
+            onSwitchToLogin={() => setIsLogin(true)}
           />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="confirm-password">Confirm Password</label>
-          <input 
-            id="confirm-password"
-            type="password" 
-            value={confirmPassword} 
-            onChange={e => setConfirmPassword(e.target.value)} 
-            placeholder="Confirm your password" 
-            required 
-          />
-        </div>
-        
-        <button type="submit" className="auth-button">Register</button>
-        
-        {/* This will now display the local form error OR the error from Firebase */}
-        {(formError || error) && <p className="error-text">{formError || error}</p>}
-        
-        <div className="form-switch-link">
-          <p>Already have an account? <button type="button" onClick={onSwitchToLogin}>Login</button></p>
-        </div>
-      </form>
+        )}
+      </div>
     </div>
   );
 };
 
-export default RegisterForm;
+export default AuthPage;
