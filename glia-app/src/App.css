@@ -1,149 +1,107 @@
-/* src/App.css */
-
-/* --- 1. NEW IAN 2025 Color Palette & Global Styles --- */
+/* --- NEW FOREST THEME & COLOR PALETTE --- */
 :root {
-  --primary-color: #00838F;
-  --primary-darker: #006064;
-  --background-color: #F8F9FA;
-  --text-primary: #212529;
-  --text-muted: #6C757D;
-  --card-bg: #FFFFFF;
-  --border-color: #DEE2E6;
+  --darkest-green: #051F20;
+  --dark-green: #0B2B26;
+  --medium-green: #163832;
+  --teal-green: #235347;
+  --light-green: #8EB69B;
+  --lightest-green: #DAF1DE;
+  --font-light: #EAEAEA;
+  --font-dark: #051F20;
 }
 
+/* --- GLOBAL STYLES & BACKGROUND --- */
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--background-color);
-    color: var(--text-primary);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* The dark forest background image */
+  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Keeps the background stationary on scroll */
+  color: var(--font-light);
 }
 
 .app-container {
-    max-width: 896px;
-    margin: 0 auto;
-    background-color: var(--card-bg);
-    min-height: 100vh;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07);
+  /* The container is now transparent to let the background show through */
+  background-color: transparent;
+  min-height: 100vh;
 }
 
 .app-main {
-    padding: 1.5rem;
+  padding: 1.5rem;
 }
 
-.text-center { text-align: center; }
-.text-muted { color: var(--text-muted); }
-.font-semibold { font-weight: 600; }
-.error-text { color: #dc3545; font-size: 0.875rem; text-align: center; margin-top: 0.5rem; }
+/* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
+.glass-effect {
+  background: rgba(5, 31, 32, 0.6); /* Dark transparent background */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(142, 182, 155, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
 
-/* --- Header --- */
+/* --- HEADER --- */
 .app-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1.5rem;
-    text-align: center;
+  /* Applying the glass effect to the header */
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: center;
 }
 .app-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0; }
-.app-header p { color: rgba(255, 255, 255, 0.8); margin-top: 0.25rem; }
+.app-header p { color: var(--light-green); margin-top: 0.25rem; }
 
-/* --- Main Navigation --- */
-.main-nav { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; }
+/* --- NAVIGATION --- */
+.main-nav { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 .main-nav button {
-    background-color: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.5);
+    background-color: rgba(218, 241, 222, 0.1);
+    border: 1px solid transparent;
     padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
+    border-radius: 50px;
     font-weight: 500;
-    color: white;
+    color: var(--lightest-green);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
 }
-.main-nav button:hover { background-color: var(--primary-darker); border-color: var(--primary-darker); }
-.main-nav button.active { background-color: white; color: var(--primary-color); }
+.main-nav button:hover { background-color: rgba(218, 241, 222, 0.2); border-color: rgba(218, 241, 222, 0.3); }
+.main-nav button.active { background-color: var(--lightest-green); color: var(--font-dark); }
 
-/* --- Tab Navigation --- */
-.tabs-nav { border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; display: flex; gap: 2rem; }
+/* --- TABS & CARDS (Used in Schedule/Admin) --- */
+.tabs-nav { border-bottom: 1px solid rgba(142, 182, 155, 0.2); margin-bottom: 1.5rem; display: flex; gap: 2rem; }
 .tabs-nav button {
-    background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    padding: 0 0.25rem 1rem 0.25rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    cursor: pointer;
+    background: none; border: none; border-bottom: 3px solid transparent;
+    padding: 0 0.25rem 1rem 0.25rem; font-weight: 600;
+    color: var(--light-green); cursor: pointer;
 }
-.tabs-nav button:hover { color: var(--text-primary); }
-.tabs-nav button.tab-active { border-bottom-color: var(--primary-color); color: var(--primary-color); }
+.tabs-nav button.tab-active { border-bottom-color: var(--lightest-green); color: var(--lightest-green); }
 
-/* --- Cards --- */
 .card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  /* Applying the glass effect to cards */
+  padding: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-/* --- Happening Now Card --- */
-.speaker-image-large {
-    width: 8rem;
-    height: 8rem;
-    border-radius: 9999px;
-    object-fit: cover;
-    margin: 0 auto 1rem auto;
-    border: 4px solid var(--primary-color);
+/* --- SCHEDULE & EVENT STYLES --- */
+.event-title { color: var(--lightest-green); }
+.speaker-image-large { border-color: var(--light-green); }
+.schedule-date-header { border-bottom-color: var(--light-green); }
+.schedule-list-item {
+  /* Making list items transparent too */
+  background: rgba(11, 43, 38, 0.4);
+  border-radius: 15px;
+  padding: 1rem;
+  border: 1px solid rgba(142, 182, 155, 0.1);
 }
-.event-title { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.5rem; }
-.speaker-name { font-size: 1.25rem; font-weight: 600; }
-.speaker-designation { color: var(--text-muted); margin-bottom: 1rem; }
-.event-detail { display: flex; align-items: center; justify-content: center; color: var(--text-primary); margin-top: 0.5rem; }
+.event-title-list { color: var(--lightest-green); }
 
-/* --- Full Schedule List --- */
-.schedule-container { display: flex; flex-direction: column; gap: 2rem; }
-.schedule-date-header { font-size: 1.25rem; font-weight: 700; border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; margin-bottom: 1rem; }
-.schedule-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
-.schedule-list-item { background-color: #F8F9FA; padding: 1rem; display: flex; align-items: center; gap: 1rem; }
-.speaker-image-small, .speaker-image-placeholder { width: 4rem; height: 4rem; border-radius: 9999px; object-fit: cover; }
-.speaker-image-placeholder { background-color: #e9ecef; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #adb5bd; }
-.event-info { flex-grow: 1; }
-.event-title-list { font-weight: 700; font-size: 1.125rem; color: var(--primary-darker); }
-.speaker-name-list { font-weight: 600; }
-.event-details-list { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem; display: flex; gap: 1rem; }
-
-/* --- Forms & Admin --- */
-.login-container, .event-form-container { max-width: 400px; margin: 2.5rem auto; }
-.event-form-container { max-width: 600px; padding: 2rem; }
-.login-form h1, .form-header h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center; }
-.form-header { display: flex; justify-content: space-between; align-items: center; }
-.logout-button { font-weight: 500; color: var(--primary-color); background: none; border: none; cursor: pointer; }
-.logout-button:hover { text-decoration: underline; }
-.login-form form, .event-form { display: flex; flex-direction: column; gap: 1rem; }
-.event-form label { font-weight: 500; font-size: 0.875rem; color: var(--text-primary); }
-input[type="text"], input[type="email"], input[type="password"], input[type="datetime-local"] {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 0.375rem;
-    box-sizing: border-box;
-}
-button[type="submit"] {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 700;
-    padding: 0.75rem 1rem;
-    border-radius: 0.375rem;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-button[type="submit"]:hover { background-color: var(--primary-darker); }
-button[type="submit"]:disabled { background-color: #ced4da; cursor: not-allowed; }
-
+/* --- AUTH FORMS (COMBINING OLD LAYOUT WITH NEW THEME) --- */
 .auth-page-background {
-  background: linear-gradient(135deg, #006064, #00838F);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -154,33 +112,32 @@ button[type="submit"]:disabled { background-color: #ced4da; cursor: not-allowed;
 .auth-form-container {
   width: 100%;
   max-width: 420px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-/* The main glass effect form */
+/* The glass form with specific padding and radius */
 .glass-form {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 2.5rem;
+  border-radius: 15px; 
+  border: 1px solid rgba(142, 182, 155, 0.2);
+  padding: 3rem 2.5rem; 
   width: 100%;
-  color: white;
+  color: var(--font-light);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .glass-form h1 {
   text-align: center;
-  font-size: 2rem;
-  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  margin-top: 0;
+  margin-bottom: 2.5rem;
   font-weight: 600;
 }
 
 .input-group {
   margin-bottom: 1.5rem;
+  text-align: left; 
 }
 
 .input-group label {
@@ -188,69 +145,57 @@ button[type="submit"]:disabled { background-color: #ced4da; cursor: not-allowed;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(218, 241, 222, 0.8);
 }
 
 .input-group input {
   width: 100%;
-  padding: 0.8rem 1rem;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
+  padding: 0.9rem 1rem;
+  border-radius: 8px; 
+  border: 1px solid rgba(142, 182, 155, 0.3);
+  background: rgba(11, 43, 38, 0.5);
+  color: var(--font-light);
   font-size: 1rem;
   box-sizing: border-box;
-  transition: all 0.3s ease;
 }
-
-.input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
+.input-group input::placeholder { color: rgba(142, 182, 155, 0.7); }
 .input-group input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--light-green);
 }
 
 .auth-button {
   width: 100%;
   padding: 0.9rem;
-  border-radius: 10px;
+  border-radius: 8px; 
   border: none;
-  background-color: #ffffff;
-  color: var(--primary-darker, #006064);
+  background-color: var(--light-green);
+  color: var(--darkest-green);
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
+  transition: background-color 0.3s ease;
+  margin-top: 1.5rem;
 }
-
 .auth-button:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background-color: var(--lightest-green);
 }
 
 .form-switch-link {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   font-size: 0.9rem;
 }
-
 .form-switch-link p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(218, 241, 222, 0.8);
 }
-
 .form-switch-link button {
   background: none;
   border: none;
-  color: white;
+  color: var(--lightest-green);
   font-weight: 700;
   cursor: pointer;
-  padding: 0;
+  padding: 0 0 0 5px;
   text-decoration: underline;
 }
-
