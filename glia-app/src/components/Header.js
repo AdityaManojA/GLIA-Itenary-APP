@@ -2,8 +2,8 @@ import React from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
 
-// Define your admin email here as well
-const ADMIN_EMAIL = "admin@ian2025.com";
+// Define your list of admin emails
+const ADMIN_EMAILS = ["adityamanoja@gmail.com"];
 
 const Header = ({ user, setCurrentPage, className }) => {
 
@@ -54,8 +54,8 @@ const Header = ({ user, setCurrentPage, className }) => {
         <button onClick={() => setCurrentPage('home')}>Home</button>
         <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
         
-        {/* Logic for showing the Admin button is restored */}
-        {user && user.email === ADMIN_EMAIL && (
+        {/* CORRECTED: Check if the user's email is in the ADMIN_EMAILS array */}
+        {user && ADMIN_EMAILS.includes(user.email) && (
           <button onClick={() => setCurrentPage('admin')}>Admin</button>
         )}
 
