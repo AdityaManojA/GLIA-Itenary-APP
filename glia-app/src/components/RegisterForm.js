@@ -1,71 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase/config';
+import './App.css';
 
-const RegisterForm = ({ onRegister, error, onSwitchToLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+import Header from './components/Header';
+import SchedulePage from './pages/SchedulePage';
+import AdminPage from './pages/AdminPage';
+import HomePage from './pages/HomePage';
+import AuthPage from './pages/AuthPage'; 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+const ADMIN_EMAIL = "admin@ian2025.com";
+
+function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'schedule':
+        return <SchedulePage />;
+      case 'admin':
+        return user && user.email === ADMIN_EMAIL ? <AdminPage /> : <HomePage />;
+      case 'home':
+      default:
+        return <HomePage />;
     }
-    onRegister(email, password);
   };
 
+  if (loading) {
+    return (
+      <div className="auth-page-background">
+        <p style={{ color: 'white', fontSize: '1.2rem' }}>Loading App...</p>
+      </div>
+    );
+  }
+
+  // This is the final, corrected layout logic.
   return (
-    <div className="auth-form-container">
-      <form onSubmit={handleSubmit} className="glass-form">
-        <h1>Register</h1>
-        
-        <div className="input-group">
-          <label htmlFor="email">Email</label>
-          <input 
-            id="email"
-            type="email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            placeholder="Enter your email" 
-            required 
-          />
+    <>
+      {!user ? (
+        // --- IF NOT LOGGED IN ---
+        // The AuthPage now lives in its own dedicated container.
+        <div className="auth-page-background">
+            <AuthPage />
         </div>
-        
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input 
-            id="password"
-            type="password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            placeholder="Create a password" 
-            required 
-          />
+      ) : (
+        // --- IF LOGGED IN ---
+        // The main app has its own container.
+        <div className="app-container">
+          <Header user={user} setCurrentPage={setCurrentPage} className="glass-effect" />
+          <div className="app-main">
+            {renderPage()}
+          </div>
         </div>
-
-        <div className="input-group">
-          <label htmlFor="confirm-password">Confirm Password</label>
-          <input 
-            id="confirm-password"
-            type="password" 
-            value={confirmPassword} 
-            onChange={e => setConfirmPassword(e.target.value)} 
-            placeholder="Confirm your password" 
-            required 
-          />
-        </div>
-        
-        <button type="submit" className="auth-button">Register</button>
-        
-        {error && <p className="error-text">{error}</p>}
-        
-        <div className="form-switch-link">
-          <p>Already have an account? <button type="button" onClick={onSwitchToLogin}>Login</button></p>
-        </div>
-      </form>
-    </div>
+      )}
+    </>
   );
-};
+}
 
-export default RegisterForm;
+export default App;
