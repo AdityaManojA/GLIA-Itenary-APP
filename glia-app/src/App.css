@@ -19,31 +19,30 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* UPDATED: Using the path you requested */
   background-image: url('../public/v1.jpg');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* Keeps the background stationary on scroll */
+  background-attachment: fixed;
   color: var(--font-light);
 }
 
+/* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
 .app-container {
-  /* The container is now transparent to let the background show through */
   background-color: transparent;
   min-height: 100vh;
-  width: 100%; /* Ensures the container spans the full width */
-  box-sizing: border-box; /* Includes padding in the width calculation */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .app-main {
   padding: 1.5rem;
-  max-width: 896px; /* Content area is constrained */
-  margin: 0 auto; /* Center the content area */
+  max-width: 896px;
+  margin: 0 auto;
 }
 
 /* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
 .glass-effect {
-  background: rgba(5, 31, 32, 0.6); /* Dark transparent background */
+  background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 20px;
@@ -53,11 +52,10 @@ body {
 
 /* --- HEADER --- */
 .app-header {
-  /* Applying the glass effect to the header */
   margin: 1rem;
   padding: 1.5rem;
   text-align: center;
-  max-width: 896px; /* Constrain header width */
+  max-width: 896px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -89,7 +87,6 @@ body {
 .tabs-nav button.tab-active { border-bottom-color: var(--lightest-green); color: var(--lightest-green); }
 
 .card {
-  /* Applying the glass effect to cards */
   padding: 1.5rem;
   margin-bottom: 1rem;
 }
@@ -99,7 +96,6 @@ body {
 .speaker-image-large { border-color: var(--light-green); }
 .schedule-date-header { border-bottom-color: var(--lightest-green); }
 .schedule-list-item {
-  /* Making list items transparent too */
   background: rgba(11, 43, 38, 0.4);
   border-radius: 15px;
   padding: 1rem;
@@ -107,15 +103,16 @@ body {
 }
 .event-title-list { color: var(--lightest-green); }
 
-/* --- AUTH FORMS (COMBINING OLD LAYOUT WITH NEW THEME) --- */
+/* --- AUTH FORMS (DEFINITIVE FIX) --- */
 .auth-page-background {
-  min-height: 100vh;
-  width: 100%;
+  /* This container now forces its content to be centered in the viewport */
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100vw;
+  min-height: 100vh;
   padding: 1rem;
-  box-sizing: border-box; /* Ensures padding doesn't add to height/width */
+  box-sizing: border-box;
 }
 
 .auth-form-container {
@@ -123,14 +120,13 @@ body {
   max-width: 420px;
 }
 
-/* The glass form with specific padding and radius */
 .glass-form {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 15px; /* Matching the old style */
+  border-radius: 15px;
   border: 1px solid rgba(142, 182, 155, 0.2);
-  padding: 3rem 2.5rem; /* More vertical padding */
+  padding: 3rem 2.5rem;
   width: 100%;
   color: var(--font-light);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -146,7 +142,7 @@ body {
 
 .input-group {
   margin-bottom: 1.5rem;
-  text-align: left; /* Explicitly align left */
+  text-align: left;
 }
 
 .input-group label {
@@ -160,7 +156,7 @@ body {
 .input-group input {
   width: 100%;
   padding: 0.9rem 1rem;
-  border-radius: 8px; /* Matching the old style */
+  border-radius: 8px;
   border: 1px solid rgba(142, 182, 155, 0.3);
   background: rgba(11, 43, 38, 0.5);
   color: var(--font-light);
@@ -176,7 +172,7 @@ body {
 .auth-button {
   width: 100%;
   padding: 0.9rem;
-  border-radius: 8px; /* Matching the old style */
+  border-radius: 8px;
   border: none;
   background-color: var(--light-green);
   color: var(--darkest-green);
@@ -209,7 +205,7 @@ body {
   text-decoration: underline;
 }
 
-/* --- NEW: MOBILE RESPONSIVENESS --- */
+/* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
   .app-main {
     padding: 1rem;
