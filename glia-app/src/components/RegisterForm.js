@@ -9,6 +9,7 @@ const RegisterForm = ({ onRegister, error, onSwitchToLogin }) => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
+
       alert("Passwords do not match!");
       return;
     }
@@ -58,7 +59,7 @@ const RegisterForm = ({ onRegister, error, onSwitchToLogin }) => {
         
         <button type="submit" className="auth-button">Register</button>
         
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text" style={{ color: '#ff9a9a' }}>{error}</p>}
         
         <div className="form-switch-link">
           <p>Already have an account? <button type="button" onClick={onSwitchToLogin}>Login</button></p>
