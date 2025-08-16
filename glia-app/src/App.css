@@ -1,4 +1,4 @@
-/* --- NEW FOREST THEME & COLOR PALETTE --- */
+
 :root {
   --darkest-green: #051F20;
   --dark-green: #0B2B26;
@@ -9,8 +9,7 @@
   --font-light: #EAEAEA;
   --font-dark: #051F20;
 }
-
-/* This pseudo-element will hold the blurred background */
+/*BACKGROUND AND ITS FILTTER */
 body::before {
   content: '';
   position: fixed;
@@ -55,7 +54,7 @@ body::before {
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* --- HEADER --- */
+
 .app-header {
   margin: 1rem;
   padding: 1.5rem;
@@ -67,7 +66,7 @@ body::before {
 .app-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0; }
 .app-header p { color: var(--light-green); margin-top: 0.25rem; }
 
-/* --- NAVIGATION --- */
+
 .main-nav { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 .main-nav button {
     background-color: rgba(218, 241, 222, 0.1);
@@ -82,7 +81,7 @@ body::before {
 .main-nav button:hover { background-color: rgba(218, 241, 222, 0.2); border-color: rgba(218, 241, 222, 0.3); }
 .main-nav button.active { background-color: var(--lightest-green); color: var(--font-dark); }
 
-/* --- TABS & CARDS (Used in Schedule/Admin) --- */
+
 .tabs-nav { border-bottom: 1px solid rgba(142, 182, 155, 0.2); margin-bottom: 1.5rem; display: flex; gap: 2rem; }
 .tabs-nav button {
     background: none; border: none; border-bottom: 3px solid transparent;
@@ -96,7 +95,7 @@ body::before {
   margin-bottom: 1rem;
 }
 
-/* --- SCHEDULE & EVENT STYLES --- */
+
 .event-title { color: var(--lightest-green); }
 .speaker-image-large { border-color: var(--light-green); }
 .schedule-date-header { border-bottom-color: var(--lightest-green); }
@@ -108,9 +107,9 @@ body::before {
 }
 .event-title-list { color: var(--lightest-green); }
 
-/* --- AUTH FORMS (DEFINITIVE FIX) --- */
+
 .auth-page-background {
-  /* This is the most reliable way to center a single item */
+ 
   display: grid;
   place-items: center;
   min-height: 100vh;
@@ -211,7 +210,16 @@ body::before {
   text-decoration: underline;
 }
 
+
+
+
+
 /* --- MOBILE RESPONSIVENESS --- */
+
+
+
+
+
 @media (max-width: 768px) {
   .app-main {
     padding: 1rem;
