@@ -116,8 +116,7 @@ body {
 .auth-form-container {
   width: 100%;
   max-width: 420px;
-  /* Quick fix to shift the form left */
-  transform: translateX(-15px);
+  /* REMOVED the manual transform */
 }
 
 .glass-form {
@@ -232,10 +231,5 @@ body {
   .schedule-list-item {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .auth-form-container {
-    /* Reset the transform for mobile to avoid layout issues */
-    transform: none;
   }
 }
