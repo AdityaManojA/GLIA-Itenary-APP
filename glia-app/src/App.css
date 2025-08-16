@@ -19,8 +19,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* The dark forest background image */
-  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  /* UPDATED: Using the path you requested */
+  background-image: url('../public/v1.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed; /* Keeps the background stationary on scroll */
@@ -31,10 +31,14 @@ body {
   /* The container is now transparent to let the background show through */
   background-color: transparent;
   min-height: 100vh;
+  width: 100%; /* Ensures the container spans the full width */
+  box-sizing: border-box; /* Includes padding in the width calculation */
 }
 
 .app-main {
   padding: 1.5rem;
+  max-width: 896px; /* Content area is constrained */
+  margin: 0 auto; /* Center the content area */
 }
 
 /* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
@@ -53,6 +57,9 @@ body {
   margin: 1rem;
   padding: 1.5rem;
   text-align: center;
+  max-width: 896px; /* Constrain header width */
+  margin-left: auto;
+  margin-right: auto;
 }
 .app-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0; }
 .app-header p { color: var(--light-green); margin-top: 0.25rem; }
@@ -90,7 +97,7 @@ body {
 /* --- SCHEDULE & EVENT STYLES --- */
 .event-title { color: var(--lightest-green); }
 .speaker-image-large { border-color: var(--light-green); }
-.schedule-date-header { border-bottom-color: var(--light-green); }
+.schedule-date-header { border-bottom-color: var(--lightest-green); }
 .schedule-list-item {
   /* Making list items transparent too */
   background: rgba(11, 43, 38, 0.4);
@@ -102,11 +109,16 @@ body {
 
 /* --- AUTH FORMS (COMBINING OLD LAYOUT WITH NEW THEME) --- */
 .auth-page-background {
-  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  box-sizing: border-box; /* Ensures padding doesn't add to height/width */
 }
 
 .auth-form-container {
@@ -119,9 +131,9 @@ body {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 15px; 
+  border-radius: 15px; /* Matching the old style */
   border: 1px solid rgba(142, 182, 155, 0.2);
-  padding: 3rem 2.5rem; 
+  padding: 3rem 2.5rem; /* More vertical padding */
   width: 100%;
   color: var(--font-light);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
@@ -137,7 +149,7 @@ body {
 
 .input-group {
   margin-bottom: 1.5rem;
-  text-align: left; 
+  text-align: left; /* Explicitly align left */
 }
 
 .input-group label {
@@ -151,7 +163,7 @@ body {
 .input-group input {
   width: 100%;
   padding: 0.9rem 1rem;
-  border-radius: 8px; 
+  border-radius: 8px; /* Matching the old style */
   border: 1px solid rgba(142, 182, 155, 0.3);
   background: rgba(11, 43, 38, 0.5);
   color: var(--font-light);
@@ -167,7 +179,7 @@ body {
 .auth-button {
   width: 100%;
   padding: 0.9rem;
-  border-radius: 8px; 
+  border-radius: 8px; /* Matching the old style */
   border: none;
   background-color: var(--light-green);
   color: var(--darkest-green);
@@ -198,4 +210,34 @@ body {
   cursor: pointer;
   padding: 0 0 0 5px;
   text-decoration: underline;
+}
+
+/* --- NEW: MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .app-main {
+    padding: 1rem;
+  }
+
+  .app-header {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .glass-form {
+    padding: 2rem 1.5rem;
+  }
+
+  .glass-form h1 {
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .schedule-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
