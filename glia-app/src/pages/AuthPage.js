@@ -5,7 +5,7 @@ import LoginForm from '../components/LoginForm';
 import RegisterForm from '../components/RegisterForm';
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = async (email, password) => {
