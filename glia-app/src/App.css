@@ -142,3 +142,20 @@ button[type="submit"] {
 button[type="submit"]:hover { background-color: var(--primary-darker); }
 button[type="submit"]:disabled { background-color: #ced4da; cursor: not-allowed; }
 
+.auth-page-background {
+  background: linear-gradient(135deg, #006064, #00838F);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
