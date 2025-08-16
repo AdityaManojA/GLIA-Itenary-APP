@@ -16,25 +16,35 @@ const Header = ({ user, setCurrentPage, className }) => {
     // Added position: 'relative' to act as an anchor for the button
     <header className={`app-header ${className}`} style={{ position: 'relative' }}>
       
-      {/* The Sign Out button is now positioned absolutely within the header */}
+      {/* This new div groups the button and the user email together */}
       {user && (
-        <button 
-          onClick={handleLogout} 
-          className="main-nav-button" // Reusing the nav button style for consistency
+        <div 
           style={{ 
             position: 'absolute', 
             top: '1.5rem', 
             right: '1.5rem',
-            padding: '0.5rem 1rem',
-            borderRadius: '50px',
-            background: 'rgba(218, 241, 222, 0.1)',
-            border: '1px solid transparent',
-            color: '#DAF1DE',
-            cursor: 'pointer'
+            textAlign: 'right' // Aligns the text to the right
           }}
         >
-          Sign Out
-        </button>
+          <button 
+            onClick={handleLogout} 
+            className="main-nav-button" // Reusing the nav button style for consistency
+            style={{ 
+              padding: '0.5rem 1rem',
+              borderRadius: '50px',
+              background: 'rgba(218, 241, 222, 0.1)',
+              border: '1px solid transparent',
+              color: '#DAF1DE',
+              cursor: 'pointer'
+            }}
+          >
+            Sign Out
+          </button>
+          {/* The user email is now here, styled to be smaller */}
+          <p style={{ margin: '0.5rem 0 0', opacity: '0.8', fontSize: '0.8rem' }}>
+           <p>Logged in as : </p> {user.email}
+          </p>
+        </div>
       )}
 
       <h1>IAN 2025</h1>
@@ -53,7 +63,7 @@ const Header = ({ user, setCurrentPage, className }) => {
           <button onClick={() => setCurrentPage('auth')}>Login</button>
         )}
       </nav>
-      {user && <p style={{ marginTop: '1rem', opacity: '0.8', fontSize: '0.9rem' }}>Logged in as: {user.email}</p>}
+      {/* The old "Logged in as" text has been removed from here */}
     </header>
   );
 };
