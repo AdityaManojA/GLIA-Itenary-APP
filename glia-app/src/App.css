@@ -1,4 +1,4 @@
-/* --- NEW FOREST THEME & COLOR PALETTE --- */
+
 :root {
   --darkest-green: #051F20;
   --dark-green: #0B2B26;
@@ -10,7 +10,7 @@
   --font-dark: #051F20;
 }
 
-/* --- GLOBAL STYLES & BACKGROUND --- */
+
 body::before {
   content: '';
   position: fixed;
@@ -32,7 +32,7 @@ body::before {
   transform: scale(1.05);
   
 }
-/* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
+
 .app-container {
   background-color: transparent;
   width: 100%;
@@ -46,7 +46,7 @@ body::before {
   margin: 0 auto;
 }
 
-/* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
+
 .glass-effect {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
@@ -56,7 +56,7 @@ body::before {
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* --- HEADER --- */
+
 .app-header {
   margin: 1rem;
   padding: 1.5rem;
