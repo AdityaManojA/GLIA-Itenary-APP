@@ -11,21 +11,26 @@
 }
 
 /* --- GLOBAL STYLES & BACKGROUND --- */
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+
   background-image: url('../public/v1.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   color: var(--font-light);
-}
 
+  
+  filter:brightness(50%) blur(9px);
+
+  transform: scale(1.05);
+}
 /* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
 .app-container {
   background-color: transparent;

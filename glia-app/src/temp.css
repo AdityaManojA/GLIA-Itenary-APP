@@ -1,0 +1,19 @@
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+
+  background-image: url('../public/v1.jpg');
+  background-size: cover;
+  background-position: center;
+  
+
+  
+  filter:brightness(50%) blur(9px);
+
+  transform: scale(1.05);
+}
