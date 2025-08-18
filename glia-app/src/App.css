@@ -1,4 +1,4 @@
-
+/* --- NEW FOREST THEME & COLOR PALETTE --- */
 :root {
   --darkest-green: #051F20;
   --dark-green: #0B2B26;
@@ -9,29 +9,24 @@
   --font-light: #EAEAEA;
   --font-dark: #051F20;
 }
-/*BACKGROUND AND ITS FILTTER */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
 
+/* --- GLOBAL STYLES & BACKGROUND --- */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
   background-image: url('../public/v1.jpg');
   background-size: cover;
   background-position: center;
-  
-
-  
-  filter:brightness(50%) blur(9px);
-
-  transform: scale(1.05);
+  background-attachment: fixed;
+  color: var(--font-light);
 }
 
-
-
+/* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
 .app-container {
   background-color: transparent;
   width: 100%;
@@ -44,7 +39,7 @@ body::before {
   margin: 0 auto;
 }
 
-
+/* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
 .glass-effect {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
@@ -54,7 +49,7 @@ body::before {
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-
+/* --- HEADER --- */
 .app-header {
   margin: 1rem;
   padding: 1.5rem;
@@ -66,7 +61,7 @@ body::before {
 .app-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0; }
 .app-header p { color: var(--light-green); margin-top: 0.25rem; }
 
-
+/* --- NAVIGATION --- */
 .main-nav { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 .main-nav button {
     background-color: rgba(218, 241, 222, 0.1);
@@ -81,7 +76,7 @@ body::before {
 .main-nav button:hover { background-color: rgba(218, 241, 222, 0.2); border-color: rgba(218, 241, 222, 0.3); }
 .main-nav button.active { background-color: var(--lightest-green); color: var(--font-dark); }
 
-
+/* --- TABS & CARDS (Used in Schedule/Admin) --- */
 .tabs-nav { border-bottom: 1px solid rgba(142, 182, 155, 0.2); margin-bottom: 1.5rem; display: flex; gap: 2rem; }
 .tabs-nav button {
     background: none; border: none; border-bottom: 3px solid transparent;
@@ -95,10 +90,40 @@ body::before {
   margin-bottom: 1rem;
 }
 
-
-.event-title { color: var(--lightest-green); }
-.speaker-image-large { border-color: var(--light-green); }
-.schedule-date-header { border-bottom-color: var(--lightest-green); }
+/* --- SCHEDULE & EVENT STYLES (UPDATED FOR VISIBILITY) --- */
+.event-title { 
+  color: var(--lightest-green); 
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.speaker-name {
+  color: var(--lightest-green);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+.speaker-designation {
+  color: var(--light-green);
+  margin-bottom: 1rem;
+  font-style: italic;
+}
+.event-detail {
+  color: var(--light-green);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.speaker-image-large { 
+  width: 8rem;
+  height: 8rem;
+  border-radius: 9999px;
+  object-fit: cover;
+  margin: 0 auto 1rem auto;
+  border: 4px solid var(--light-green);
+}
+.schedule-date-header { border-bottom-color: var(--light-green); }
 .schedule-list-item {
   background: rgba(11, 43, 38, 0.4);
   border-radius: 15px;
@@ -107,9 +132,8 @@ body::before {
 }
 .event-title-list { color: var(--lightest-green); }
 
-
+/* --- AUTH FORMS --- */
 .auth-page-background {
- 
   display: grid;
   place-items: center;
   min-height: 100vh;
@@ -120,17 +144,15 @@ body::before {
 
 .auth-form-container {
   width: 100%;
-  display: flex;
   max-width: 420px;
-  
 }
 
 .glass-form {
   background: rgba(5, 31, 32, 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1.5px solid rgba(142, 182, 155, 0.2);
+  border-radius: 15px;
+  border: 1px solid rgba(142, 182, 155, 0.2);
   padding: 3rem 2.5rem;
   width: 100%;
   color: var(--font-light);
@@ -210,16 +232,7 @@ body::before {
   text-decoration: underline;
 }
 
-
-
-
-
-/* MOBILE VIEW  */
-
-
-
-
-
+/* --- MOBILE RESPONSIVENESS --- */
 @media (max-width: 768px) {
   .app-main {
     padding: 1rem;
