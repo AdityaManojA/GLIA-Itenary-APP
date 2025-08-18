@@ -68,7 +68,7 @@ body::before {
 .app-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0; }
 .app-header p { color: var(--light-green); margin-top: 0.25rem; }
 
-/* --- NAVIGATION --- */
+
 .main-nav { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 .main-nav button {
     background-color: rgba(218, 241, 222, 0.1);
@@ -83,7 +83,7 @@ body::before {
 .main-nav button:hover { background-color: rgba(218, 241, 222, 0.2); border-color: rgba(218, 241, 222, 0.3); }
 .main-nav button.active { background-color: var(--lightest-green); color: var(--font-dark); }
 
-/* --- TABS & CARDS (Used in Schedule/Admin) --- */
+
 .tabs-nav { border-bottom: 1px solid rgba(142, 182, 155, 0.2); margin-bottom: 1.5rem; display: flex; gap: 2rem; }
 .tabs-nav button {
     background: none; border: none; border-bottom: 3px solid transparent;
@@ -97,7 +97,7 @@ body::before {
   margin-bottom: 1rem;
 }
 
-/* --- SCHEDULE & EVENT STYLES (UPDATED FOR VISIBILITY) --- */
+
 .event-title { 
   color: var(--lightest-green); 
   font-size: 1.8rem;
@@ -139,7 +139,7 @@ body::before {
 }
 .event-title-list { color: var(--lightest-green); }
 
-/* --- AUTH FORMS --- */
+
 .auth-page-background {
   display: grid;
   place-items: center;
@@ -239,7 +239,7 @@ body::before {
   text-decoration: underline;
 }
 
-/* --- MOBILE RESPONSIVENESS --- */
+
 @media (max-width: 768px) {
   .app-main {
     padding: 1rem;
