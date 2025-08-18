@@ -30,11 +30,13 @@ body::before {
   filter:brightness(50%) blur(9px);
 
   transform: scale(1.05);
+  
 }
 /* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
 .app-container {
   background-color: transparent;
   width: 100%;
+  color: var(--lightest-green);
   box-sizing: border-box;
 }
 
