@@ -1,4 +1,3 @@
-
 :root {
   --darkest-green: #051F20;
   --dark-green: #0B2B26;
@@ -9,8 +8,6 @@
   --font-light: #EAEAEA;
   --font-dark: #051F20;
 }
-
-
 body::before {
   content: '';
   position: fixed;
