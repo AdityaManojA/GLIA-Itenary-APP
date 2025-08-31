@@ -16,6 +16,7 @@ body::before {
   width: 100vw;
   height: 100vh;
   z-index: -1;
+  display: flex;
 
   background-image: url('../public/v1.jpg');
   background-size: cover;
@@ -35,12 +36,14 @@ body::before {
   width: 100%;
   color: var(--lightest-green);
   box-sizing: border-box;
+  display: flex;
 }
 
 .app-main {
   padding: 1.5rem;
   max-width: 896px;
   margin: 0 auto;
+  
 }
 
 
