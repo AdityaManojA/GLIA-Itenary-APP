@@ -9,7 +9,7 @@ import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
 // --- IMPORT NEW ITINERARY PAGE ---
-import ItineraryPage from './pages/ItineraryPage'; 
+import ItineraryPage from './pages/ItineraryPage';
 
 const ADMIN_EMAILS = ["adityamanoja@gmail.com"];
 

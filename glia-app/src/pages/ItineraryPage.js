@@ -3,7 +3,7 @@ import { collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 
 // We can reuse the FullSchedule component to display the events
-import FullSchedule from './FullSchedule';
+import FullSchedule from '../components/FullSchedule';
 
 const ItineraryPage = () => {
   const [itineraryEvents, setItineraryEvents] = useState([]);
