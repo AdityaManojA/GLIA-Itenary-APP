@@ -4,74 +4,73 @@ import { auth } from './firebase/config';
 import './App.css';
 
 import Header from './components/Header';
+import AuthPage from './pages/AuthPage';
+import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
-import HomePage from './pages/HomePage';
-import AuthPage from './pages/AuthPage'; 
+// --- IMPORT NEW ITINERARY PAGE ---
+import ItineraryPage from './pages/ItineraryPage'; 
 
-// IMPORTANT: Make sure this email matches the admin user you created in the Firebase console.
-const ADMIN_EMAIL = "admin@ian2025.com";
+const ADMIN_EMAILS = ["adityamanoja@gmail.com"];
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState('home');
 
   useEffect(() => {
-    // This Firebase listener is the heart of the authentication.
-    // It automatically updates the 'user' state whenever someone logs in or out.
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
       setLoading(false);
+      // If user logs out, send them to the home page
+      if (!user) {
+        setCurrentPage('home');
+      }
     });
-    // Cleanup the listener when the component unmounts
     return () => unsubscribe();
   }, []);
 
-  // This function decides which main page to show *after* a user is logged in.
   const renderPage = () => {
     switch (currentPage) {
       case 'schedule':
         return <SchedulePage />;
       case 'admin':
-        // This protects the admin page.
-        // It checks if the logged-in user's email matches the admin email.
-        return user && user.email === ADMIN_EMAIL ? <AdminPage /> : <HomePage />;
+        return user && ADMIN_EMAILS.includes(user.email) ? <AdminPage /> : <HomePage />;
+      // --- ADD ITINERARY PAGE CASE ---
+      case 'itinerary':
+        return user ? <ItineraryPage /> : <AuthPage />; // Only show if logged in
+      case 'auth':
+        return <AuthPage />;
       case 'home':
       default:
         return <HomePage />;
     }
   };
 
-  // While Firebase is checking the auth state, show a loading screen.
-  // This prevents the login page from flashing on screen for already logged-in users.
   if (loading) {
     return (
       <div className="auth-page-background">
-        <p style={{ color: 'white', fontSize: '1.2rem' }}>Loading App...</p>
+        <p>Loading App...</p>
       </div>
     );
   }
 
-  // This is the main gatekeeper for your app.
+  // If the user is not logged in, show the AuthPage
+  if (!user) {
+    return (
+      <div className="auth-page-background">
+        <AuthPage />
+      </div>
+    );
+  }
+  
+  // If the user is logged in, show the main app layout
   return (
     <div className="app-container">
-      {!user ? (
-        // --- IF NOT LOGGED IN ---
-        // Render ONLY the authentication page with its special background.
-        <div className="auth-page-background">
-            <AuthPage />
-        </div>
-      ) : (
-        // --- IF LOGGED IN ---
-        // Render the full app layout with the Header and the current page.
-        <>
-          <Header user={user} setCurrentPage={setCurrentPage} />
-          <div className="app-main">
-            {renderPage()}
-          </div>
-        </>
-      )}
+      <Header user={user} setCurrentPage={setCurrentPage} />
+      <main className="app-main">
+        {renderPage()}
+      </main>
     </div>
   );
 }
