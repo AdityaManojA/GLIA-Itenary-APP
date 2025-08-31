@@ -269,3 +269,35 @@ body {
   }
 }
 
+/* --- Notification Permission Banner --- */
+.notification-banner {
+  background-color: var(--darkest-green);
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--medium-green);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--lightest-green);
+}
+
+.notification-banner p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.notification-banner button {
+  background-color: var(--light-green);
+  color: var(--darkest-green);
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 50px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.notification-banner button:hover {
+  background-color: var(--lightest-green);
+}
