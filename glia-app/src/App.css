@@ -301,3 +301,79 @@ body {
 .notification-banner button:hover {
   background-color: var(--lightest-green);
 }
+
+/* --- Alerts List on Home Page --- */
+.home-page-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.alerts-list-container {
+  padding: 1.5rem;
+}
+
+.alerts-list-container h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--lightest-green);
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.alerts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px; /* Makes the list scrollable */
+  overflow-y: auto;
+  padding-right: 10px; /* Space for scrollbar */
+}
+
+.alert-item {
+  background: rgba(11, 43, 38, 0.4);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(142, 182, 155, 0.1);
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: var(--lightest-green);
+}
+
+.alert-timestamp {
+  font-size: 0.8rem;
+  color: var(--light-green);
+  font-style: italic;
+}
+
+.alert-message {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--light-green);
+  line-height: 1.5;
+}
+
+.no-alerts-message {
+  text-align: center;
+  color: var(--light-green);
+  font-style: italic;
+}
+
+/* Custom scrollbar for alerts list */
+.alerts-list::-webkit-scrollbar {
+  width: 6px;
+}
+.alerts-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.alerts-list::-webkit-scrollbar-thumb {
+  background-color: var(--medium-green);
+  border-radius: 6px;
+}
