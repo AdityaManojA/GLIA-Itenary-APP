@@ -1,66 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
+import AlertsList from '../components/AlertsList'; // Import the new component
 
 const HomePage = () => {
-  const [events, setEvents] = useState([]);
+  const [liveEvent, setLiveEvent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // This useEffect will fetch the schedule from Firebase when the component loads.
   useEffect(() => {
-    const q = query(collection(db, 'schedule'), orderBy('startTime'));
+    const now = new Date();
+    
+    const q = query(
+      collection(db, 'schedule'), 
+      where('startTime', '<=', now),
+      where('endTime', '>=', now)
+    );
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const eventsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        startTime: doc.data().startTime.toDate(),
-        endTime: doc.data().endTime.toDate(),
-      }));
-      setEvents(eventsData);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching schedule: ", error);
+      if (!snapshot.empty) {
+        const eventData = snapshot.docs[0].data();
+        setLiveEvent({ id: snapshot.docs[0].id, ...eventData });
+      } else {
+        setLiveEvent(null);
+      }
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
-  // This function finds the event that is currently happening.
-  const getCurrentEvent = () => {
-    const now = new Date();
-    return events.find(event => now >= event.startTime && now <= event.endTime);
-  };
-
-  const currentEvent = getCurrentEvent();
-
   return (
-    <div className="card glass-effect" style={{ textAlign: 'center' }}>
-      <h1>Live Now</h1>
+    <div className="home-page-layout">
+      <div className="card glass-effect" style={{ textAlign: 'center' }}>
+        <h2>Live Now</h2>
+        {loading ? (
+          <p>Checking schedule...</p>
+        ) : liveEvent ? (
+          <div>
+            {liveEvent.speakerImageURL && <img src={liveEvent.speakerImageURL} alt={liveEvent.speakerName} className="speaker-image-large" />}
+            <h3 className="event-title">{liveEvent.title}</h3>
+            {liveEvent.speakerName && <p className="speaker-name">{liveEvent.speakerName}</p>}
+            {liveEvent.designation && <p className="speaker-designation">{liveEvent.designation}</p>}
+            <div className="event-detail">
+              <span>📍 {liveEvent.venue}</span>
+            </div>
+          </div>
+        ) : (
+          <p>No event is currently in session. Please check the full schedule.</p>
+        )}
+      </div>
+
       
-      {loading ? (
-        <p>Loading current event...</p>
-      ) : currentEvent ? (
-        <div>
-          {currentEvent.speakerImageURL && (
-            <img 
-              src={currentEvent.speakerImageURL} 
-              alt={currentEvent.speakerName} 
-              className="speaker-image-large" // Reusing style from App.css
-            />
-          )}
-          <h2 className="event-title">{currentEvent.title}</h2>
-          {currentEvent.speakerName && <p className="speaker-name">{currentEvent.speakerName}</p>}
-          {currentEvent.designation && <p className="speaker-designation">{currentEvent.designation}</p>}
-          <div className="event-detail">
-            <span>📍 {currentEvent.venue}</span>
-          </div>
-          <div className="event-detail">
-            <span>🕒 {currentEvent.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {currentEvent.endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-          </div>
-        </div>
-      ) : (
-        <p>No event is currently in session. Please check the full schedule.</p>
-      )}
+      <AlertsList />
     </div>
   );
 };
