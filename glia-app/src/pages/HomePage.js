@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import AlertsList from '../components/AlertsList'; // Import the new component
+import AlertsList from '../components/AlertsList'; 
 
 const HomePage = () => {
   const [liveEvent, setLiveEvent] = useState(null);
