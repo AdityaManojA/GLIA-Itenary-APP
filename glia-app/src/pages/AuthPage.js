@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
@@ -39,6 +39,7 @@ const AuthPage = () => {
 
   return (
     <div className="auth-form-container">
+      {/* This component now only renders the LoginForm */}
       <LoginForm 
         onLogin={handleLogin} 
         error={error} 
