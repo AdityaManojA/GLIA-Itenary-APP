@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import AlertsList from '../components/AlertsList'; 
+import AlertsList from '../components/AlertsList';
 
 const HomePage = () => {
   const [liveEvent, setLiveEvent] = useState(null);
@@ -10,20 +10,29 @@ const HomePage = () => {
   useEffect(() => {
     const now = new Date();
     
+    // 1. Query Firestore for all events that have already started.
+    // We order by startTime descending to get the most recently started events first.
     const q = query(
       collection(db, 'schedule'), 
       where('startTime', '<=', now),
-      where('endTime', '>=', now)
+      orderBy('startTime', 'desc')
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (!snapshot.empty) {
-        const eventData = snapshot.docs[0].data();
-        setLiveEvent({ id: snapshot.docs[0].id, ...eventData });
+      // 2. Filter the results on the client-side to find the one that is still ongoing.
+      const startedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const currentLiveEvent = startedEvents.find(event => event.endTime.toDate() >= now);
+
+      if (currentLiveEvent) {
+        setLiveEvent(currentLiveEvent);
       } else {
         setLiveEvent(null);
       }
       setLoading(false);
+    }, (error) => {
+        // Added error handling for permission issues
+        console.error("Error fetching live schedule:", error);
+        setLoading(false);
     });
 
     return () => unsubscribe();
@@ -49,11 +58,10 @@ const HomePage = () => {
           <p>No event is currently in session. Please check the full schedule.</p>
         )}
       </div>
-
-      
       <AlertsList />
     </div>
   );
 };
+
 
 export default HomePage;
