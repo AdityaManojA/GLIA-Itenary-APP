@@ -1,53 +1,38 @@
 import React, { useState } from 'react';
 
-const LoginForm = ({ onLogin, error, onSwitchToRegister }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const LoginForm = ({ onLogin, error }) => {
+  const [username, setUsername] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin(email, password);
+    onLogin(username);
   };
 
   return (
     <div className="auth-form-container">
-      <form onSubmit={handleSubmit} className="glass-form">
-        <h1>Login</h1>
+      <form onSubmit={handleSubmit} className="glass-form glass-effect">
+        <h1>Attendee Login</h1>
         
         <div className="input-group">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="username">Attendee ID</label>
           <input 
-            id="email"
-            type="email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            placeholder="Enter your email" 
-            required 
-          />
-        </div>
-        
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input 
-            id="password"
-            type="password" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            placeholder="Enter your password" 
+            id="username"
+            type="text" 
+            value={username} 
+            onChange={e => setUsername(e.target.value)} 
+            placeholder="Enter your assigned ID" 
             required 
           />
         </div>
         
         <button type="submit" className="auth-button">Login</button>
         
-        {error && <p className="error-text" style={{ color: '#ff9a9a' }}>{error}</p>}
+        {error && <p className="error-text">{error}</p>}
         
-        <div className="form-switch-link">
-          <p>Don't have an account? <button type="button" onClick={onSwitchToRegister}>Register</button></p>
-        </div>
       </form>
     </div>
   );
 };
 
 export default LoginForm;
+
