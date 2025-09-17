@@ -1,84 +1,51 @@
-    import React, { useState } from 'react';
-    import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-    import { doc, setDoc, writeBatch } from 'firebase/firestore';
-    import { auth, db } from '../firebase/config';
-    import LoginForm from '../components/LoginForm';
-    import RegisterForm from '../components/RegisterForm';
+import React, { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
+import LoginForm from '../components/LoginForm';
 
-    const AuthPage = () => {
-      const [isLogin, setIsLogin] = useState(false);
-      const [error, setError] = useState('');
+const AuthPage = () => {
+  const [error, setError] = useState('');
 
-      const handleRegister = async (email, password) => {
-        setError('');
-        try {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const newUser = userCredential.user;
+  const handleLogin = async (username) => {
+    setError('');
 
-          
-          await setDoc(doc(db, "users", newUser.uid), {
-            email: newUser.email,
-            uid: newUser.uid,
-            createdAt: new Date()
-          });
+    try {
+      // Step 1: Check if a participant with the provided username exists in Firestore.
+      const participantsRef = collection(db, 'participants');
+      const q = query(participantsRef, where("username", "==", username));
+      const querySnapshot = await getDocs(q);
 
-          
-          const mealEvents = [
-            "lunch-2025-10-29", "dinner-2025-10-29",
-            "lunch-2025-10-30", "dinner-2025-10-30",
-            "lunch-2025-10-31", "dinner-2025-10-31",
-            "lunch-2025-11-01"
-          ];
-          
-          const batch = writeBatch(db);
-          mealEvents.forEach(mealId => {
-            const couponRef = doc(db, "users", newUser.uid, "mealCoupons", mealId);
-            batch.set(couponRef, { status: "unused" });
-          });
-          await batch.commit();
+      if (querySnapshot.empty) {
+        setError('Invalid Attendee ID. Please check the ID and try again.');
+        return;
+      }
 
-        } catch (err) {
-            if (err.code === 'auth/email-already-in-use') {
-                setError('Email is already in use.');
-            } else if (err.code === 'auth/weak-password') {
-                setError('Password must be at least 6 characters long.');
-            } else {
-                setError('Failed to create account. Please try again.');
-            }
-        }
-      };
-      
-      const handleLogin = async (email, password) => {
-        setError('');
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-        } catch (err) {
-            if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-                setError('Invalid email or password.');
-            } else {
-                setError('Failed to log in. Please try again.');
-            }
-        }
-      };
+      // Step 2: If the username is valid, construct the hidden email and standard password.
+      const hiddenEmail = `${username}@ian2025.app`;
+      const standardPassword = 'IAN2025';
 
-      return (
-        <div className="auth-form-container">
-          {isLogin ? (
-            <LoginForm 
-              onLogin={handleLogin} 
-              error={error} 
-              onSwitchToRegister={() => setIsLogin(false)}
-            />
-          ) : (
-            <RegisterForm 
-              onRegister={handleRegister} 
-              error={error}
-              onSwitchToLogin={() => setIsLogin(true)}
-            />
-          )}
-        </div>
-      );
-    };
+      // Step 3: Attempt to sign in the user with the constructed credentials.
+      await signInWithEmailAndPassword(auth, hiddenEmail, standardPassword);
+      // A successful login will be caught by the onAuthStateChanged listener in your App.js,
+      // which will then show the main application content.
 
-    export default AuthPage;
-    
+    } catch (err) {
+      console.error("Login Error:", err);
+      // Provide a generic error for security, but check the console for specific Firebase errors.
+      setError('An error occurred during login. Please contact an admin for help.');
+    }
+  };
+
+  return (
+    <div className="auth-form-container">
+      <LoginForm 
+        onLogin={handleLogin} 
+        error={error} 
+      />
+    </div>
+  );
+};
+
+export default AuthPage;
+
