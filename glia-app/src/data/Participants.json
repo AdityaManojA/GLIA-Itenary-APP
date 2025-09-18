@@ -1,8 +1,9 @@
 [
     {
-        "reg_no": "admin2025ian",
-        "name": "admin"
-    },
+  "reg_no": "admin2025ian",
+  "name": "admin",
+  "email": "adityamanoja@gmail.com"
+},
     {
         "reg_no": "IAN/2025/11",
         "name": "Dibya"

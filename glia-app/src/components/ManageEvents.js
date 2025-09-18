@@ -4,10 +4,10 @@ import React from 'react';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-const ManageEvents = ({ events }) => {
+// UPDATED: Added onEdit prop
+const ManageEvents = ({ events, onEdit }) => {
 
   const handleDelete = async (eventId, eventTitle) => {
-    // Confirm before deleting
     if (window.confirm(`Are you sure you want to delete the event: "${eventTitle}"?`)) {
       try {
         const eventDocRef = doc(db, 'schedule', eventId);
@@ -39,7 +39,8 @@ const ManageEvents = ({ events }) => {
                 </div>
               </div>
               <div className="event-actions">
-                <button className="edit-btn" onClick={() => alert('Edit functionality will be added next!')}>
+                {/* UPDATED: onClick handler now uses the onEdit prop */}
+                <button className="edit-btn" onClick={() => onEdit(event)}>
                   Edit
                 </button>
                 <button className="delete-btn" onClick={() => handleDelete(event.id, event.title)}>
