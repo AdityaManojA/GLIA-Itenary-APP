@@ -173,7 +173,7 @@ body {
   .header-user-info { position: static; text-align: center; margin-top: 1rem; }
 }
 
-/* src/App.css */
+
 
 .event-actions {
   display: flex;
@@ -206,4 +206,61 @@ body {
 
 .delete-btn:hover {
   background-color: #ef5350;
+}
+
+/* src/App.css */
+
+/* --- Redesigned Alerts List --- */
+.alerts-list-container .alerts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.alert-item-redesigned {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-color);
+  border-radius: 12px;
+  box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+}
+
+.alert-icon {
+  font-size: 1.5rem;
+  margin-top: -2px;
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.alert-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.alert-timestamp {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.alert-message {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }

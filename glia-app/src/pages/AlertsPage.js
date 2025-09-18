@@ -11,7 +11,7 @@ const AlertsPage = () => {
   useEffect(() => {
     const q = query(
       collection(db, 'notifications'), 
-      orderBy('createdAt', 'desc') // No limit, fetches all alerts
+      orderBy('createdAt', 'desc')
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -29,7 +29,6 @@ const AlertsPage = () => {
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return 'Just now';
     const date = timestamp.toDate();
-    // Format to include date and time
     return date.toLocaleString('en-US', { 
         month: 'short', 
         day: 'numeric', 
@@ -38,29 +37,28 @@ const AlertsPage = () => {
     });
   };
 
-  if (loading) {
-    return (
-        <div className="card glass-effect">
-            <h1 style={{ textAlign: 'center' }}>Notifications</h1>
-            <p>Loading alerts...</p>
-        </div>
-    );
-  }
-
   return (
     <div className="card glass-effect">
       <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>All Notifications</h1>
-      {alerts.length === 0 ? (
+      {loading ? (
+        <p>Loading alerts...</p>
+      ) : alerts.length === 0 ? (
         <p className="no-alerts-message" style={{ textAlign: 'center' }}>No notifications have been sent yet.</p>
       ) : (
+        // UPDATED JSX structure below to match the new design
         <ul className="alerts-list">
           {alerts.map(alert => (
-            <li key={alert.id} className="alert-item">
-              <div className="alert-header">
-                <strong>{alert.title}</strong>
-                <span className="alert-timestamp">{formatTimestamp(alert.createdAt)}</span>
+            <li key={alert.id} className="alert-item-redesigned">
+              <div className="alert-icon">
+                <span>🔔</span>
               </div>
-              <p className="alert-message">{alert.message}</p>
+              <div className="alert-content">
+                <div className="alert-header">
+                  <strong className="alert-title">{alert.title}</strong>
+                  <span className="alert-timestamp">{formatTimestamp(alert.createdAt)}</span>
+                </div>
+                <p className="alert-message">{alert.message}</p>
+              </div>
             </li>
           ))}
         </ul>
