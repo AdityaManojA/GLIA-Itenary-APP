@@ -1,6 +1,7 @@
+// src/components/Header.js
+
 import React from 'react';
 
-// Define your list of admin emails here
 const ADMIN_EMAILS = ["adityamanoja@gmail.com"]; 
 
 const Header = ({ user, onLogout, setCurrentPage }) => {
@@ -24,7 +25,9 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
         <button onClick={() => setCurrentPage('home')}>Home</button>
         <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
         
-        {/* Only show Admin button to admin users */}
+        {/* New Alerts Button Below */}
+        <button onClick={() => setCurrentPage('alerts')}>Alerts</button>
+        
         {user && ADMIN_EMAILS.includes(user.email) && (
           <button onClick={() => setCurrentPage('admin')}>Admin</button>
         )}
@@ -34,4 +37,3 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
 };
 
 export default Header;
-
