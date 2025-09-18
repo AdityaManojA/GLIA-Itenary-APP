@@ -11,6 +11,7 @@ import AdminPage from './pages/AdminPage';
 import ItineraryPage from './pages/ItineraryPage';
 import NotificationListener from './components/NotificationListener';
 
+// Define your list of admin emails
 const ADMIN_EMAILS = ["adityamanoja@gmail.com"];
 
 function App() {
@@ -19,23 +20,26 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
 
   useEffect(() => {
+    // This listener checks if the user is logged in or out
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
       if (user) {
-        setCurrentPage('home');
+        setCurrentPage('home'); // Go to home page after login
       }
     });
-    return unsubscribe;
+    return unsubscribe; // Cleanup the listener
   }, []);
 
+  // This function decides which page component to show
   const renderPage = () => {
     switch (currentPage) {
       case 'schedule':
-        return <SchedulePage />;
+        return <SchedulePage user={user} />;
       case 'itinerary':
         return <ItineraryPage user={user} />;
       case 'admin':
+        // Only show AdminPage if the user's email is in the admin list
         return user && ADMIN_EMAILS.includes(user.email) ? <AdminPage /> : <HomePage />;
       case 'home':
       default:
@@ -49,13 +53,15 @@ function App() {
 
   return (
     <>
+      {/* If no user is logged in, show the AuthPage */}
       {!user ? (
         <div className="auth-page-background">
           <AuthPage />
         </div>
       ) : (
+        // If a user is logged in, show the main app
         <div className="app-container">
-          <NotificationListener /> 
+          <NotificationListener />
           <Header user={user} setCurrentPage={setCurrentPage} />
           <main className="app-main">
             {renderPage()}
@@ -67,3 +73,4 @@ function App() {
 }
 
 export default App;
+
