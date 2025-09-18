@@ -1,379 +1,175 @@
-/* --- NEW FOREST THEME & COLOR PALETTE --- */
+/* --- NEW Soft UI Redesign --- */
+
+/* 1. Color Palette & Global Styles */
 :root {
-  --darkest-green: #051F20;
-  --dark-green: #0B2B26;
-  --medium-green: #163832;
-  --teal-green: #235347;
-  --light-green: #8EB69B;
-  --lightest-green: #DAF1DE;
-  --font-light: #EAEAEA;
-  --font-dark: #051F20;
+  --bg-color: #0B2B26; /* Dark green background */
+  --surface-color: #163832; /* Slightly lighter for cards */
+  --primary-color: #8EB69B; /* Light green for accents and buttons */
+  --text-primary: #DAF1DE; /* Lightest green for main text */
+  --text-secondary: #8EB69B; /* Light green for secondary text */
+  --shadow-dark: rgba(5, 31, 32, 0.7);
+  --shadow-light: rgba(142, 182, 155, 0.2);
+  --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* --- GLOBAL STYLES & BACKGROUND --- */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
-  background-image: url('../public/v2.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  color: var(--font-light);
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  /* The background image is now removed */
 }
 
-/* --- MAIN APP LAYOUT (FOR LOGGED-IN USERS) --- */
-.app-container {
-  background-color: transparent;
+/* --- App Layout --- */
+.app-container, .auth-page-background {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex-grow: 1;
+  padding: 1.5rem;
+  max-width: 900px;
   width: 100%;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
-/* FIX: Added top padding to prevent content from going under the header */
-.app-main {
-  padding: 10rem 1.5rem 1.5rem 1.5rem; /* Increased top padding */
-  max-width: 896px;
-  margin: 0 auto;
-}
-
-/* --- GLASSMORPHISM EFFECT (The core of the new UI) --- */
-.glass-effect {
-  background: rgba(5, 31, 32, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(142, 182, 155, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-/* --- HEADER --- */
-.app-header {
-  margin: 1rem;
-  padding: 1.5rem;
-  text-align: center;
-  max-width: 896px;
-  margin-left: auto;
-  margin-right: auto;
-  position: absolute; /* Takes header out of normal flow */
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 10; /* Ensures header is above other content */
-}
-.app-header h1 { font-size: 1.875rem; font-weight: 700; margin: 0; }
-.app-header p { color: var(--light-green); margin-top: 0.25rem; }
-
-/* --- NAVIGATION --- */
-.main-nav { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-.main-nav button {
-    background-color: rgba(218, 241, 222, 0.1);
-    border: 1px solid transparent;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-weight: 500;
-    color: var(--lightest-green);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-.main-nav button:hover { background-color: rgba(218, 241, 222, 0.2); border-color: rgba(218, 241, 222, 0.3); }
-.main-nav button.active { background-color: var(--lightest-green); color: var(--font-dark); }
-
-/* --- TABS & CARDS (Used in Schedule/Admin) --- */
-.tabs-nav { border-bottom: 1px solid rgba(142, 182, 155, 0.2); margin-bottom: 1.5rem; display: flex; gap: 2rem; }
-.tabs-nav button {
-    background: none; border: none; border-bottom: 3px solid transparent;
-    padding: 0 0.25rem 1rem 0.25rem; font-weight: 600;
-    color: var(--light-green); cursor: pointer;
-}
-.tabs-nav button.tab-active { border-bottom-color: var(--lightest-green); color: var(--lightest-green); }
-
-.card {
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-/* --- SCHEDULE & EVENT STYLES (UPDATED FOR VISIBILITY) --- */
-.event-title { 
-  color: var(--lightest-green); 
-  font-size: 1.8rem;
-  margin-bottom: 0.5rem;
-}
-.speaker-name {
-  color: var(--lightest-green);
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0.5rem 0;
-}
-.speaker-designation {
-  color: var(--light-green);
-  margin-bottom: 1rem;
-  font-style: italic;
-}
-.event-detail {
-  color: var(--light-green);
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-.speaker-image-large { 
-  width: 8rem;
-  height: 8rem;
-  border-radius: 9999px;
-  object-fit: cover;
-  margin: 0 auto 1rem auto;
-  border: 4px solid var(--light-green);
-}
-.schedule-date-header { border-bottom-color: var(--light-green); }
-.schedule-list-item {
-  background: rgba(11, 43, 38, 0.4);
-  border-radius: 15px;
-  padding: 1rem;
-  border: 1px solid rgba(142, 182, 155, 0.1);
-}
-.event-title-list { color: var(--lightest-green); }
-
-/* --- AUTH FORMS --- */
-.auth-page-background {
+.loading-screen {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  width: 100%;
-  padding: 1rem;
-  box-sizing: border-box;
-}
-
-.auth-form-container {
-  width: 100%;
-  max-width: 420px;
-}
-
-.glass-form {
-  background: rgba(5, 31, 32, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 15px;
-  border: 1px solid rgba(142, 182, 155, 0.2);
-  padding: 3rem 2.5rem;
-  width: 100%;
-  color: var(--font-light);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-.glass-form h1 {
-  text-align: center;
-  font-size: 2.2rem;
-  margin-top: 0;
-  margin-bottom: 2.5rem;
-  font-weight: 600;
-}
-
-.input-group {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: rgba(218, 241, 222, 0.8);
-}
-
-.input-group input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(142, 182, 155, 0.3);
-  background: rgba(11, 43, 38, 0.5);
-  color: var(--font-light);
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-.input-group input::placeholder { color: rgba(142, 182, 155, 0.7); }
-.input-group input:focus {
-  outline: none;
-  border-color: var(--light-green);
-}
-
-.auth-button {
-  width: 100%;
-  padding: 0.9rem;
-  border-radius: 8px;
-  border: none;
-  background-color: var(--light-green);
-  color: var(--darkest-green);
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 1.5rem;
-}
-.auth-button:hover {
-  background-color: var(--lightest-green);
-}
-
-.form-switch-link {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 0.9rem;
-}
-.form-switch-link p {
-  margin: 0;
-  color: rgba(218, 241, 222, 0.8);
-}
-.form-switch-link button {
-  background: none;
-  border: none;
-  color: var(--lightest-green);
-  font-weight: 700;
-  cursor: pointer;
-  padding: 0 0 0 5px;
-  text-decoration: underline;
-}
-
-/* --- MOBILE RESPONSIVENESS --- */
-@media (max-width: 768px) {
-  /* FIX: Adjusted mobile padding to accommodate absolute header */
-  .app-main {
-    padding: 8rem 1rem 1rem 1rem;
-  }
-
-  .app-header {
-    margin: 0.5rem;
-    padding: 1rem;
-  }
-
-  .app-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .glass-form {
-    padding: 2rem 1.5rem;
-  }
-
-  .glass-form h1 {
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-  }
-
-  .schedule-list-item {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-/* --- Notification Permission Banner --- */
-.notification-banner {
-  background-color: var(--darkest-green);
-  padding: 1rem;
-  text-align: center;
-  border-bottom: 1px solid var(--medium-green);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-  color: var(--lightest-green);
-}
-
-.notification-banner p {
-  margin: 0;
-  font-weight: 500;
-}
-
-.notification-banner button {
-  background-color: var(--light-green);
-  color: var(--darkest-green);
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 50px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.notification-banner button:hover {
-  background-color: var(--lightest-green);
-}
-
-/* --- Alerts List on Home Page --- */
-.home-page-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.alerts-list-container {
-  padding: 1.5rem;
-}
-
-.alerts-list-container h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: var(--lightest-green);
-  text-align: center;
   font-size: 1.5rem;
 }
 
-.alerts-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 300px; /* Makes the list scrollable */
-  overflow-y: auto;
-  padding-right: 10px; /* Space for scrollbar */
+/* --- Reusable "Soft UI" Card Style --- */
+.soft-ui-card, .glass-effect, .card {
+  background-color: var(--surface-color);
+  border-radius: 20px;
+  padding: 1.5rem;
+  border: 1px solid var(--shadow-light);
+  box-shadow: 
+    5px 5px 10px var(--shadow-dark),
+    -5px -5px 10px var(--shadow-light);
 }
 
-.alert-item {
-  background: rgba(11, 43, 38, 0.4);
-  border-radius: 10px;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  border: 1px solid rgba(142, 182, 155, 0.1);
-}
-
-.alert-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  color: var(--lightest-green);
-}
-
-.alert-timestamp {
-  font-size: 0.8rem;
-  color: var(--light-green);
-  font-style: italic;
-}
-
-.alert-message {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--light-green);
-  line-height: 1.5;
-}
-
-.no-alerts-message {
+/* --- Header & Navigation --- */
+.app-header {
+  padding: 2rem 1.5rem;
   text-align: center;
-  color: var(--light-green);
-  font-style: italic;
+  position: relative;
 }
 
-/* Custom scrollbar for alerts list */
-.alerts-list::-webkit-scrollbar {
-  width: 6px;
+.app-header h1 { font-size: 2.5rem; font-weight: 700; margin: 0; color: var(--text-primary); }
+.app-header p { color: var(--text-secondary); margin-top: 0.5rem; }
+
+.main-nav { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.main-nav-button, .main-nav button {
+  background-color: var(--surface-color);
+  border: 1px solid var(--shadow-light);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
 }
-.alerts-list::-webkit-scrollbar-track {
-  background: transparent;
+.main-nav-button:hover, .main-nav button:hover {
+  color: var(--text-primary);
+  border-color: var(--primary-color);
 }
-.alerts-list::-webkit-scrollbar-thumb {
-  background-color: var(--medium-green);
-  border-radius: 6px;
+.main-nav button.active {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
 }
+
+.header-user-info {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  text-align: right;
+}
+.header-user-info p { margin: 0.5rem 0 0; font-size: 0.8rem; opacity: 0.8; }
+
+/* --- Auth Pages --- */
+.auth-page-background {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.auth-form-container { width: 100%; max-width: 420px; }
+
+.glass-form { padding: 3rem 2.5rem; } /* Re-using class for structure */
+.glass-form h1 { text-align: center; font-size: 2.2rem; margin: 0 0 2.5rem 0; font-weight: 700; }
+
+.input-group { margin-bottom: 1.5rem; text-align: left; }
+.input-group label { display: block; margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-secondary); }
+.input-group input, textarea {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  box-sizing: border-box;
+  box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+}
+.input-group input::placeholder, textarea::placeholder { color: var(--text-secondary); opacity: 0.7; }
+.input-group input:focus, textarea:focus { outline: 2px solid var(--primary-color); }
+
+.auth-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+  box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+}
+.auth-button:hover { background-color: var(--text-primary); }
+.auth-button:disabled { background-color: var(--medium-green); cursor: not-allowed; }
+
+.form-switch-link { text-align: center; margin-top: 2rem; font-size: 0.9rem; color: var(--text-secondary); }
+.form-switch-link button { background: none; border: none; color: var(--text-primary); font-weight: 700; cursor: pointer; padding: 0 0 0 5px; text-decoration: underline; }
+.error-text { color: #ff9a9a; text-align: center; margin-top: 1rem; font-weight: 500; }
+
+/* --- Main Content & Cards --- */
+.tabs-nav { border-bottom: 1px solid var(--surface-color); margin-bottom: 1.5rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+.tabs-nav button { background: none; border: none; border-bottom: 3px solid transparent; padding: 0 0.25rem 1rem 0.25rem; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+.tabs-nav button.tab-active { border-bottom-color: var(--primary-color); color: var(--primary-color); }
+
+.event-title { color: var(--text-primary); font-size: 1.8rem; margin-bottom: 0.5rem; }
+.speaker-name { color: var(--text-primary); font-size: 1.2rem; font-weight: 600; margin: 0.5rem 0; }
+.speaker-designation { color: var(--text-secondary); margin-bottom: 1rem; font-style: italic; }
+.speaker-image-large { width: 8rem; height: 8rem; border-radius: 50%; object-fit: cover; margin: 0 auto 1rem auto; border: 4px solid var(--primary-color); }
+.schedule-date-header { border-bottom-color: var(--primary-color); color: var(--primary-color); font-weight: 700; padding-bottom: 0.5rem; }
+.schedule-list-item { margin-bottom: 1rem; }
+.event-title-list { color: var(--text-primary); font-weight: 700; }
+
+/* --- Alerts List --- */
+.home-page-layout { display: flex; flex-direction: column; gap: 1.5rem; }
+.alerts-list-container h3 { margin-top: 0; color: var(--text-primary); text-align: center; font-size: 1.5rem; }
+.alerts-list { list-style: none; padding: 0; margin: 0; max-height: 300px; overflow-y: auto; }
+.alert-item { margin-bottom: 0.75rem; background-color: var(--bg-color); box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light); }
+.alert-header { font-size: 1rem; color: var(--text-primary); }
+.alert-timestamp { font-size: 0.8rem; color: var(--text-secondary); }
+.alert-message { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  .app-main, .app-header, .glass-form { padding: 1rem; }
+  .header-user-info { position: static; text-align: center; margin-top: 1rem; }
+}
+

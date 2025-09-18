@@ -3,15 +3,20 @@ import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestor
 import { db } from '../firebase/config';
 import AlertsList from '../components/AlertsList';
 
-const HomePage = () => {
+const HomePage = ({ user }) => {
   const [liveEvent, setLiveEvent] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // A helper function to get the user's first name for the greeting
+  const getFirstName = (fullName) => {
+    if (!fullName) return 'Attendee'; // Fallback name
+    return fullName.split(' ')[0];
+  };
+
+  // This useEffect fetches the currently live event from Firestore
   useEffect(() => {
     const now = new Date();
     
-    // 1. Query Firestore for all events that have already started.
-    // We order by startTime descending to get the most recently started events first.
     const q = query(
       collection(db, 'schedule'), 
       where('startTime', '<=', now),
@@ -19,18 +24,12 @@ const HomePage = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      // 2. Filter the results on the client-side to find the one that is still ongoing.
       const startedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       const currentLiveEvent = startedEvents.find(event => event.endTime.toDate() >= now);
 
-      if (currentLiveEvent) {
-        setLiveEvent(currentLiveEvent);
-      } else {
-        setLiveEvent(null);
-      }
+      setLiveEvent(currentLiveEvent || null);
       setLoading(false);
     }, (error) => {
-        // Added error handling for permission issues
         console.error("Error fetching live schedule:", error);
         setLoading(false);
     });
@@ -40,6 +39,13 @@ const HomePage = () => {
 
   return (
     <div className="home-page-layout">
+      {/* Personalized Welcome Message */}
+      <div className="welcome-header" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <h1>Welcome, {getFirstName(user?.name)}</h1>
+        <p>Here's what's happening now at IAN 2025.</p>
+      </div>
+
+      {/* Live Now Card */}
       <div className="card glass-effect" style={{ textAlign: 'center' }}>
         <h2>Live Now</h2>
         {loading ? (
@@ -58,6 +64,8 @@ const HomePage = () => {
           <p>No event is currently in session. Please check the full schedule.</p>
         )}
       </div>
+
+      {/* Recent Alerts List */}
       <AlertsList />
     </div>
   );

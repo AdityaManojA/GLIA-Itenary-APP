@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase/config';
+import React, {useState} from 'react';
 import './App.css';
 
 import Header from './components/Header';
@@ -8,61 +6,48 @@ import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
-import ItineraryPage from './pages/ItineraryPage';
-import NotificationListener from './components/NotificationListener';
+import participants from './data/participants.json'; // Import the local participant data
 
-// Define your list of admin emails
-const ADMIN_EMAILS = ["adityamanoja@gmail.com"];
+// Define your list of admin emails here
+const ADMIN_EMAILS = ["adityamanoja@gmail.com"]; 
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null); 
   const [currentPage, setCurrentPage] = useState('home');
 
-  useEffect(() => {
-    // This listener checks if the user is logged in or out
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-      if (user) {
-        setCurrentPage('home'); // Go to home page after login
-      }
-    });
-    return unsubscribe; // Cleanup the listener
-  }, []);
+  const handleLoginSuccess = (userData) => {
+    // On login, find the full user profile from our local JSON
+    const fullUser = participants.find(p => p.reg_no.toLowerCase() === userData.reg_no.toLowerCase());
+    setUser(fullUser);
+    setCurrentPage('home');
+  };
 
-  // This function decides which page component to show
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'schedule':
-        return <SchedulePage user={user} />;
-      case 'itinerary':
-        return <ItineraryPage user={user} />;
+        return <SchedulePage />;
       case 'admin':
-        // Only show AdminPage if the user's email is in the admin list
-        return user && ADMIN_EMAILS.includes(user.email) ? <AdminPage /> : <HomePage />;
+        return user && ADMIN_EMAILS.includes(user.email) ? <AdminPage /> : <HomePage user={user} />;
       case 'home':
       default:
-        return <HomePage />;
+        // Pass the full user object to the HomePage
+        return <HomePage user={user} />;
     }
   };
 
-  if (loading) {
-    return <div className="loading-screen">Loading App...</div>;
-  }
-
   return (
     <>
-      {/* If no user is logged in, show the AuthPage */}
       {!user ? (
         <div className="auth-page-background">
-          <AuthPage />
+          <AuthPage onLoginSuccess={handleLoginSuccess} />
         </div>
       ) : (
-        // If a user is logged in, show the main app
         <div className="app-container">
-          <NotificationListener />
-          <Header user={user} setCurrentPage={setCurrentPage} />
+          <Header user={user} onLogout={handleLogout} setCurrentPage={setCurrentPage} />
           <main className="app-main">
             {renderPage()}
           </main>
