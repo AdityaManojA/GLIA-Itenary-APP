@@ -173,3 +173,37 @@ body {
   .header-user-info { position: static; text-align: center; margin-top: 1rem; }
 }
 
+/* src/App.css */
+
+.event-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.edit-btn, .delete-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.edit-btn {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+}
+
+.delete-btn {
+  background-color: #E57373; /* A soft red for delete */
+  color: var(--text-primary);
+}
+
+.edit-btn:hover {
+  background-color: var(--text-primary);
+}
+
+.delete-btn:hover {
+  background-color: #ef5350;
+}
