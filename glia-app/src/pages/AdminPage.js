@@ -1,10 +1,12 @@
+// src/pages/AdminPage.js
+
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import EventForm from '../components/EventForm';
-import FullSchedule from '../components/FullSchedule';
 import Scanner from '../components/Scanner';
-import AlertsAdmin from '../components/AlertsAdmin'; // Import the new component
+import AlertsAdmin from '../components/AlertsAdmin';
+import ManageEvents from '../components/ManageEvents'; // Import the new component
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('addEvent');
@@ -33,9 +35,9 @@ const AdminPage = () => {
     <main className="app-main">
       <div className="tabs-nav">
         <button onClick={() => setActiveTab('addEvent')} className={activeTab === 'addEvent' ? 'tab-active' : ''}>Add Event</button>
-        <button onClick={() => setActiveTab('viewSchedule')} className={activeTab === 'viewSchedule' ? 'tab-active' : ''}>View Schedule</button>
+        {/* The "View Schedule" tab is now "Manage Events" */}
+        <button onClick={() => setActiveTab('manageEvents')} className={activeTab === 'manageEvents' ? 'tab-active' : ''}>Manage Events</button>
         <button onClick={() => setActiveTab('scanner')} className={activeTab === 'scanner' ? 'tab-active' : ''}>Scanner</button>
-        
         <button onClick={() => setActiveTab('alerts')} className={activeTab === 'alerts' ? 'tab-active' : ''}>Alerts</button>
       </div>
       {loading ? (
@@ -43,9 +45,9 @@ const AdminPage = () => {
       ) : (
         <div>
           {activeTab === 'addEvent' && <EventForm />}
-          {activeTab === 'viewSchedule' && <FullSchedule events={events} />}
-          {activeTab === 'scanner' && <Scanner events={events} />}
-          
+          {/* Render the new ManageEvents component */}
+          {activeTab === 'manageEvents' && <ManageEvents events={events} />}
+          {activeTab === 'scanner' && <Scanner />}
           {activeTab === 'alerts' && <AlertsAdmin />}
         </div>
       )}
