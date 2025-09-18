@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 
 const LoginForm = ({ onLogin, error }) => {
   const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin(username);
+    onLogin(username, password);
   };
 
   return (
@@ -21,6 +22,18 @@ const LoginForm = ({ onLogin, error }) => {
             value={username} 
             onChange={e => setUsername(e.target.value)} 
             placeholder="Enter your assigned ID" 
+            required 
+          />
+        </div>
+        
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <input 
+            id="password"
+            type="password" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            placeholder="Enter the event password" 
             required 
           />
         </div>
