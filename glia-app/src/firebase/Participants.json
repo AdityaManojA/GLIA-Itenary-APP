@@ -1,62 +1,83 @@
 [
     {
-        "reg_no\tname": "IAN/2025/11\tDibya Sundar Padhy"
+        "reg_no": "IAN/2025/11",
+        "name": "Dibya"
     },
     {
-        "reg_no\tname": "IAN/2025/12\tJANANI.T"
+        "reg_no": "IAN/2025/12",
+        "name": "JANANI.T"
     },
     {
-        "reg_no\tname": "IAN/2025/13\tRaghu Vemuganti"
+        "reg_no": "IAN/2025/13",
+        "name": "Raghu"
     },
     {
-        "reg_no\tname": "IAN/2025/14\tSHAFAQ AFTAB"
+        "reg_no": "IAN/2025/14",
+        "name": "SHAFAQ"
     },
     {
-        "reg_no\tname": "IAN/2025/15\tGopal Khodve"
+        "reg_no": "IAN/2025/15",
+        "name": "Gopal"
     },
     {
-        "reg_no\tname": "IAN/2025/17\tAnubroto Pal"
+        "reg_no": "IAN/2025/17",
+        "name": "Anubroto"
     },
     {
-        "reg_no\tname": "IAN/2025/20\tNishant Kumar Suman"
+        "reg_no": "IAN/2025/20",
+        "name": "Nishant"
     },
     {
-        "reg_no\tname": "IAN/2025/21\tNitin Agnihotri"
+        "reg_no": "IAN/2025/21",
+        "name": "Nitin"
     },
     {
-        "reg_no\tname": "IAN/2025/25\tDr B Subhash"
+        "reg_no": "IAN/2025/25",
+        "name": "Dr"
     },
     {
-        "reg_no\tname": "IAN/2025/26\tSandhya Kortagere"
+        "reg_no": "IAN/2025/26",
+        "name": "Sandhya"
     },
     {
-        "reg_no\tname": "IAN/2025/28\tRamesh Raghupathi"
+        "reg_no": "IAN/2025/28",
+        "name": "Ramesh"
     },
     {
-        "reg_no\tname": "IAN/2025/29\tNeelu Gireesh"
+        "reg_no": "IAN/2025/29",
+        "name": "Neelu"
     },
     {
-        "reg_no\tname": "IAN/2025/30\tJUHI BHARDWAJ"
+        "reg_no": "IAN/2025/30",
+        "name": "JUHI"
     },
     {
-        "reg_no\tname": "IAN/2025/31\tSRISHTI SHARMA"
+        "reg_no": "IAN/2025/31",
+        "name": "SRISHTI"
     },
     {
-        "reg_no\tname": "IAN/2025/32\tTREESA K ISSEN"
+        "reg_no": "IAN/2025/32",
+        "name": "TREESA"
     },
     {
-        "reg_no\tname": "IAN/2025/33\tAdyasa pattnayak"
+        "reg_no": "IAN/2025/33",
+        "name": "Adyasa"
     },
     {
-        "reg_no\tname": "IAN/2025/34\tMohammed Swalih KT"
+        "reg_no": "IAN/2025/34",
+        "name": "Mohammed"
     },
     {
-        "reg_no\tname": "IAN/2025/35\tLOVELY GAUTAM"
+        "reg_no": "IAN/2025/35",
+        "name": "LOVELY"
     },
     {
-        "reg_no\tname": "IAN/2025/36\tTancia P Benny"
+        "reg_no": "IAN/2025/36",
+        "name": "Tancia"
     },
     {
-        "reg_no\tname": "IAN/2025/39\tJackson James"
+        "reg_no": "IAN/2025/39",
+        "name": "Jackson"
     }
 ]
+
