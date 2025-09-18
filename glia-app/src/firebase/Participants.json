@@ -1,32 +1,62 @@
 [
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/11\tDibya Sundar Padhy\tdibyasundarpadhy@gmail.com\tMob: 7008113869\tNIPER Kolkata\tPhD student"
+        "reg_no\tname": "IAN/2025/11\tDibya Sundar Padhy"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/12\tJANANI.T\tjananit00718@gmail.com\tMob: 8220626099\tPSG Institute of Advanced Studies\tPhD student"
+        "reg_no\tname": "IAN/2025/12\tJANANI.T"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/13\tRaghu Vemuganti\tvemuganti@neurosurgery.wisc.edu\tMob: 6083589925\tUniversity of Wisconsin-Madison\tFaculty"
+        "reg_no\tname": "IAN/2025/13\tRaghu Vemuganti"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/14\tSHAFAQ AFTAB\tshafaqaftab08@gmail.com\tMob: 9027567405\tNational Brain Research Centre\tPhD student"
+        "reg_no\tname": "IAN/2025/14\tSHAFAQ AFTAB"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/15\tGopal Khodve\tgopalkhodve@gmail.com\tMob: 9503983315\tNIPER Kolkata\tPhD student"
+        "reg_no\tname": "IAN/2025/15\tGopal Khodve"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/20\tNishant Kumar Suman\tnishantks@iisc.ac.in\tMob: 7678218690\tIndian Institute of Science\tPhD student"
+        "reg_no\tname": "IAN/2025/17\tAnubroto Pal"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/26\tSandhya Kortagere\tsk673@drexel.edu\tMob: 9175387006\tDrexel University College of Medicine\tFaculty"
+        "reg_no\tname": "IAN/2025/20\tNishant Kumar Suman"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/28\tRamesh Raghupathi\trr79@drexel.edu\tMob: 4846451839\tDrexel University\tFaculty"
+        "reg_no\tname": "IAN/2025/21\tNitin Agnihotri"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/29\tNeelu Gireesh\tgireeshneelu@gmail.com\tMob: 9442656217\tAIIMS Delhi\tMSc student"
+        "reg_no\tname": "IAN/2025/25\tDr B Subhash"
     },
     {
-        "reg_no\tname\temail\tcontact_no\tinstitution\tposition": "IAN/2025/30\tJUHI BHARDWAJ\tjuhibhardwaj250@gmail.com\tMob: 9690546559\tCSIR IGIB\tPhD student"
+        "reg_no\tname": "IAN/2025/26\tSandhya Kortagere"
+    },
+    {
+        "reg_no\tname": "IAN/2025/28\tRamesh Raghupathi"
+    },
+    {
+        "reg_no\tname": "IAN/2025/29\tNeelu Gireesh"
+    },
+    {
+        "reg_no\tname": "IAN/2025/30\tJUHI BHARDWAJ"
+    },
+    {
+        "reg_no\tname": "IAN/2025/31\tSRISHTI SHARMA"
+    },
+    {
+        "reg_no\tname": "IAN/2025/32\tTREESA K ISSEN"
+    },
+    {
+        "reg_no\tname": "IAN/2025/33\tAdyasa pattnayak"
+    },
+    {
+        "reg_no\tname": "IAN/2025/34\tMohammed Swalih KT"
+    },
+    {
+        "reg_no\tname": "IAN/2025/35\tLOVELY GAUTAM"
+    },
+    {
+        "reg_no\tname": "IAN/2025/36\tTancia P Benny"
+    },
+    {
+        "reg_no\tname": "IAN/2025/39\tJackson James"
     }
 ]
