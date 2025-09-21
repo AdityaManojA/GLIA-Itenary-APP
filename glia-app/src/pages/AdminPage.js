@@ -1,5 +1,3 @@
-// src/pages/AdminPage.js
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
@@ -60,7 +58,7 @@ const AdminPage = () => {
           {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
           {activeTab === 'manageEvents' && <ManageEvents events={events} onEdit={handleEdit} />}
           
-          {/* UPDATED: Pass the participants data to the Scanner */}
+          
           {activeTab === 'scanner' && <Scanner participants={participants} />}
           
           {activeTab === 'alerts' && <AlertsAdmin />}

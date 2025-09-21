@@ -1,17 +1,15 @@
-// src/components/Scanner.js
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// UPDATED: Scanner now accepts participants list as a prop
 const Scanner = ({ participants }) => {
   const [feedback, setFeedback] = useState({ message: '', type: '' });
   const [isProcessing, setIsProcessing] = useState(false);
   const [scanEvent, setScanEvent] = useState('lunch-2025-10-29');
 
-  // NEW: Functions to play sounds
+  
   const playSound = (url) => {
     const audio = new Audio(url);
     audio.play().catch(e => console.error("Audio playback failed.", e));
@@ -20,8 +18,6 @@ const Scanner = ({ participants }) => {
   const handleScan = useCallback(async (userId) => {
     setIsProcessing(true);
     setFeedback({ message: 'Processing...', type: 'info' });
-
-    // NEW: Find the participant's name from the prop
     const participant = participants.find(p => p.reg_no === userId);
     const participantName = participant ? participant.name : 'Unknown User';
 
@@ -84,7 +80,7 @@ const Scanner = ({ participants }) => {
     setTimeout(() => setFeedback({ message: '', type: '' }), 2000);
   };
   
-  // Custom styles for feedback messages
+  
   const getFeedbackStyle = (type) => {
     switch (type) {
       case 'success':

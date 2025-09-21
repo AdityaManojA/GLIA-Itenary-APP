@@ -1,10 +1,8 @@
-// src/components/ManageEvents.js
-
 import React from 'react';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// UPDATED: Added onEdit prop
+
 const ManageEvents = ({ events, onEdit }) => {
 
   const handleDelete = async (eventId, eventTitle) => {
@@ -39,7 +37,7 @@ const ManageEvents = ({ events, onEdit }) => {
                 </div>
               </div>
               <div className="event-actions">
-                {/* UPDATED: onClick handler now uses the onEdit prop */}
+                
                 <button className="edit-btn" onClick={() => onEdit(event)}>
                   Edit
                 </button>

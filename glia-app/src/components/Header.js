@@ -1,5 +1,3 @@
-// src/components/Header.js
-
 import React from 'react';
 
 const ADMIN_EMAILS = ["adityamanoja@gmail.com"]; 
@@ -25,7 +23,7 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
         <button onClick={() => setCurrentPage('home')}>Home</button>
         <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
         
-        {/* UPDATED: Add My Itinerary button */}
+       
         <button onClick={() => setCurrentPage('itinerary')}>My Itinerary</button>
         
         <button onClick={() => setCurrentPage('alerts')}>Alerts</button>
