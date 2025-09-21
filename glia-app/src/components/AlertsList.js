@@ -1,5 +1,3 @@
-// src/components/AlertsList.js
-
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/config';
@@ -12,7 +10,7 @@ const AlertsList = () => {
     const q = query(
       collection(db, 'notifications'), 
       orderBy('createdAt', 'desc'), 
-      limit(5) // Show the last 5 recent alerts
+      limit(5) //Limiter for how many alers need to be shown
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
