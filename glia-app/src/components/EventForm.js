@@ -1,19 +1,15 @@
-// src/components/EventForm.js
-
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase/config';
 
-// UPDATED: Added currentEvent and onDone props
+
 const EventForm = ({ currentEvent, onDone }) => {
   const [feedback, setFeedback] = useState({ message: '', type: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [imageError, setImageError] = useState('');
-
-  // NEW: State for each form field
   const [title, setTitle] = useState('');
   const [speakerName, setSpeakerName] = useState('');
   const [designation, setDesignation] = useState('');
@@ -21,7 +17,7 @@ const EventForm = ({ currentEvent, onDone }) => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
 
-  // NEW: Function to format dates for datetime-local input
+  
   const formatDateForInput = (date) => {
     if (!date) return '';
     const d = new Date(date);
@@ -33,7 +29,7 @@ const EventForm = ({ currentEvent, onDone }) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  // NEW: useEffect to populate form when currentEvent changes
+  
   useEffect(() => {
     if (currentEvent) {
       setTitle(currentEvent.title || '');
@@ -43,9 +39,9 @@ const EventForm = ({ currentEvent, onDone }) => {
       setStartTime(formatDateForInput(currentEvent.startTime));
       setEndTime(formatDateForInput(currentEvent.endTime));
       setImagePreview(currentEvent.speakerImageURL || '');
-      setImageFile(null); // Reset file input
+      setImageFile(null); 
     } else {
-      // Clear form if we're not editing
+      
       setTitle('');
       setSpeakerName('');
       setDesignation('');
@@ -58,15 +54,14 @@ const EventForm = ({ currentEvent, onDone }) => {
   }, [currentEvent]);
   
   const handleImageChange = (e) => {
-    // ... (This function remains unchanged)
     const file = e.target.files[0];
     if (!file) {
       setImageFile(null);
-      setImagePreview(currentEvent ? currentEvent.speakerImageURL : ''); // Keep old image on cancel
+      setImagePreview(currentEvent ? currentEvent.speakerImageURL : ''); 
       setImageError('');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit in image 
       setImageError('File is too large. Max 2MB.');
       return;
     }
@@ -75,7 +70,7 @@ const EventForm = ({ currentEvent, onDone }) => {
     setImageError('');
   };
 
-  // UPDATED: handleSubmit now handles both add and update
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -100,15 +95,15 @@ const EventForm = ({ currentEvent, onDone }) => {
       eventDataPayload.speakerImageURL = speakerImageURL;
 
       if (currentEvent) {
-        // Update existing document
+        
         const eventDocRef = doc(db, 'schedule', currentEvent.id);
         await updateDoc(eventDocRef, eventDataPayload);
         setFeedback({ message: '✅ Event updated successfully!', type: 'success' });
       } else {
-        // Add new document
+        
         await addDoc(collection(db, 'schedule'), eventDataPayload);
         setFeedback({ message: '✅ Event saved successfully!', type: 'success' });
-        // Reset form fields only on new submission
+        
         e.target.reset();
         setImagePreview('');
         setImageFile(null);
@@ -119,14 +114,14 @@ const EventForm = ({ currentEvent, onDone }) => {
       setFeedback({ message: `❌ Error: ${error.message}`, type: 'error' });
     } finally {
       setIsSubmitting(false);
-      onDone(); // Notify parent that submission is finished
+      onDone(); 
       setTimeout(() => setFeedback({ message: '', type: '' }), 5000);
     }
   };
 
   return (
     <div className="card glass-effect" style={{ textAlign: 'left' }}>
-      {/* UPDATED: Dynamic title */}
+      
       <h2>{currentEvent ? 'Edit Conference Event' : 'Add New Conference Event'}</h2>
       <p style={{ opacity: 0.8, marginTop: 0 }}>
         {currentEvent ? 'Update the details below.' : 'Fill out the details below to add a new item to the schedule.'}
@@ -171,7 +166,7 @@ const EventForm = ({ currentEvent, onDone }) => {
           </div>
         </div>
         
-        {/* UPDATED: Dynamic button text and a new cancel button */}
+
         <div className="event-actions" style={{ justifyContent: 'center' }}>
             {currentEvent && (
                 <button type="button" className="delete-btn" onClick={onDone} style={{backgroundColor: '#555'}}>
