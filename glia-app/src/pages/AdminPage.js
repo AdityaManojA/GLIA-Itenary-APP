@@ -7,12 +7,13 @@ import EventForm from '../components/EventForm';
 import Scanner from '../components/Scanner';
 import AlertsAdmin from '../components/AlertsAdmin';
 import ManageEvents from '../components/ManageEvents';
+import participants from '../data/participants.json'; // Import participants data
 
 const AdminPage = () => {
-  const [activeTab, setActiveTab] = useState('manageEvents'); // Default to manage events
+  const [activeTab, setActiveTab] = useState('scanner'); 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [eventToEdit, setEventToEdit] = useState(null); // NEW: State to hold event for editing
+  const [eventToEdit, setEventToEdit] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'schedule'), orderBy('startTime'));
@@ -32,22 +33,19 @@ const AdminPage = () => {
     return () => unsubscribe();
   }, []);
 
-  // NEW: Function to handle when the edit button is clicked
   const handleEdit = (event) => {
     setEventToEdit(event);
-    setActiveTab('addEvent'); // Switch to the form tab
+    setActiveTab('addEvent');
   };
 
-  // NEW: Function to handle when editing is done or cancelled
   const handleDoneEditing = () => {
     setEventToEdit(null);
-    setActiveTab('manageEvents'); // Switch back to the list
+    setActiveTab('manageEvents');
   };
 
   return (
     <main className="app-main">
       <div className="tabs-nav">
-        {/* UPDATED: Add Event tab now clears the edit state */}
         <button onClick={() => { setEventToEdit(null); setActiveTab('addEvent'); }} className={activeTab === 'addEvent' ? 'tab-active' : ''}>
           {eventToEdit ? 'Edit Event' : 'Add Event'}
         </button>
@@ -59,13 +57,12 @@ const AdminPage = () => {
         <div className="text-center"><p>Loading Admin Panel...</p></div>
       ) : (
         <div>
-          {/* UPDATED: Pass the current event and done handler to the form */}
           {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
-
-          {/* UPDATED: Pass the edit handler to the manage component */}
           {activeTab === 'manageEvents' && <ManageEvents events={events} onEdit={handleEdit} />}
           
-          {activeTab === 'scanner' && <Scanner />}
+          {/* UPDATED: Pass the participants data to the Scanner */}
+          {activeTab === 'scanner' && <Scanner participants={participants} />}
+          
           {activeTab === 'alerts' && <AlertsAdmin />}
         </div>
       )}

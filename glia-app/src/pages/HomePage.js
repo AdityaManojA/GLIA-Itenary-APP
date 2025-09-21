@@ -1,17 +1,17 @@
-// src/pages/HomePage.js
+
 
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, limit, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { db, auth } from '../firebase/config'; // Import auth
+import { db} from '../firebase/config';
 import AlertsList from '../components/AlertsList';
 
 const HomePage = ({ user }) => {
   const [liveEvents, setLiveEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [itinerary, setItinerary] = useState(new Set()); // NEW: State for user's itinerary
+  const [itinerary, setItinerary] = useState(new Set());
 
-  // NEW: useEffect to listen for changes in the user's personal itinerary
+
   useEffect(() => {
     if (!user) return;
     const itineraryColRef = collection(db, 'users', user.uid, 'itinerary');
@@ -61,7 +61,7 @@ const HomePage = ({ user }) => {
     };
   }, []);
 
-  // NEW: Function to add/remove event from itinerary
+ 
   const toggleItinerary = async (eventId, isSaved) => {
     if (!user) {
       alert("Please log in to create a personalized itinerary.");
@@ -75,7 +75,7 @@ const HomePage = ({ user }) => {
     }
   };
 
-  // UPDATED: renderEventCard now includes the star button
+
   const renderEventCard = (event, isLive = false) => {
     const isSaved = itinerary.has(event.id);
     return (
@@ -90,13 +90,13 @@ const HomePage = ({ user }) => {
                     <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
             </div>
-            {/* NEW: Star Button */}
+            
             <button 
   onClick={() => toggleItinerary(event.id, isSaved)}
   title={isSaved ? "Remove from Itinerary" : "Add to Itinerary"}
   className={`itinerary-toggle-button ${isSaved ? 'saved' : ''}`}
 >
-  {/* The star is now a background image from the CSS */}
+  
 </button>
         </div>
     );

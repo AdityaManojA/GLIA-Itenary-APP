@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 
-// We can reuse the FullSchedule component to display the events
+
 import FullSchedule from '../components/FullSchedule';
 
 const ItineraryPage = () => {
@@ -16,7 +16,7 @@ const ItineraryPage = () => {
       return;
     }
 
-    // Listen for changes to the user's personal itinerary
+    
     const itineraryColRef = collection(db, 'users', user.uid, 'itinerary');
     const unsubscribe = onSnapshot(itineraryColRef, async (snapshot) => {
       const eventPromises = snapshot.docs.map(eventDoc => {
@@ -36,7 +36,7 @@ const ItineraryPage = () => {
             endTime: doc.data().endTime.toDate(),
         }));
 
-      // Sort events by start time
+      
       eventsData.sort((a, b) => a.startTime - b.startTime);
 
       setItineraryEvents(eventsData);
