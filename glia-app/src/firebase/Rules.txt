@@ -10,6 +10,8 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    schedule
+
     // Rule for the 'schedule' collection
     // Anyone (logged in or not) can read the schedule.
     // Only an admin can create, update, or delete events.
