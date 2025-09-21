@@ -1,12 +1,26 @@
+// src/pages/HomePage.js
+
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, where, orderBy, limit } from 'firebase/firestore';
-import { db } from '../firebase/config';
-import AlertsList from '../components/AlertsList'; // We'll keep this for now
+import { collection, onSnapshot, query, where, orderBy, limit, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase/config'; // Import auth
+import AlertsList from '../components/AlertsList';
 
 const HomePage = ({ user }) => {
   const [liveEvents, setLiveEvents] = useState([]);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [itinerary, setItinerary] = useState(new Set()); // NEW: State for user's itinerary
+
+  // NEW: useEffect to listen for changes in the user's personal itinerary
+  useEffect(() => {
+    if (!user) return;
+    const itineraryColRef = collection(db, 'users', user.uid, 'itinerary');
+    const unsubscribe = onSnapshot(itineraryColRef, (snapshot) => {
+      const savedEventIds = new Set(snapshot.docs.map(doc => doc.id));
+      setItinerary(savedEventIds);
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   const getFirstName = (fullName) => {
     if (!fullName) return 'Attendee';
@@ -16,14 +30,12 @@ const HomePage = ({ user }) => {
   useEffect(() => {
     const now = new Date();
     
-    // Query for events that are currently live
     const liveQuery = query(
       collection(db, 'schedule'),
       where('startTime', '<=', now),
       orderBy('startTime', 'desc')
     );
 
-    // Query for the next 3 upcoming events
     const upcomingQuery = query(
         collection(db, 'schedule'),
         where('startTime', '>', now),
@@ -32,15 +44,14 @@ const HomePage = ({ user }) => {
     );
 
     const unsubscribeLive = onSnapshot(liveQuery, (snapshot) => {
-      const allStartedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Filter to find events that haven't ended yet
-      const currentLiveEvents = allStartedEvents.filter(event => event.endTime.toDate() > now);
+      const allStartedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), startTime: doc.data().startTime.toDate(), endTime: doc.data().endTime.toDate() }));
+      const currentLiveEvents = allStartedEvents.filter(event => event.endTime > now);
       setLiveEvents(currentLiveEvents);
       setLoading(false);
     });
 
     const unsubscribeUpcoming = onSnapshot(upcomingQuery, (snapshot) => {
-        const upcomingData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const upcomingData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), startTime: doc.data().startTime.toDate(), endTime: doc.data().endTime.toDate() }));
         setUpcomingEvents(upcomingData);
     });
 
@@ -50,18 +61,46 @@ const HomePage = ({ user }) => {
     };
   }, []);
 
-  const renderEventCard = (event, isLive = false) => (
-    <div key={event.id} className={`event-card ${isLive ? 'live' : ''}`}>
-        {event.speakerImageURL && <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-large" />}
-        <h3 className="event-title">{event.title}</h3>
-        {event.speakerName && <p className="speaker-name">{event.speakerName}</p>}
-        {event.designation && <p className="speaker-designation">{event.designation}</p>}
-        <div className="event-detail">
-            <span>📍 {event.venue}</span>
-            <span>🕒 {event.startTime.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+  // NEW: Function to add/remove event from itinerary
+  const toggleItinerary = async (eventId, isSaved) => {
+    if (!user) {
+      alert("Please log in to create a personalized itinerary.");
+      return;
+    }
+    const itineraryDocRef = doc(db, 'users', user.uid, 'itinerary', eventId);
+    if (isSaved) {
+      await deleteDoc(itineraryDocRef);
+    } else {
+      await setDoc(itineraryDocRef, { savedAt: new Date() });
+    }
+  };
+
+  // UPDATED: renderEventCard now includes the star button
+  const renderEventCard = (event, isLive = false) => {
+    const isSaved = itinerary.has(event.id);
+    return (
+        <div key={event.id} className={`event-card ${isLive ? 'live' : ''} schedule-list-item`}>
+            {event.speakerImageURL && <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-large" />}
+            <div className="event-info">
+                <h3 className="event-title">{event.title}</h3>
+                {event.speakerName && <p className="speaker-name">{event.speakerName}</p>}
+                {event.designation && <p className="speaker-designation">{event.designation}</p>}
+                <div className="event-details">
+                    <span>📍 {event.venue}</span>
+                    <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+            </div>
+            {/* NEW: Star Button */}
+            <button 
+  onClick={() => toggleItinerary(event.id, isSaved)}
+  title={isSaved ? "Remove from Itinerary" : "Add to Itinerary"}
+  className={`itinerary-toggle-button ${isSaved ? 'saved' : ''}`}
+>
+  {/* The star is now a background image from the CSS */}
+</button>
         </div>
-    </div>
-  );
+    );
+  }
 
   return (
     <div className="home-page-layout">
@@ -70,7 +109,6 @@ const HomePage = ({ user }) => {
         <p>Here's what's happening at IAN 2025.</p>
       </div>
 
-      {/* Live Now Section */}
       <div className="card glass-effect">
         <h2>Happening Now</h2>
         {loading ? (
@@ -82,7 +120,6 @@ const HomePage = ({ user }) => {
         )}
       </div>
 
-      {/* Up Next Section */}
       <div className="card glass-effect">
           <h2>Up Next</h2>
           {loading ? (
@@ -94,7 +131,6 @@ const HomePage = ({ user }) => {
           )}
       </div>
 
-      {/* Recent Alerts List */}
       <AlertsList />
     </div>
   );

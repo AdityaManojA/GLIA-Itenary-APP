@@ -25,7 +25,9 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
         <button onClick={() => setCurrentPage('home')}>Home</button>
         <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
         
-        {/* New Alerts Button Below */}
+        {/* UPDATED: Add My Itinerary button */}
+        <button onClick={() => setCurrentPage('itinerary')}>My Itinerary</button>
+        
         <button onClick={() => setCurrentPage('alerts')}>Alerts</button>
         
         {user && ADMIN_EMAILS.includes(user.email) && (

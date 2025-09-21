@@ -1,87 +1,87 @@
 [
-    {
-  "reg_no": "admin2025ian",
-  "name": "admin",
-  "email": "adityamanoja@gmail.com"
-},
-    {
-        "reg_no": "IAN/2025/11",
-        "name": "Dibya"
-    },
-    {
-        "reg_no": "IAN/2025/12",
-        "name": "JANANI.T"
-    },
-    {
-        "reg_no": "IAN/2025/13",
-        "name": "Raghu"
-    },
-    {
-        "reg_no": "IAN/2025/14",
-        "name": "SHAFAQ"
-    },
-    {
-        "reg_no": "IAN/2025/15",
-        "name": "Gopal"
-    },
-    {
-        "reg_no": "IAN/2025/17",
-        "name": "Anubroto"
-    },
-    {
-        "reg_no": "IAN/2025/20",
-        "name": "Nishant"
-    },
-    {
-        "reg_no": "IAN/2025/21",
-        "name": "Nitin"
-    },
-    {
-        "reg_no": "IAN/2025/25",
-        "name": "Dr"
-    },
-    {
-        "reg_no": "IAN/2025/26",
-        "name": "Sandhya"
-    },
-    {
-        "reg_no": "IAN/2025/28",
-        "name": "Ramesh"
-    },
-    {
-        "reg_no": "IAN/2025/29",
-        "name": "Neelu"
-    },
-    {
-        "reg_no": "IAN/2025/30",
-        "name": "JUHI"
-    },
-    {
-        "reg_no": "IAN/2025/31",
-        "name": "SRISHTI"
-    },
-    {
-        "reg_no": "IAN/2025/32",
-        "name": "TREESA"
-    },
-    {
-        "reg_no": "IAN/2025/33",
-        "name": "Adyasa"
-    },
-    {
-        "reg_no": "IAN/2025/34",
-        "name": "Mohammed"
-    },
-    {
-        "reg_no": "IAN/2025/35",
-        "name": "LOVELY"
-    },
-    {
-        "reg_no": "IAN/2025/36",
-        "name": "Tancia"
-    },
-    {
-        "reg_no": "IAN/2025/39",
-        "name": "Jackson"
-    }
+  {
+    "reg_no": "admin2025ian",
+    "name": "admin",
+    "email": "adityamanoja@gmail.com"
+  },
+  {
+    "reg_no": "IAN/2025/11",
+    "name": "Dibya"
+  },
+  {
+    "reg_no": "IAN/2025/12",
+    "name": "JANANI.T"
+  },
+  {
+    "reg_no": "IAN/2025/13",
+    "name": "Raghu"
+  },
+  {
+    "reg_no": "IAN/2025/14",
+    "name": "SHAFAQ"
+  },
+  {
+    "reg_no": "IAN/2025/15",
+    "name": "Gopal"
+  },
+  {
+    "reg_no": "IAN/2025/17",
+    "name": "Anubroto"
+  },
+  {
+    "reg_no": "IAN/2025/20",
+    "name": "Nishant"
+  },
+  {
+    "reg_no": "IAN/2025/21",
+    "name": "Nitin"
+  },
+  {
+    "reg_no": "IAN/2025/25",
+    "name": "Dr"
+  },
+  {
+    "reg_no": "IAN/2025/26",
+    "name": "Sandhya"
+  },
+  {
+    "reg_no": "IAN/2025/28",
+    "name": "Ramesh"
+  },
+  {
+    "reg_no": "IAN/2025/29",
+    "name": "Neelu"
+  },
+  {
+    "reg_no": "IAN/2025/30",
+    "name": "JUHI"
+  },
+  {
+    "reg_no": "IAN/2025/31",
+    "name": "SRISHTI"
+  },
+  {
+    "reg_no": "IAN/2025/32",
+    "name": "TREESA"
+  },
+  {
+    "reg_no": "IAN/2025/33",
+    "name": "Adyasa"
+  },
+  {
+    "reg_no": "IAN/2025/34",
+    "name": "Mohammed"
+  },
+  {
+    "reg_no": "IAN/2025/35",
+    "name": "LOVELY"
+  },
+  {
+    "reg_no": "IAN/2025/36",
+    "name": "Tancia"
+  },
+  {
+    "reg_no": "IAN/2025/39",
+    "name": "Jackson"
+  }
 ]

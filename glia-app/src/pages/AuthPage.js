@@ -1,15 +1,19 @@
+// src/pages/AuthPage.js
+
 import React, { useState } from 'react';
 import LoginForm from '../components/LoginForm';
-// Import the local list of participants from your JSON file
 import participants from '../data/participants.json';
+import { getAuth, signInAnonymously } from 'firebase/auth'; // Import Firebase Anonymous Auth
 
 const AuthPage = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
 
-  const handleLogin = (username, password) => {
+  // Make the function async to wait for Firebase
+  const handleLogin = async (username, password) => {
+    console.log("--- RUNNING THE LATEST AuthPage.js CODE ---");
     setError('');
 
-    // 1. Find the user in our local JSON file by matching the 'reg_no'
+    // 1. Find the user in our local JSON file
     const foundUser = participants.find(p => p.reg_no.toLowerCase() === username.toLowerCase());
 
     if (!foundUser) {
@@ -17,13 +21,30 @@ const AuthPage = ({ onLoginSuccess }) => {
       return;
     }
 
-    // 2. Check for admin user and correct password
+    // 2. Check for the correct password
     const isAdmin = foundUser.reg_no.toLowerCase() === 'admin2025ian';
     const correctPassword = isAdmin ? 'Admin321' : 'IAN2025';
 
     if (password === correctPassword) {
-      // 3. If the user is found and password is correct, call the success function from App.js
-      onLoginSuccess(foundUser);
+      try {
+        // 3. Sign the user in anonymously to get a real Firebase UID
+        const auth = getAuth();
+        const userCredential = await signInAnonymously(auth);
+        const firebaseUid = userCredential.user.uid;
+
+        // 4. Combine the user data from JSON with the real UID from Firebase
+        const completeUser = {
+          ...foundUser, // This includes name, reg_no, email (if it exists)
+          uid: firebaseUid // This adds the real, secure UID
+        };
+
+        // 5. If successful, call the success function from App.js
+        onLoginSuccess(completeUser);
+
+      } catch (authError) {
+        console.error("Firebase anonymous sign-in failed:", authError);
+        setError("Could not create a secure session. Please try again.");
+      }
     } else {
       setError('Incorrect password.');
     }

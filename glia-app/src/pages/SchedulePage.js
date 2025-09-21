@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config'; 
-import HappeningNow from '../components/HappeningNow'; 
 import FullSchedule from '../components/FullSchedule'; 
 
 const SchedulePage = () => {
@@ -33,14 +32,12 @@ const SchedulePage = () => {
   return (
     <main className="app-main">
       <div className="tabs-nav">
-        <button onClick={() => setActiveTab('home')} className={activeTab === 'home' ? 'tab-active' : ''}>Happening Now</button>
         <button onClick={() => setActiveTab('schedule')} className={activeTab === 'schedule' ? 'tab-active' : ''}>Full Schedule</button>
       </div>
       {loading ? (
         <div className="text-center"><p>Loading schedule...</p></div>
       ) : (
         <div>
-          {activeTab === 'home' && <HappeningNow events={events} />}
           {activeTab === 'schedule' && <FullSchedule events={events} />}
         </div>
       )}

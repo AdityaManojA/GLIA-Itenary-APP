@@ -70,12 +70,12 @@ const FullSchedule = ({ events }) => {
                   </div>
                   
                   <button 
-                    onClick={() => toggleItinerary(event.id, isSaved)}
-                    title={isSaved ? "Remove from Itinerary" : "Add to Itinerary"}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', marginLeft: 'auto' }}
-                  >
-                    {isSaved ? '⭐' : '☆'}
-                  </button>
+  onClick={() => toggleItinerary(event.id, isSaved)}
+  title={isSaved ? "Remove from Itinerary" : "Add to Itinerary"}
+  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', marginLeft: 'auto' }}
+>
+  {isSaved ? '⭐' : '☆'}
+</button>
                 </li>
               );
             })}

@@ -264,3 +264,62 @@ body {
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+/* src/App.css */
+
+/* --- Fix for Event Card Layout --- */
+.schedule-list-item {
+  display: flex; /* Aligns items horizontally */
+  align-items: center; /* Aligns items vertically in the middle */
+  justify-content: space-between; /* Pushes text and button to opposite ends */
+  gap: 1rem; /* Adds some space between items */
+}
+
+.event-info {
+  flex: 1; /* Allows the text block to take up available space */
+}
+
+/* --- Adjustment for Star Button Size --- */
+.itinerary-toggle-button {
+  width: 38px;  /* Reduced from 44px */
+  height: 38px; /* Reduced from 44px */
+}
+/* src/App.css */
+
+/* --- Custom Itinerary Star Button --- */
+.itinerary-toggle-button {
+  background-color: var(--surface-color);
+  border: 1px solid transparent;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+  box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+  transition: all 0.2s ease-in-out;
+  
+  /* Star Outline Icon (URL-encoded SVG) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238EB69B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.itinerary-toggle-button:hover {
+  transform: scale(1.1);
+  border-color: var(--primary-color);
+}
+
+.itinerary-toggle-button:active {
+  transform: scale(0.95);
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+}
+
+.itinerary-toggle-button.saved {
+  background-color: var(--primary-color);
+  
+  /* Star Filled Icon (URL-encoded SVG) */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%230B2B26' stroke='%230B2B26' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
+}
