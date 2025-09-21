@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -10,8 +8,6 @@ import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
 import AlertsPage from './pages/AlertsPage';
 import ItineraryPage from './pages/ItineraryPage';
-// participants.json is no longer needed here for login logic
-// import participants from './data/participants.json'; 
 
 const ADMIN_EMAILS = ["adityamanoja@gmail.com"]; 
 
@@ -26,8 +22,7 @@ function App() {
     }
   }, []);
 
-  // UPDATED AND SIMPLIFIED: This is the key change.
-  // This function now directly accepts the complete user object from AuthPage.
+
   const handleLoginSuccess = (completeUserData) => {
     localStorage.setItem('user', JSON.stringify(completeUserData));
     setUser(completeUserData);
@@ -54,9 +49,6 @@ function App() {
         return <HomePage user={user} />;
     }
   };
-  
-  // This console.log can now be removed if you wish, or kept for debugging.
-  // console.log("Current User Object:", user); 
 
   return (
     <>
