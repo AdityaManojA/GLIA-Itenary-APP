@@ -321,7 +321,7 @@ body {
     margin-bottom: 1rem;
   }
   .header-logo-small {
-    max-height: 60px; /* Smaller logos on mobile */
+    max-height: 120px; /* Smaller logos on mobile */
   }
   .header-user-info {
     position: static; /* Position normally on smaller screens */
