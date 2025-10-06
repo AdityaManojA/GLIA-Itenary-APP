@@ -1,57 +1,29 @@
+// TEMPORARY CODE TO FIND YOUR UID
 import React, { useState } from 'react';
 import LoginForm from '../components/LoginForm';
-import participants from '../data/participants.json';
 import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const AuthPage = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
-
   const handleLogin = async (username, password) => {
-    setError('');
-
-    let foundUser;
-    let correctPassword;
-
-    if (username.toLowerCase() === 'admin2025ian') {
-      // UPDATED: Added the admin's email address back in
-      foundUser = { 
-        reg_no: 'admin2025ian', 
-        name: 'admin', 
-        email: 'adityamanoja@gmail.com' 
-      };
-      correctPassword = 'Admin321';
-    } else {
-      foundUser = participants.find(p => p.reg_no.toLowerCase() === username.toLowerCase());
-      correctPassword = 'IAN2025';
-    }
-
-    if (!foundUser) {
-      setError('Invalid Attendee ID.');
-      return;
-    }
-
-    if (password === correctPassword) {
+    if (username.toLowerCase() === 'admin2025ian' && password === 'Admin321') {
       try {
         const auth = getAuth();
         const userCredential = await signInAnonymously(auth);
-        const completeUser = { ...foundUser, uid: userCredential.user.uid };
-        onLoginSuccess(completeUser);
-      } catch (authError) {
-        setError("Could not create a secure session. Please try again.");
-      }
+        const firebaseUid = userCredential.user.uid;
+        alert(`Your Admin UID is: ${firebaseUid}\n\nCOPY THIS VALUE!`); // This will show your ID
+        const adminUser = { reg_no: 'admin2025ian', name: 'admin', uid: firebaseUid };
+        onLoginSuccess(adminUser);
+      } catch (e) { setError('Could not sign in.'); }
     } else {
-      setError('Incorrect password.');
+      setError('Invalid credentials for this test.');
     }
   };
 
   return (
     <div className="auth-form-container">
-      <LoginForm 
-        onLogin={handleLogin} 
-        error={error} 
-      />
+      <LoginForm onLogin={handleLogin} error={error} />
     </div>
   );
 };
-
 export default AuthPage;

@@ -43,7 +43,7 @@ const AlertsList = () => {
           {alerts.map(alert => (
             <li key={alert.id} className="alert-item-redesigned">
               <div className="alert-icon">
-                <span>🔔</span>
+                <span> -🔔- </span>
               </div>
               <div className="alert-content">
                 <div className="alert-header">
