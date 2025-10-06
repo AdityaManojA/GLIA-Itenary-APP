@@ -106,7 +106,7 @@ const HomePage = ({ user }) => {
     <div className="home-page-layout">
       <div className="welcome-header" style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1>Welcome, {getFirstName(user?.name)}</h1>
-        <p>Here's what's happening at IAN 2025.</p>
+        {/* <h2>Here's what's happening at IAN 2025.</h2> */}
       </div>
 
       <div className="card glass-effect">

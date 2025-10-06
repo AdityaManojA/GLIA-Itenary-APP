@@ -7,10 +7,7 @@ body::before {
   height: 100vh;
   z-index: -1;
 
-  background-image: url('../public/v1.jpg');
-  background-size: cover;
-  background-position: center;
-  
+
 
   
   filter:brightness(50%) blur(9px);
