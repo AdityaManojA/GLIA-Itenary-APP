@@ -1,8 +1,7 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, limit, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { db} from '../firebase/config';
+import { db } from '../firebase/config';
+import { auth } from '../firebase/config';
 import AlertsList from '../components/AlertsList';
 
 const HomePage = ({ user }) => {
@@ -10,7 +9,6 @@ const HomePage = ({ user }) => {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [itinerary, setItinerary] = useState(new Set());
-
 
   useEffect(() => {
     if (!user) return;
@@ -61,20 +59,19 @@ const HomePage = ({ user }) => {
     };
   }, []);
 
- 
   const toggleItinerary = async (eventId, isSaved) => {
-    if (!user) {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
       alert("Please log in to create a personalized itinerary.");
       return;
     }
-    const itineraryDocRef = doc(db, 'users', user.uid, 'itinerary', eventId);
+    const itineraryDocRef = doc(db, 'users', currentUser.uid, 'itinerary', eventId);
     if (isSaved) {
       await deleteDoc(itineraryDocRef);
     } else {
       await setDoc(itineraryDocRef, { savedAt: new Date() });
     }
   };
-
 
   const renderEventCard = (event, isLive = false) => {
     const isSaved = itinerary.has(event.id);
@@ -84,29 +81,36 @@ const HomePage = ({ user }) => {
             <div className="event-info">
                 <h3 className="event-title">{event.title}</h3>
                 {event.speakerName && <p className="speaker-name">{event.speakerName}</p>}
-                {event.designation && <p className="speaker-designation">{event.designation}</p>}
+                {/* Display Speaker Topic */}
+                {event.speakerTopic && <p className="speaker-topic">{event.speakerTopic}</p>}
                 <div className="event-details">
                     <span>📍 {event.venue}</span>
                     <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
             </div>
-            
-            <button 
-  onClick={() => toggleItinerary(event.id, isSaved)}
-  title={isSaved ? "Remove from Itinerary" : "Add to Itinerary"}
-  className={`itinerary-toggle-button ${isSaved ? 'saved' : ''}`}
->
-  
-</button>
+            <div className="event-right-column">
+              {event.chairpersons && (
+                <div className="chairpersons-info home-chairpersons">
+                  <strong>Chairperson(s):</strong>
+                  <p>{event.chairpersons}</p>
+                </div>
+              )}
+              <button 
+                onClick={() => toggleItinerary(event.id, isSaved)}
+                title={isSaved ? "Remove from Itinerary" : "Add to Itinerary"}
+                className={`itinerary-toggle-button ${isSaved ? 'saved' : ''}`}
+              >
+              </button>
+            </div>
         </div>
     );
   }
 
   return (
     <div className="home-page-layout">
-      <div className="welcome-header" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <div className="welcome-header card glass-effect" style={{ textAlign: 'center' }}>
         <h1>Welcome, {getFirstName(user?.name)}</h1>
-        {/* <h2>Here's what's happening at IAN 2025.</h2> */}
+        <p>Here's what's happening at IAN 2025.</p>
       </div>
 
       <div className="card glass-effect">

@@ -3,21 +3,22 @@ import { collection, addDoc, doc, updateDoc, Timestamp } from 'firebase/firestor
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../firebase/config';
 
-
 const EventForm = ({ currentEvent, onDone }) => {
   const [feedback, setFeedback] = useState({ message: '', type: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [imageError, setImageError] = useState('');
+
+  // Updated state to match new fields
   const [title, setTitle] = useState('');
   const [speakerName, setSpeakerName] = useState('');
-  const [designation, setDesignation] = useState('');
+  const [speakerTopic, setSpeakerTopic] = useState(''); // New field
+  const [chairpersons, setChairpersons] = useState(''); // New field
   const [venue, setVenue] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
 
-  
   const formatDateForInput = (date) => {
     if (!date) return '';
     const d = new Date(date);
@@ -29,22 +30,22 @@ const EventForm = ({ currentEvent, onDone }) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
-  
   useEffect(() => {
     if (currentEvent) {
       setTitle(currentEvent.title || '');
       setSpeakerName(currentEvent.speakerName || '');
-      setDesignation(currentEvent.designation || '');
+      setSpeakerTopic(currentEvent.speakerTopic || ''); // New field
+      setChairpersons(currentEvent.chairpersons || ''); // New field
       setVenue(currentEvent.venue || '');
       setStartTime(formatDateForInput(currentEvent.startTime));
       setEndTime(formatDateForInput(currentEvent.endTime));
       setImagePreview(currentEvent.speakerImageURL || '');
-      setImageFile(null); 
+      setImageFile(null);
     } else {
-      
       setTitle('');
       setSpeakerName('');
-      setDesignation('');
+      setSpeakerTopic(''); // New field
+      setChairpersons(''); // New field
       setVenue('');
       setStartTime('');
       setEndTime('');
@@ -52,16 +53,16 @@ const EventForm = ({ currentEvent, onDone }) => {
       setImageFile(null);
     }
   }, [currentEvent]);
-  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) {
       setImageFile(null);
-      setImagePreview(currentEvent ? currentEvent.speakerImageURL : ''); 
+      setImagePreview(currentEvent ? currentEvent.speakerImageURL : '');
       setImageError('');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit in image 
+    if (file.size > 2 * 1024 * 1024) {
       setImageError('File is too large. Max 2MB.');
       return;
     }
@@ -70,21 +71,22 @@ const EventForm = ({ currentEvent, onDone }) => {
     setImageError('');
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFeedback({ message: '', type: '' });
-  
+
+    // Updated payload with new fields
     const eventDataPayload = {
-        title,
-        speakerName,
-        designation,
-        venue,
-        startTime: Timestamp.fromDate(new Date(startTime)),
-        endTime: Timestamp.fromDate(new Date(endTime)),
+      title,
+      speakerName,
+      speakerTopic, // New field
+      chairpersons, // New field
+      venue,
+      startTime: Timestamp.fromDate(new Date(startTime)),
+      endTime: Timestamp.fromDate(new Date(endTime)),
     };
-  
+
     try {
       let speakerImageURL = currentEvent?.speakerImageURL || '';
       if (imageFile) {
@@ -95,59 +97,59 @@ const EventForm = ({ currentEvent, onDone }) => {
       eventDataPayload.speakerImageURL = speakerImageURL;
 
       if (currentEvent) {
-        
         const eventDocRef = doc(db, 'schedule', currentEvent.id);
         await updateDoc(eventDocRef, eventDataPayload);
         setFeedback({ message: '✅ Event updated successfully!', type: 'success' });
       } else {
-        
         await addDoc(collection(db, 'schedule'), eventDataPayload);
         setFeedback({ message: '✅ Event saved successfully!', type: 'success' });
-        
-        e.target.reset();
-        setImagePreview('');
-        setImageFile(null);
+        e.target.reset(); // This now clears the controlled components via useEffect
       }
-
     } catch (error) {
       console.error("Error saving event: ", error);
       setFeedback({ message: `❌ Error: ${error.message}`, type: 'error' });
     } finally {
       setIsSubmitting(false);
-      onDone(); 
+      onDone();
       setTimeout(() => setFeedback({ message: '', type: '' }), 5000);
     }
   };
 
   return (
     <div className="card glass-effect" style={{ textAlign: 'left' }}>
-      
       <h2>{currentEvent ? 'Edit Conference Event' : 'Add New Conference Event'}</h2>
       <p style={{ opacity: 0.8, marginTop: 0 }}>
         {currentEvent ? 'Update the details below.' : 'Fill out the details below to add a new item to the schedule.'}
       </p>
       <form onSubmit={handleSubmit} className="event-form">
-        
         <div className="input-group">
           <label htmlFor="title">Event Title</label>
           <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
 
+        {/* Text changed here */}
         <div className="input-group">
-          <label htmlFor="speakerName">Speaker Name (Optional)</label>
+          <label htmlFor="speakerName">Speaker + Institution (Optional)</label>
           <input id="speakerName" type="text" value={speakerName} onChange={e => setSpeakerName(e.target.value)} />
         </div>
         
+        {/* Designation replaced with Speaker Topic */}
         <div className="input-group">
-          <label htmlFor="designation">Speaker's Designation (Optional)</label>
-          <input id="designation" type="text" value={designation} onChange={e => setDesignation(e.target.value)} />
+          <label htmlFor="speakerTopic">Speaker Topic (Optional)</label>
+          <input id="speakerTopic" type="text" value={speakerTopic} onChange={e => setSpeakerTopic(e.target.value)} />
+        </div>
+        
+        {/* New field for Chairperson(s) */}
+        <div className="input-group">
+          <label htmlFor="chairpersons">Chairperson(s) (Optional)</label>
+          <input id="chairpersons" type="text" value={chairpersons} onChange={e => setChairpersons(e.target.value)} placeholder="e.g., Dr. Smith, Dr. Jones" />
         </div>
 
         <div className="input-group">
           <label htmlFor="speakerImage">Speaker Image (Optional, max 2MB)</label>
           <input id="speakerImage" type="file" accept="image/*" onChange={handleImageChange} />
           {imagePreview && <img src={imagePreview} alt="Preview" style={{ maxHeight: '100px', marginTop: '10px', borderRadius: '8px' }} />}
-          {imageError && <p className="error-text" style={{ color: '#ff9a9a' }}>{imageError}</p>}
+          {imageError && <p className="error-text">{imageError}</p>}
         </div>
 
         <div className="input-group">
@@ -166,10 +168,9 @@ const EventForm = ({ currentEvent, onDone }) => {
           </div>
         </div>
         
-
         <div className="event-actions" style={{ justifyContent: 'center' }}>
             {currentEvent && (
-                <button type="button" className="delete-btn" onClick={onDone} style={{backgroundColor: '#555'}}>
+                <button type="button" className="delete-btn" onClick={onDone} style={{backgroundColor: '#6c757d'}}>
                     Cancel
                 </button>
             )}
