@@ -5,83 +5,692 @@
     "email": "adityamanoja@gmail.com"
   },
   {
-    "reg_no": "IAN/2025/11",
-    "name": "Dibya"
-  },
-  {
-    "reg_no": "IAN/2025/12",
-    "name": "JANANI.T"
-  },
-  {
-    "reg_no": "IAN/2025/13",
-    "name": "Raghu"
-  },
-  {
-    "reg_no": "IAN/2025/14",
-    "name": "SHAFAQ"
-  },
-  {
-    "reg_no": "IAN/2025/15",
-    "name": "Gopal"
-  },
-  {
-    "reg_no": "IAN/2025/17",
-    "name": "Anubroto"
-  },
-  {
-    "reg_no": "IAN/2025/20",
-    "name": "Nishant"
-  },
-  {
-    "reg_no": "IAN/2025/21",
-    "name": "Nitin"
-  },
-  {
-    "reg_no": "IAN/2025/25",
-    "name": "Dr"
-  },
-  {
-    "reg_no": "IAN/2025/26",
-    "name": "Sandhya"
-  },
-  {
-    "reg_no": "IAN/2025/28",
-    "name": "Ramesh"
-  },
-  {
-    "reg_no": "IAN/2025/29",
-    "name": "Neelu"
-  },
-  {
-    "reg_no": "IAN/2025/30",
-    "name": "JUHI"
-  },
-  {
-    "reg_no": "IAN/2025/31",
-    "name": "SRISHTI"
-  },
-  {
-    "reg_no": "IAN/2025/32",
-    "name": "TREESA"
-  },
-  {
-    "reg_no": "IAN/2025/33",
-    "name": "Adyasa"
-  },
-  {
-    "reg_no": "IAN/2025/34",
-    "name": "Mohammed"
-  },
-  {
-    "reg_no": "IAN/2025/35",
-    "name": "LOVELY"
-  },
-  {
-    "reg_no": "IAN/2025/36",
-    "name": "Tancia"
-  },
-  {
-    "reg_no": "IAN/2025/39",
-    "name": "Jackson"
-  }
+        "reg_no": "IAN/2025/11",
+        "name": "Dibya Sundar Padhy"
+    },
+    {
+        "reg_no": "IAN/2025/12",
+        "name": "JANANI.T"
+    },
+    {
+        "reg_no": "IAN/2025/15",
+        "name": "Gopal Khodve"
+    },
+    {
+        "reg_no": "IAN/2025/17",
+        "name": "Anubroto Pal"
+    },
+    {
+        "reg_no": "IAN/2025/21",
+        "name": "Nitin Agnihotri"
+    },
+    {
+        "reg_no": "IAN/2025/30",
+        "name": "JUHI BHARDWAJ"
+    },
+    {
+        "reg_no": "IAN/2025/31",
+        "name": "SRISHTI SHARMA"
+    },
+    {
+        "reg_no": "IAN/2025/32",
+        "name": "TREESA K ISSEN"
+    },
+    {
+        "reg_no": "IAN/2025/49",
+        "name": "Vishal Lolam"
+    },
+    {
+        "reg_no": "IAN/2025/60",
+        "name": "Dr. Sanjeev Kumar Paikra"
+    },
+    {
+        "reg_no": "IAN/2025/67",
+        "name": "Aishwarya Hattiholi"
+    },
+    {
+        "reg_no": "IAN/2025/68",
+        "name": "Chintada Guna Sai"
+    },
+    {
+        "reg_no": "IAN/2025/69",
+        "name": "GARGI MANDAL"
+    },
+    {
+        "reg_no": "IAN/2025/75",
+        "name": "Fateh Mohammad"
+    },
+    {
+        "reg_no": "IAN/2025/77",
+        "name": "vikas yadav"
+    },
+    {
+        "reg_no": "IAN/2025/79",
+        "name": "Anushree Chakraborty"
+    },
+    {
+        "reg_no": "IAN/2025/81",
+        "name": "Shrijal Singh"
+    },
+    {
+        "reg_no": "IAN/2025/84",
+        "name": "ANINDITA TARAFDAR"
+    },
+    {
+        "reg_no": "IAN/2025/85",
+        "name": "SHARMISTHA DAS"
+    },
+    {
+        "reg_no": "IAN/2025/87",
+        "name": "Aphrodite Chakraborty"
+    },
+    {
+        "reg_no": "IAN/2025/96",
+        "name": "AMRISH RAI"
+    },
+    {
+        "reg_no": "IAN/2025/100",
+        "name": "Anantha Maharasi Ramakrishnan"
+    },
+    {
+        "reg_no": "IAN/2025/117",
+        "name": "Akanksha Panigrahy"
+    },
+    {
+        "reg_no": "IAN/2025/119",
+        "name": "Akshaya R"
+    },
+    {
+        "reg_no": "IAN/2025/126",
+        "name": "Ayushi Tanwar"
+    },
+    {
+        "reg_no": "IAN/2025/129",
+        "name": "Utkarsh Patil"
+    },
+    {
+        "reg_no": "IAN/2025/134",
+        "name": "Writawrik Bhattacharya"
+    },
+    {
+        "reg_no": "IAN/2025/135",
+        "name": "Adityo Chaudhury"
+    },
+    {
+        "reg_no": "IAN/2025/145",
+        "name": "Amrita Singh"
+    },
+    {
+        "reg_no": "IAN/2025/153",
+        "name": "Janani Abirami Sriram"
+    },
+    {
+        "reg_no": "IAN/2025/154",
+        "name": "Aisha Shaju"
+    },
+    {
+        "reg_no": "IAN/2025/157",
+        "name": "Mohammed Faizan Rizvi"
+    },
+    {
+        "reg_no": "IAN/2025/161",
+        "name": "SHREYA YADAV"
+    },
+    {
+        "reg_no": "IAN/2025/162",
+        "name": "Jasmeet Singh Bindra"
+    },
+    {
+        "reg_no": "IAN/2025/166",
+        "name": "Dhanshree Sayangrushi Borkar"
+    },
+    {
+        "reg_no": "IAN/2025/171",
+        "name": "Manojkumar Kumaran"
+    },
+    {
+        "reg_no": "IAN/2025/175",
+        "name": "Anusree A Kumar"
+    },
+    {
+        "reg_no": "IAN/2025/177",
+        "name": "Simranjit Kaur"
+    },
+    {
+        "reg_no": "IAN/2025/181",
+        "name": "Anisha S Menon"
+    },
+    {
+        "reg_no": "IAN/2025/183",
+        "name": "Solanki Shil"
+    },
+    {
+        "reg_no": "IAN/2025/185",
+        "name": "Jasmine John"
+    },
+    {
+        "reg_no": "IAN/2025/187",
+        "name": "ARSHA U P"
+    },
+    {
+        "reg_no": "IAN/2025/189",
+        "name": "Akasmika Priyadarsani"
+    },
+    {
+        "reg_no": "IAN/2025/192",
+        "name": "Anasua Mandal"
+    },
+    {
+        "reg_no": "IAN/2025/193",
+        "name": "Asha Channakkar"
+    },
+    {
+        "reg_no": "IAN/2025/200",
+        "name": "GEETHU S NAIR"
+    },
+    {
+        "reg_no": "IAN/2025/202",
+        "name": "SHRINGIKA SONI"
+    },
+    {
+        "reg_no": "IAN/2025/206",
+        "name": "Sailesh S"
+    },
+    {
+        "reg_no": "IAN/2025/208",
+        "name": "SNEHA JOS"
+    },
+    {
+        "reg_no": "IAN/2025/209",
+        "name": "Srilekha Prabhu"
+    },
+    {
+        "reg_no": "IAN/2025/210",
+        "name": "VAISHNAVI"
+    },
+    {
+        "reg_no": "IAN/2025/218",
+        "name": "Saniya Ansari"
+    },
+    {
+        "reg_no": "IAN/2025/219",
+        "name": "Pooja Shukla"
+    },
+    {
+        "reg_no": "IAN/2025/227",
+        "name": "Kruttika"
+    },
+    {
+        "reg_no": "IAN/2025/228",
+        "name": "Rutuja Arun Pendharkar"
+    },
+    {
+        "reg_no": "IAN/2025/233",
+        "name": "C. Prakash"
+    },
+    {
+        "reg_no": "IAN/2025/235",
+        "name": "YOGESH SAHU"
+    },
+    {
+        "reg_no": "IAN/2025/236",
+        "name": "Nudrat Jahan"
+    },
+    {
+        "reg_no": "IAN/2025/237",
+        "name": "Suraj C M"
+    },
+    {
+        "reg_no": "IAN/2025/238",
+        "name": "ASWATHY B J"
+    },
+    {
+        "reg_no": "IAN/2025/241",
+        "name": "Katha Sanyal"
+    },
+    {
+        "reg_no": "IAN/2025/242",
+        "name": "Nimai Gorai"
+    },
+    {
+        "reg_no": "IAN/2025/244",
+        "name": "Samantha Shrihari"
+    },
+    {
+        "reg_no": "IAN/2025/245",
+        "name": "Ananya P.U"
+    },
+    {
+        "reg_no": "IAN/2025/246",
+        "name": "CHETNA MISHRA"
+    },
+    {
+        "reg_no": "IAN/2025/248",
+        "name": "Pranoy Toppo"
+    },
+    {
+        "reg_no": "IAN/2025/249",
+        "name": "RITUPARNA GHANTY"
+    },
+    {
+        "reg_no": "IAN/2025/251",
+        "name": "Muskan Mittal"
+    },
+    {
+        "reg_no": "IAN/2025/253",
+        "name": "Padmaja S"
+    },
+    {
+        "reg_no": "IAN/2025/257",
+        "name": "Dipti Singh"
+    },
+    {
+        "reg_no": "IAN/2025/259",
+        "name": "Dhyey"
+    },
+    {
+        "reg_no": "IAN/2025/260",
+        "name": "Soumojit Biswas"
+    },
+    {
+        "reg_no": "IAN/2025/261",
+        "name": "Abhiyanta Mukherjee"
+    },
+    {
+        "reg_no": "IAN/2025/263",
+        "name": "Kaneez Fatima"
+    },
+    {
+        "reg_no": "IAN/2025/264",
+        "name": "Dr Nitin Yadav"
+    },
+    {
+        "reg_no": "IAN/2025/268",
+        "name": "Nikita Gupta"
+    },
+    {
+        "reg_no": "IAN/2025/270",
+        "name": "Arunima Das"
+    },
+    {
+        "reg_no": "IAN/2025/271",
+        "name": "Gauri Chaudhari"
+    },
+    {
+        "reg_no": "IAN/2025/276",
+        "name": "Abhishriya Mahanta"
+    },
+    {
+        "reg_no": "IAN/2025/277",
+        "name": "Shahid Afridi"
+    },
+    {
+        "reg_no": "IAN/2025/283",
+        "name": "GREESHMA .S"
+    },
+    {
+        "reg_no": "IAN/2025/284",
+        "name": "KODAM PRADEEP"
+    },
+    {
+        "reg_no": "IAN/2025/285",
+        "name": "Dr.Niranjana Gopal. K"
+    },
+    {
+        "reg_no": "IAN/2025/291",
+        "name": "Vartika Srivastava"
+    },
+    {
+        "reg_no": "IAN/2025/294",
+        "name": "AYNAL HOQUE"
+    },
+    {
+        "reg_no": "IAN/2025/295",
+        "name": "Mohd Muzzammil"
+    },
+    {
+        "reg_no": "IAN/2025/296",
+        "name": "Gayatri Vasantrao Raut"
+    },
+    {
+        "reg_no": "IAN/2025/299",
+        "name": "Arun J Kumar"
+    },
+    {
+        "reg_no": "IAN/2025/301",
+        "name": "Devyani Vadawale"
+    },
+    {
+        "reg_no": "IAN/2025/303",
+        "name": "Rakesh Nanjappa"
+    },
+    {
+        "reg_no": "IAN/2025/304",
+        "name": "ANANYA MONDAL"
+    },
+    {
+        "reg_no": "IAN/2025/305",
+        "name": "Dipak K. Sahare"
+    },
+    {
+        "reg_no": "IAN/2025/306",
+        "name": "BOTHIKAR SAVITRA AMBADAS"
+    },
+    {
+        "reg_no": "IAN/2025/307",
+        "name": "Rahul Jose"
+    },
+    {
+        "reg_no": "IAN/2025/311",
+        "name": "Amol Pritilal Giri"
+    },
+    {
+        "reg_no": "IAN/2025/316",
+        "name": "Smarak Das"
+    },
+    {
+        "reg_no": "IAN/2025/318",
+        "name": "REMYA V R"
+    },
+    {
+        "reg_no": "IAN/2025/319",
+        "name": "Sandeep Kumar Guin"
+    },
+    {
+        "reg_no": "IAN/2025/321",
+        "name": "Mercy Priyadharshini B"
+    },
+    {
+        "reg_no": "IAN/2025/322",
+        "name": "Rakshika Raveendran"
+    },
+    {
+        "reg_no": "IAN/2025/324",
+        "name": "Amrutha S"
+    },
+    {
+        "reg_no": "IAN/2025/326",
+        "name": "Suravi Sasmita Dash"
+    },
+    {
+        "reg_no": "IAN/2025/327",
+        "name": "Gayathri Kumaran"
+    },
+    {
+        "reg_no": "IAN/2025/328",
+        "name": "Anjana Pithakumar"
+    },
+    {
+        "reg_no": "IAN/2025/329",
+        "name": "Shevani Arun Arunesh"
+    },
+    {
+        "reg_no": "IAN/2025/332",
+        "name": "Jivitha Jyothi Ramesh"
+    },
+    {
+        "reg_no": "IAN/2025/334",
+        "name": "ANGSHUMAN MURMU"
+    },
+    {
+        "reg_no": "IAN/2025/335",
+        "name": "Samanwitha Rao"
+    },
+    {
+        "reg_no": "IAN/2025/336",
+        "name": "Sonam Dolma"
+    },
+    {
+        "reg_no": "IAN/2025/337",
+        "name": "Sakshi Yadav"
+    },
+    {
+        "reg_no": "IAN/2025/338",
+        "name": "S. Amal Dhivahar"
+    },
+    {
+        "reg_no": "IAN/2025/339",
+        "name": "Rittika Dutta"
+    },
+    {
+        "reg_no": "IAN/2025/341",
+        "name": "ARYA M L"
+    },
+    {
+        "reg_no": "IAN/2025/342",
+        "name": "SATTI SATYA SRILAKSHMI"
+    },
+    {
+        "reg_no": "IAN/2025/346",
+        "name": "Mahmood Akbar"
+    },
+    {
+        "reg_no": "IAN/2025/348",
+        "name": "Anjali Sharma"
+    },
+    {
+        "reg_no": "IAN/2025/349",
+        "name": "Shivangi Singh"
+    },
+    {
+        "reg_no": "IAN/2025/350",
+        "name": "JYOTHI P NAIR"
+    },
+    {
+        "reg_no": "IAN/2025/351",
+        "name": "Surya Suresh"
+    },
+    {
+        "reg_no": "IAN/2025/352",
+        "name": "YOGESH RAMESH JOGDAND"
+    },
+    {
+        "reg_no": "IAN/2025/353",
+        "name": "Archita Khatua"
+    },
+    {
+        "reg_no": "IAN/2025/354",
+        "name": "Niraj Kumar Gupta"
+    },
+    {
+        "reg_no": "IAN/2025/358",
+        "name": "Iswari Ray"
+    },
+    {
+        "reg_no": "IAN/2025/359",
+        "name": "Neha Yadav"
+    },
+    {
+        "reg_no": "IAN/2025/364",
+        "name": "YUKTHA NILE"
+    },
+    {
+        "reg_no": "IAN/2025/366",
+        "name": "Anand Krishnan"
+    },
+    {
+        "reg_no": "IAN/2025/368",
+        "name": "SARANYA SS"
+    },
+    {
+        "reg_no": "IAN/2025/369",
+        "name": "ANJALI SHARMA"
+    },
+    {
+        "reg_no": "IAN/2025/370",
+        "name": "Manasi Harish"
+    },
+    {
+        "reg_no": "IAN/2025/371",
+        "name": "ANITHA RATHINAM T J"
+    },
+    {
+        "reg_no": "IAN/2025/378",
+        "name": "Ujaswini Gogoi"
+    },
+    {
+        "reg_no": "IAN/2025/382",
+        "name": "Dr. Swathi G"
+    },
+    {
+        "reg_no": "IAN/2025/388",
+        "name": "Intezar Ali"
+    },
+    {
+        "reg_no": "IAN/2025/393",
+        "name": "Sneha Raut"
+    },
+    {
+        "reg_no": "IAN/2025/394",
+        "name": "KUSHARE PRATHMESH SUNIL"
+    },
+    {
+        "reg_no": "IAN/2025/395",
+        "name": "Riddhi Ashok Lawand"
+    },
+    {
+        "reg_no": "IAN/2025/398",
+        "name": "Ms. Ashwini A. Patil"
+    },
+    {
+        "reg_no": "IAN/2025/399",
+        "name": "JERLY HELAN MARY J"
+    },
+    {
+        "reg_no": "IAN/2025/402",
+        "name": "SHWETA"
+    },
+    {
+        "reg_no": "IAN/2025/403",
+        "name": "Jaldhi"
+    },
+    {
+        "reg_no": "IAN/2025/406",
+        "name": "Hemant S. Kanhere"
+    },
+    {
+        "reg_no": "IAN/2025/407",
+        "name": "Akash Mangal Waghade"
+    },
+    {
+        "reg_no": "IAN/2025/414",
+        "name": "PRIYA MISHRA"
+    },
+    {
+        "reg_no": "IAN/2025/415",
+        "name": "Bhavesh Verma"
+    },
+    {
+        "reg_no": "IAN/2025/421",
+        "name": "Balaganesh Janakiraman"
+    },
+    {
+        "reg_no": "IAN/2025/427",
+        "name": "JASSIKA GUPTA"
+    },
+    {
+        "reg_no": "IAN/2025/431",
+        "name": "Debalina Chatterjee"
+    },
+    {
+        "reg_no": "IAN/2025/436",
+        "name": "FARHEEN KHAN"
+    },
+    {
+        "reg_no": "IAN/2025/438",
+        "name": "Shivam Verma"
+    },
+    {
+        "reg_no": "IAN/2025/439",
+        "name": "ANJU KRISHNAN"
+    },
+    {
+        "reg_no": "IAN/2025/442",
+        "name": "Manju Babu"
+    },
+    {
+        "reg_no": "IAN/2025/457",
+        "name": "Anaekshi Gogoi"
+    },
+    {
+        "reg_no": "IAN/2025/J1",
+        "name": "Dr. Jackson James"
+    },
+    {
+        "reg_no": "IAN/2025/J2",
+        "name": "Dr. Dileep Vasudevan"
+    },
+    {
+        "reg_no": "IAN/2025/J3",
+        "name": "Dr. Harikumar K B"
+    },
+    {
+        "reg_no": "IAN/2025/J4",
+        "name": "Dr. Kathiresan Natarajan"
+    },
+    {
+        "reg_no": "IAN/2025/J5",
+        "name": "Dr. Shijulal Nelson Sathi"
+    },
+    {
+        "reg_no": "IAN/2025/J6",
+        "name": "Dr. Anoop Kumar T"
+    },
+    {
+        "reg_no": "IAN/2025/J7",
+        "name": "Dr. Kamalesh K Gulia"
+    },
+    {
+        "reg_no": "IAN/2025/J8",
+        "name": "Biju S Nair"
+    },
+    {
+        "reg_no": "IAN/2025/J9",
+        "name": "Sreedevi L R"
+    },
+    {
+        "reg_no": "IAN/2025/J10",
+        "name": "Rahul Jose"
+    },
+    {
+        "reg_no": "IAN/2025/J11",
+        "name": "Aryasree R"
+    },
+    {
+        "reg_no": "IAN/2025/J12",
+        "name": "Sandra S Hari"
+    },
+    {
+        "reg_no": "IAN/2025/J13",
+        "name": "Arun Warrier"
+    },
+    {
+        "reg_no": "IAN/2025/J14",
+        "name": "Danny G Mathai"
+    },
+    {
+        "reg_no": "IAN/2025/J15",
+        "name": "Mookul Samader"
+    },
+    {
+        "reg_no": "IAN/2025/J16",
+        "name": "Devika S R"
+    },
+    {
+        "reg_no": "IAN/2025/J17",
+        "name": "Rudra Samson"
+    },
+    {
+        "reg_no": "IAN/2025/J18",
+        "name": "Anju Krishnan"
+    },
+    {
+        "reg_no": "IAN/2025/J19",
+        "name": "Thasni Fazil"
+    },
+    {
+        "reg_no": "IAN/2025/J20",
+        "name": "Hega Vincent"
+    }
+
 ]

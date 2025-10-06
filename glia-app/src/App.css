@@ -282,16 +282,16 @@ body {
   justify-content: center; /* Centers them in the header */
   align-items: center; /* Vertically aligns them */
   gap: 1.5rem; /* Space between the logos */
-  margin-bottom: 1.5rem; /* Space below the logos */
-  flex-wrap: wrap; /* Allows logos to wrap on smaller screens */
+  margin-bottom: 1rem; /* Space below the logos */
+  flex-wrap: wrap; 
 }
 
 .header-logo-small {
   max-height: 160px; /* Adjust height as needed for small size */
-  width: auto; /* Maintain aspect ratio */
+  width: auto; 
 }
 
-/* Update app-header to remove text that was previously there */
+
 .app-header {
   padding: 2rem 1.5rem;
   text-align: center;
@@ -321,12 +321,12 @@ body {
     margin-bottom: 1rem;
   }
   .header-logo-small {
-    max-height: 120px; /* Smaller logos on mobile */
+    max-height: 120px;
   }
   .header-user-info {
-    position: static; /* Position normally on smaller screens */
+    position: static;
     text-align: center;
     margin-top: 1rem;
-    padding-bottom: 1rem; /* Add some space below */
+    padding-bottom: 1rem; 
   }
 }
