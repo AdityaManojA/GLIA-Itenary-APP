@@ -5,33 +5,38 @@ import { getAuth, signInAnonymously } from 'firebase/auth';
 
 const AuthPage = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
+
   const handleLogin = async (username, password) => {
-    console.log("--- RUNNING THE LATEST AuthPage.js CODE ---");
     setError('');
-    const foundUser = participants.find(p => p.reg_no.toLowerCase() === username.toLowerCase());
+
+    let foundUser;
+    let correctPassword;
+
+    if (username.toLowerCase() === 'admin2025ian') {
+      // UPDATED: Added the admin's email address back in
+      foundUser = { 
+        reg_no: 'admin2025ian', 
+        name: 'admin', 
+        email: 'adityamanoja@gmail.com' 
+      };
+      correctPassword = 'Admin321';
+    } else {
+      foundUser = participants.find(p => p.reg_no.toLowerCase() === username.toLowerCase());
+      correctPassword = 'IAN2025';
+    }
 
     if (!foundUser) {
-      setError('Invalid Attendee ID. Please check the ID and try again.');
+      setError('Invalid Attendee ID.');
       return;
     }
-    const isAdmin = foundUser.reg_no.toLowerCase() === 'admin2025ian';
-    const correctPassword = isAdmin ? 'Admin321' : 'IAN2025';
 
     if (password === correctPassword) {
       try {
         const auth = getAuth();
         const userCredential = await signInAnonymously(auth);
-        const firebaseUid = userCredential.user.uid;
-
-
-        const completeUser = {
-          ...foundUser, 
-          uid: firebaseUid 
-        };
+        const completeUser = { ...foundUser, uid: userCredential.user.uid };
         onLoginSuccess(completeUser);
-
       } catch (authError) {
-        console.error("Firebase anonymous sign-in failed:", authError);
         setError("Could not create a secure session. Please try again.");
       }
     } else {
