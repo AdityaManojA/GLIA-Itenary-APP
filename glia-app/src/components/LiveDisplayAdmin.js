@@ -2,11 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy, doc, setDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
+// New sub-component to display event details
+const CurrentEventDetails = ({ event }) => {
+  if (!event) {
+    return (
+      <div className="current-event-details">
+        <p><strong>Currently Displaying:</strong></p>
+        <p>Automatic (Time-based)</p>
+      </div>
+    );
+  }
+
+  const startTime = event.startTime?.toDate ? event.startTime.toDate() : event.startTime;
+  const endTime = event.endTime?.toDate ? event.endTime.toDate() : event.endTime;
+
+  return (
+    <div className="current-event-details">
+      <p><strong>Currently Displaying:</strong></p>
+      <p className="details-title">{event.title}</p>
+      {event.speakerName && <p>{event.speakerName}</p>}
+      {event.speakerTopic && <p><em>{event.speakerTopic}</em></p>}
+      {startTime && endTime && (
+        <p>🕒 {startTime.toLocaleTimeString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})} - {endTime.toLocaleTimeString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</p>
+      )}
+      {event.chairpersons && <p><strong>Chairs:</strong> {event.chairpersons}</p>}
+    </div>
+  );
+};
+
 const LiveDisplayAdmin = () => {
   const [hall1Events, setHall1Events] = useState([]);
   const [hall2Events, setHall2Events] = useState([]);
   const [override, setOverride] = useState({ hall1: null, hall2: null });
   const [loading, setLoading] = useState(true);
+  const [feedback, setFeedback] = useState({ hall1: '', hall2: '' });
 
   const overrideDocRef = doc(db, 'live_display', 'override');
 
@@ -19,8 +48,8 @@ const LiveDisplayAdmin = () => {
         startTime: doc.data().startTime.toDate(),
         endTime: doc.data().endTime.toDate(),
       }));
-      setHall1Events(allEvents.filter(e => e.venue === 'Hall 1'));
-      setHall2Events(allEvents.filter(e => e.venue === 'Hall 2'));
+      setHall1Events(allEvents.filter(e => e.venue === 'HALL 1'));
+      setHall2Events(allEvents.filter(e => e.venue === 'HALL 2'));
       setLoading(false);
     });
 
@@ -36,14 +65,23 @@ const LiveDisplayAdmin = () => {
       unsubscribeEvents();
       unsubscribeOverride();
     };
-  }, [overrideDocRef]); 
+  }, []); 
+
+  const showFeedback = (hall, message) => {
+    setFeedback(prev => ({ ...prev, [hall]: message }));
+    setTimeout(() => {
+      setFeedback(prev => ({ ...prev, [hall]: '' }));
+    }, 2500);
+  };
   
   const handleNavigate = (hall, direction) => {
     const events = hall === 'hall1' ? hall1Events : hall2Events;
+    if (events.length === 0) return;
+
     const currentId = override[hall];
     let currentIndex = events.findIndex(e => e.id === currentId);
 
-    if (currentIndex === -1 && events.length > 0) {
+    if (currentIndex === -1) {
       const now = new Date();
       const liveIndex = events.findIndex(e => e.startTime <= now && e.endTime >= now);
       currentIndex = liveIndex !== -1 ? liveIndex : 0;
@@ -56,18 +94,19 @@ const LiveDisplayAdmin = () => {
 
     const nextEventId = events[nextIndex]?.id;
     if (nextEventId) {
-      updateDoc(overrideDocRef, { [hall]: nextEventId });
+      updateDoc(overrideDocRef, { [hall]: nextEventId })
+        .then(() => showFeedback(hall, 'Display updated!'));
     }
   };
 
   const handleReset = (hall) => {
-    updateDoc(overrideDocRef, { [hall]: deleteField() });
+    updateDoc(overrideDocRef, { [hall]: deleteField() })
+      .then(() => showFeedback(hall, 'Reset to Automatic.'));
   };
   
-  const getCurrentEventTitle = (hall) => {
+  const getCurrentEvent = (hall) => {
     const events = hall === 'hall1' ? hall1Events : hall2Events;
-    const event = events.find(e => e.id === override[hall]);
-    return event ? event.title : 'Automatic (Time-based)';
+    return events.find(e => e.id === override[hall]);
   };
 
   if (loading) return <p>Loading events...</p>;
@@ -81,23 +120,27 @@ const LiveDisplayAdmin = () => {
 
       <div className="live-admin-controls">
         <div className="hall-control">
-          <h4>Hall 1</h4>
+          <h4>HALL 1</h4>
           <div className="control-row">
             <button onClick={() => handleNavigate('hall1', -1)}>&lt;</button>
-            <span className="current-event-title">{getCurrentEventTitle('hall1')}</span>
+            <span className="current-event-title">Navigate</span>
             <button onClick={() => handleNavigate('hall1', 1)}>&gt;</button>
           </div>
           <button className="reset-btn" onClick={() => handleReset('hall1')}>Reset to Auto</button>
+          <p className="admin-feedback-text">{feedback.hall1}</p>
+          <CurrentEventDetails event={getCurrentEvent('hall1')} />
         </div>
 
         <div className="hall-control">
-          <h4>Hall 2</h4>
+          <h4>HALL 2</h4>
           <div className="control-row">
             <button onClick={() => handleNavigate('hall2', -1)}>&lt;</button>
-            <span className="current-event-title">{getCurrentEventTitle('hall2')}</span>
+            <span className="current-event-title">Navigate</span>
             <button onClick={() => handleNavigate('hall2', 1)}>&gt;</button>
           </div>
           <button className="reset-btn" onClick={() => handleReset('hall2')}>Reset to Auto</button>
+          <p className="admin-feedback-text">{feedback.hall2}</p>
+          <CurrentEventDetails event={getCurrentEvent('hall2')} />
         </div>
       </div>
     </div>

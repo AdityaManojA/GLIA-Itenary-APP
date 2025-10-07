@@ -512,6 +512,35 @@ body {
   cursor: pointer;
 }
 
+.admin-feedback-text {
+  min-height: 20px;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.current-event-details {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #E0E0E0;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.current-event-details p {
+  margin: 0.3rem 0;
+}
+
+.current-event-details .details-title {
+  font-weight: bold;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
   .app-main, .app-header, .glass-form { padding: 1rem; }

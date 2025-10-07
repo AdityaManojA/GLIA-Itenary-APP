@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// EventDisplayCard now accepts itinerary and toggleItinerary
 const EventDisplayCard = ({ event, itinerary, toggleItinerary }) => {
   if (!event) {
     return (
@@ -27,7 +26,8 @@ const EventDisplayCard = ({ event, itinerary, toggleItinerary }) => {
         {event.speakerTopic && <p className="live-display-topic">{event.speakerTopic}</p>}
         {startTime && endTime && (
             <p className="live-display-time">
-                🕒 {startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {/* UPDATED: Added date to the start time display */}
+                🕒 {startTime.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </p>
         )}
         {event.chairpersons && (
@@ -48,7 +48,6 @@ const EventDisplayCard = ({ event, itinerary, toggleItinerary }) => {
   );
 };
 
-// HappeningNow now accepts itinerary and toggleItinerary
 const HappeningNow = ({ itinerary, toggleItinerary }) => {
   const [hall1Event, setHall1Event] = useState(null);
   const [hall2Event, setHall2Event] = useState(null);

@@ -17,7 +17,11 @@ const ManageEvents = ({ events, onEdit }) => {
     }
   };
 
-  const formatTime = (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  // UPDATED: This function now formats the full date and time
+  const formatDateTime = (date) => {
+    if (!date) return '';
+    return date.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
     <div className="manage-events-container">
@@ -33,7 +37,8 @@ const ManageEvents = ({ events, onEdit }) => {
                 {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
                 <div className="event-details-list">
                   <span>📍 {event.venue}</span>
-                  <span>🕒 {formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
+                  {/* UPDATED: Using the new date-time formatter */}
+                  <span>🕒 {formatDateTime(event.startTime)} - {event.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               </div>
               <div className="event-actions">
@@ -53,3 +58,4 @@ const ManageEvents = ({ events, onEdit }) => {
 };
 
 export default ManageEvents;
+
