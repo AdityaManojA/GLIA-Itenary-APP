@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteField } from 'firebase/firestore';
+import { collection, onSnapshot, query, orderBy, doc, setDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 const LiveDisplayAdmin = () => {
@@ -11,19 +11,24 @@ const LiveDisplayAdmin = () => {
   const overrideDocRef = doc(db, 'live_display', 'override');
 
   useEffect(() => {
-    // Fetch all events and sort them into halls
     const q = query(collection(db, 'schedule'), orderBy('startTime'));
     const unsubscribeEvents = onSnapshot(q, (snapshot) => {
-      const allEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const allEvents = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        startTime: doc.data().startTime.toDate(),
+        endTime: doc.data().endTime.toDate(),
+      }));
       setHall1Events(allEvents.filter(e => e.venue === 'Hall 1'));
       setHall2Events(allEvents.filter(e => e.venue === 'Hall 2'));
       setLoading(false);
     });
 
-    // Listen for current override settings
     const unsubscribeOverride = onSnapshot(overrideDocRef, (docSnap) => {
       if (docSnap.exists()) {
         setOverride(docSnap.data());
+      } else {
+        setDoc(overrideDocRef, {});
       }
     });
 
@@ -31,7 +36,7 @@ const LiveDisplayAdmin = () => {
       unsubscribeEvents();
       unsubscribeOverride();
     };
-  }, []);
+  }, [overrideDocRef]); 
   
   const handleNavigate = (hall, direction) => {
     const events = hall === 'hall1' ? hall1Events : hall2Events;
@@ -39,9 +44,8 @@ const LiveDisplayAdmin = () => {
     let currentIndex = events.findIndex(e => e.id === currentId);
 
     if (currentIndex === -1 && events.length > 0) {
-      // If no override is set, find the naturally live event to start from
       const now = new Date();
-      const liveIndex = events.findIndex(e => e.startTime.toDate() <= now && e.endTime.toDate() >= now);
+      const liveIndex = events.findIndex(e => e.startTime <= now && e.endTime >= now);
       currentIndex = liveIndex !== -1 ? liveIndex : 0;
     }
 
@@ -57,7 +61,6 @@ const LiveDisplayAdmin = () => {
   };
 
   const handleReset = (hall) => {
-    // To reset, we remove the field from the override document
     updateDoc(overrideDocRef, { [hall]: deleteField() });
   };
   
@@ -77,7 +80,6 @@ const LiveDisplayAdmin = () => {
       </p>
 
       <div className="live-admin-controls">
-        {/* Hall 1 Controls */}
         <div className="hall-control">
           <h4>Hall 1</h4>
           <div className="control-row">
@@ -88,7 +90,6 @@ const LiveDisplayAdmin = () => {
           <button className="reset-btn" onClick={() => handleReset('hall1')}>Reset to Auto</button>
         </div>
 
-        {/* Hall 2 Controls */}
         <div className="hall-control">
           <h4>Hall 2</h4>
           <div className="control-row">

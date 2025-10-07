@@ -72,7 +72,7 @@ body {
 }
 
 .header-logo-small {
-  max-height: 100px;
+  max-height: 60px;
   width: auto; 
 }
 
@@ -359,6 +359,141 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFFFFF' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
 }
 
+/* --- Styles for Live Display --- */
+.live-display-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.live-display-column {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.live-display-column h3 {
+  text-align: center;
+  color: var(--primary-color);
+  border-bottom: 1px solid #E0E0E0;
+  padding-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.live-display-card {
+  padding: 1rem;
+  background-color: #F5F5F5;
+  border-radius: 8px;
+  flex-grow: 1;
+}
+
+.no-event-message {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem 0;
+}
+
+.live-display-speaker-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 1rem auto;
+  display: block;
+  border: 3px solid var(--primary-color);
+}
+
+.live-display-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+}
+
+.live-display-speaker {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0.25rem 0;
+}
+
+.live-display-topic {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0.25rem 0 1rem 0;
+}
+
+.live-display-time {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  text-align: center;
+  font-weight: 500;
+}
+
+.live-display-chairs {
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+.live-display-chairs strong {
+  color: var(--text-primary);
+}
+
+/* --- Styles for Live Display Admin Controls --- */
+.live-admin-controls {
+  display: flex;
+  justify-content: space-around;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.hall-control {
+  flex: 1;
+  text-align: center;
+  background-color: #F5F5F5;
+  padding: 1rem;
+  border-radius: 8px;
+  min-width: 250px;
+}
+
+.hall-control h4 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.control-row button {
+  font-size: 1.5rem;
+  padding: 0.25rem 1rem;
+}
+
+.current-event-title {
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+.reset-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
   .app-main, .app-header, .glass-form { padding: 1rem; }
@@ -377,4 +512,3 @@ body {
     padding-bottom: 1rem; 
   }
 }
-

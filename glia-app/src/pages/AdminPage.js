@@ -5,6 +5,7 @@ import EventForm from '../components/EventForm';
 import AlertsAdmin from '../components/AlertsAdmin';
 import ManageEvents from '../components/ManageEvents';
 import ManageAlerts from '../components/ManageAlerts';
+import LiveDisplayAdmin from '../components/LiveDisplayAdmin';
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('manageEvents'); 
@@ -76,16 +77,17 @@ const AdminPage = () => {
           {alertToEdit ? 'Edit Alert' : 'Send Alert'}
         </button>
         <button onClick={() => setActiveTab('manageAlerts')} className={activeTab === 'manageAlerts' ? 'tab-active' : ''}>Manage Alerts</button>
+        <button onClick={() => setActiveTab('liveDisplay')} className={activeTab === 'liveDisplay' ? 'tab-active' : ''}>Live Display</button>
       </div>
       {loading ? (
-        <div className="text-center"><p>Loading Admin Panel...</p></div>
+        <div className="text-center" style={{textAlign: 'center'}}><p>Loading Admin Panel...</p></div>
       ) : (
         <div>
           {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
           {activeTab === 'manageEvents' && <ManageEvents events={events} onEdit={handleEdit} />}
           {activeTab === 'sendAlert' && <AlertsAdmin currentAlert={alertToEdit} onDone={handleDoneAlertEditing} />}
-          
           {activeTab === 'manageAlerts' && <ManageAlerts alerts={alerts} onEdit={handleAlertEdit} />}
+          {activeTab === 'liveDisplay' && <LiveDisplayAdmin />}
         </div>
       )}
     </div>

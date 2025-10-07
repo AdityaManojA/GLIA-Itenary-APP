@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// This is a reusable card for displaying a single event
 const EventDisplayCard = ({ event }) => {
   if (!event) {
     return (
@@ -12,6 +11,9 @@ const EventDisplayCard = ({ event }) => {
     );
   }
 
+  const startTime = event.startTime?.toDate ? event.startTime.toDate() : event.startTime;
+  const endTime = event.endTime?.toDate ? event.endTime.toDate() : event.endTime;
+
   return (
     <div className="live-display-card">
       {event.speakerImageURL && (
@@ -20,6 +22,11 @@ const EventDisplayCard = ({ event }) => {
       <h3 className="live-display-title">{event.title}</h3>
       {event.speakerName && <p className="live-display-speaker">{event.speakerName}</p>}
       {event.speakerTopic && <p className="live-display-topic">{event.speakerTopic}</p>}
+      {startTime && endTime && (
+          <p className="live-display-time">
+              🕒 {startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </p>
+      )}
       {event.chairpersons && (
         <div className="live-display-chairs">
           <strong>Chairperson(s):</strong> {event.chairpersons}
@@ -35,19 +42,19 @@ const HappeningNow = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let unsubscribeHall1Auto = null;
+    let unsubscribeHall2Auto = null;
     const overrideDocRef = doc(db, 'live_display', 'override');
     const scheduleColRef = collection(db, 'schedule');
-    const now = new Date();
 
-    // This function fetches an event based on an ID
     const fetchEventById = async (eventId) => {
       if (!eventId) return null;
       const eventDoc = await getDoc(doc(db, 'schedule', eventId));
       return eventDoc.exists() ? { id: eventDoc.id, ...eventDoc.data() } : null;
     };
 
-    // This function finds a live event based on the current time for a specific hall
     const fetchLiveEventForHall = (hallName, callback) => {
+      const now = new Date();
       const q = query(
         scheduleColRef,
         where('venue', '==', hallName),
@@ -62,35 +69,24 @@ const HappeningNow = () => {
       });
     };
 
-    // Main listener for overrides
     const unsubscribeOverride = onSnapshot(overrideDocRef, async (docSnap) => {
       const overrideData = docSnap.exists() ? docSnap.data() : {};
-
-      // Handle Hall 1
+      if (unsubscribeHall1Auto) unsubscribeHall1Auto();
       if (overrideData.hall1) {
         const event = await fetchEventById(overrideData.hall1);
         setHall1Event(event);
       } else {
-        // If no override, let the time-based listener handle it
-        if (unsubscribeHall1Auto) unsubscribeHall1Auto(); // Stop previous listener
-        var unsubscribeHall1Auto = fetchLiveEventForHall('Hall 1', setHall1Event);
+        unsubscribeHall1Auto = fetchLiveEventForHall('Hall 1', setHall1Event);
       }
-
-      // Handle Hall 2
+      if (unsubscribeHall2Auto) unsubscribeHall2Auto();
       if (overrideData.hall2) {
         const event = await fetchEventById(overrideData.hall2);
         setHall2Event(event);
       } else {
-        if (unsubscribeHall2Auto) unsubscribeHall2Auto();
-        var unsubscribeHall2Auto = fetchLiveEventForHall('Hall 2', setHall2Event);
+        unsubscribeHall2Auto = fetchLiveEventForHall('Hall 2', setHall2Event);
       }
-      
       setLoading(false);
     });
-
-    // Initial listeners for auto mode if no overrides are set
-    let unsubscribeHall1Auto = fetchLiveEventForHall('Hall 1', setHall1Event);
-    let unsubscribeHall2Auto = fetchLiveEventForHall('Hall 2', setHall2Event);
 
     return () => {
       unsubscribeOverride();
