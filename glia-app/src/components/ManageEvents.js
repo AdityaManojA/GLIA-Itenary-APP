@@ -30,7 +30,6 @@ const ManageEvents = ({ events, onEdit }) => {
             <li key={event.id} className="schedule-list-item">
               <div className="event-info">
                 <p className="event-title-list">{event.title}</p>
-                {/* Speaker name is now displayed below the title */}
                 {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
                 <div className="event-details-list">
                   <span>📍 {event.venue}</span>
