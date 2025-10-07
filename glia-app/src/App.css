@@ -72,7 +72,7 @@ body {
 }
 
 .header-logo-small {
-  max-height: 60px;
+  max-height: 100px;
   width: auto; 
 }
 
@@ -202,7 +202,6 @@ body {
   opacity: 0.5;
 }
 
-/* Make button full-width only on login screen */
 .auth-page-background .auth-button {
   width: 100%;
 }
@@ -213,7 +212,9 @@ body {
 .home-page-layout { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .event-title { color: var(--text-primary); font-size: 1.8rem; margin-bottom: 0.5rem; }
+.event-title-list { font-weight: bold; margin: 0 0 0.25rem 0; }
 .speaker-name { color: var(--text-primary); font-size: 1.2rem; font-weight: 600; margin: 0.5rem 0; }
+.speaker-name-list { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin: 0.25rem 0 0.5rem 0; }
 .speaker-topic-list, .speaker-topic { font-style: italic; color: var(--text-secondary); margin: 0.25rem 0; }
 .speaker-image-large { 
   width: 8rem; 
@@ -255,7 +256,7 @@ body {
 
 .schedule-list-item { 
   display: flex; 
-  align-items: center; 
+  align-items: flex-start; 
   justify-content: space-between; 
   gap: 1rem; 
   margin-bottom: 1rem; 
@@ -265,7 +266,7 @@ body {
 .event-right-column {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   gap: 0.5rem;
   margin-left: auto;
@@ -282,6 +283,15 @@ body {
 .home-chairpersons { text-align: center; margin-bottom: 0.5rem; }
 
 .alerts-list-container h3 { margin-top: 0; color: var(--text-primary); text-align: center; font-size: 1.5rem; }
+.alerts-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .alert-item-redesigned {
   display: flex;
   align-items: flex-start;
@@ -332,7 +342,7 @@ body {
   margin-left: 1rem;
   transition: all 0.2s ease-in-out;
   flex-shrink: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' fill='none' stroke='%23A83333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' 24' fill='none' stroke='%23A83333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -346,7 +356,7 @@ body {
 .itinerary-toggle-button.saved {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' fill='%23FFFFFF' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24' 24' fill='%23FFFFFF' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'%3E%3C/polygon%3E%3C/svg%3E");
 }
 
 /* --- Responsive Styles --- */

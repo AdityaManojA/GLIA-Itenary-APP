@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, limit, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
-import { auth } from '../firebase/config';
 import AlertsList from '../components/AlertsList';
 
 const HomePage = ({ user }) => {
@@ -22,7 +21,9 @@ const HomePage = ({ user }) => {
 
   const getFirstName = (fullName) => {
     if (!fullName) return 'Attendee';
-    return fullName.split(' ')[0];
+    const firstName = fullName.split(' ')[0];
+    if (!firstName) return 'Attendee';
+    return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
   };
 
   useEffect(() => {
@@ -60,12 +61,11 @@ const HomePage = ({ user }) => {
   }, []);
 
   const toggleItinerary = async (eventId, isSaved) => {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
+    if (!user) {
       alert("Please log in to create a personalized itinerary.");
       return;
     }
-    const itineraryDocRef = doc(db, 'users', currentUser.uid, 'itinerary', eventId);
+    const itineraryDocRef = doc(db, 'users', user.uid, 'itinerary', eventId);
     if (isSaved) {
       await deleteDoc(itineraryDocRef);
     } else {
@@ -76,22 +76,27 @@ const HomePage = ({ user }) => {
   const renderEventCard = (event, isLive = false) => {
     const isSaved = itinerary.has(event.id);
     return (
-        <div key={event.id} className={`event-card ${isLive ? 'live' : ''} schedule-list-item`}>
-            {event.speakerImageURL && <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-large" />}
+        <div key={event.id} className="schedule-list-item">
+            {/* Use small image and add a placeholder for consistent alignment */}
+            {event.speakerImageURL ? (
+                <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-small" />
+            ) : (
+                <div className="speaker-image-placeholder" />
+            )}
+            
             <div className="event-info">
-                <h3 className="event-title">{event.title}</h3>
-                {event.speakerName && <p className="speaker-name">{event.speakerName}</p>}
-                {/* Display Speaker Topic */}
-                {event.speakerTopic && <p className="speaker-topic">{event.speakerTopic}</p>}
-                <div className="event-details">
+                <p className="event-title-list">{event.title}</p>
+                {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
+                {event.speakerTopic && <p className="speaker-topic-list">{event.speakerTopic}</p>}
+                <div className="event-details-list">
                     <span>📍 {event.venue}</span>
                     <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
             </div>
             <div className="event-right-column">
               {event.chairpersons && (
-                <div className="chairpersons-info home-chairpersons">
-                  <strong>Chairperson(s):</strong>
+                <div className="chairpersons-info">
+                  <strong>Chairperson(s)</strong>
                   <p>{event.chairpersons}</p>
                 </div>
               )}
@@ -108,9 +113,9 @@ const HomePage = ({ user }) => {
 
   return (
     <div className="home-page-layout">
-      <div className="welcome-header card glass-effect" style={{ textAlign: 'center' }}>
+      <div className="welcome-header">
         <h1>Welcome, {getFirstName(user?.name)}</h1>
-        <p>Here's what's happening at IAN 2025.</p>
+        
       </div>
 
       <div className="card glass-effect">
@@ -123,7 +128,7 @@ const HomePage = ({ user }) => {
           <p>No event is currently in session. See what's up next!</p>
         )}
       </div>
-
+    <AlertsList />
       <div className="card glass-effect">
           <h2>Up Next</h2>
           {loading ? (
@@ -135,9 +140,10 @@ const HomePage = ({ user }) => {
           )}
       </div>
 
-      <AlertsList />
+      
     </div>
   );
 };
 
 export default HomePage;
+
