@@ -1,24 +1,7 @@
 import React from 'react';
-import { getAuth } from 'firebase/auth'; // Import getAuth
 
 const Header = ({ user, onLogout, setCurrentPage }) => {
   const isAdmin = user && user.email === 'adityamanoja@gmail.com';
-
-  // TEMPORARY DEBUG FUNCTION to see the live user's details
-  const checkCurrentUser = () => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      console.log("--- LIVE SITE AUTH CHECK ---");
-      console.log("User UID:", currentUser.uid);
-      console.log("User Email:", currentUser.email);
-      console.log("Is Anonymous:", currentUser.isAnonymous);
-      console.log("Full User Object:", currentUser);
-    } else {
-      console.log("--- LIVE SITE AUTH CHECK ---");
-      console.log("No Firebase user is currently signed in.");
-    }
-  };
 
   return (
     <header className="app-header">
@@ -31,10 +14,6 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
       
       {user && (
         <div className="header-user-info">
-          {/* TEMPORARY DEBUG BUTTON */}
-          <button onClick={checkCurrentUser} style={{backgroundColor: 'yellow', color: 'black', marginRight: '10px', border: '1px solid black'}}>
-            Check Auth
-          </button>
           <button onClick={onLogout} className="main-nav-button">
             Sign Out
           </button>
@@ -47,8 +26,10 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
       <nav className="main-nav">
         <button onClick={() => setCurrentPage('home')}>Home</button>
         <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
+        <button onClick={() => setCurrentPage('map')}>Map</button>
         <button onClick={() => setCurrentPage('itinerary')}>My Itinerary</button>
         <button onClick={() => setCurrentPage('alerts')}>Alerts</button>
+        
         
         {isAdmin && (
           <button onClick={() => setCurrentPage('admin')}>Admin</button>
@@ -59,3 +40,4 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
 };
 
 export default Header;
+

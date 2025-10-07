@@ -8,8 +8,7 @@ import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
 import AlertsPage from './pages/AlertsPage';
 import ItineraryPage from './pages/ItineraryPage';
-
-const ADMIN_EMAILS = ["adityamanoja@gmail.com"]; 
+import MapPage from './pages/MapPage'; // Import MapPage
 
 function App() {
   const [user, setUser] = useState(null); 
@@ -21,7 +20,6 @@ function App() {
       setUser(JSON.parse(savedUser));
     }
   }, []);
-
 
   const handleLoginSuccess = (completeUserData) => {
     localStorage.setItem('user', JSON.stringify(completeUserData));
@@ -35,15 +33,19 @@ function App() {
   };
 
   const renderPage = () => {
+    const isAdmin = user && user.email === 'adityamanoja@gmail.com';
     switch (currentPage) {
       case 'schedule':
         return <SchedulePage />;
       case 'admin':
-        return user && ADMIN_EMAILS.includes(user.email) ? <AdminPage /> : <HomePage user={user} />;
+        return isAdmin ? <AdminPage /> : <HomePage user={user} />;
       case 'alerts':
         return <AlertsPage />;
       case 'itinerary':
         return <ItineraryPage />;
+      // This case tells the app what to do when the map button is clicked
+      case 'map':
+        return <MapPage />;
       case 'home':
       default:
         return <HomePage user={user} />;
@@ -69,3 +71,4 @@ function App() {
 }
 
 export default App;
+
