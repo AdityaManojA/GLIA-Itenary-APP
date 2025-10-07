@@ -2,7 +2,6 @@ import React from 'react';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-
 const ManageEvents = ({ events, onEdit }) => {
 
   const handleDelete = async (eventId, eventTitle) => {
@@ -31,13 +30,14 @@ const ManageEvents = ({ events, onEdit }) => {
             <li key={event.id} className="schedule-list-item">
               <div className="event-info">
                 <p className="event-title-list">{event.title}</p>
+                {/* Speaker name is now displayed below the title */}
+                {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
                 <div className="event-details-list">
                   <span>📍 {event.venue}</span>
                   <span>🕒 {formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
                 </div>
               </div>
               <div className="event-actions">
-                
                 <button className="edit-btn" onClick={() => onEdit(event)}>
                   Edit
                 </button>

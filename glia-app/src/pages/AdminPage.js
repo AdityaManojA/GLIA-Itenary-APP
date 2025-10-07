@@ -12,9 +12,9 @@ const AdminPage = () => {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [eventToEdit, setEventToEdit] = useState(null);
+  const [alertToEdit, setAlertToEdit] = useState(null);
 
   useEffect(() => {
-    // Fetch events
     const eventsQuery = query(collection(db, 'schedule'), orderBy('startTime'));
     const unsubscribeEvents = onSnapshot(eventsQuery, (snapshot) => {
       const eventsData = snapshot.docs.map(doc => ({
@@ -30,7 +30,6 @@ const AdminPage = () => {
       setLoading(false);
     });
 
-    // Fetch alerts
     const alertsQuery = query(collection(db, 'notifications'), orderBy('createdAt', 'desc'));
     const unsubscribeAlerts = onSnapshot(alertsQuery, (snapshot) => {
       const alertsData = snapshot.docs.map(doc => ({
@@ -56,6 +55,16 @@ const AdminPage = () => {
     setActiveTab('manageEvents');
   };
 
+  const handleAlertEdit = (alert) => {
+    setAlertToEdit(alert);
+    setActiveTab('sendAlert');
+  };
+
+  const handleDoneAlertEditing = () => {
+    setAlertToEdit(null);
+    setActiveTab('manageAlerts');
+  };
+
   return (
     <div className="card glass-effect">
       <div className="tabs-nav">
@@ -63,7 +72,9 @@ const AdminPage = () => {
           {eventToEdit ? 'Edit Event' : 'Add Event'}
         </button>
         <button onClick={() => setActiveTab('manageEvents')} className={activeTab === 'manageEvents' ? 'tab-active' : ''}>Manage Events</button>
-        <button onClick={() => setActiveTab('sendAlert')} className={activeTab === 'sendAlert' ? 'tab-active' : ''}>Send Alert</button>
+        <button onClick={() => { setAlertToEdit(null); setActiveTab('sendAlert'); }} className={activeTab === 'sendAlert' ? 'tab-active' : ''}>
+          {alertToEdit ? 'Edit Alert' : 'Send Alert'}
+        </button>
         <button onClick={() => setActiveTab('manageAlerts')} className={activeTab === 'manageAlerts' ? 'tab-active' : ''}>Manage Alerts</button>
       </div>
       {loading ? (
@@ -72,8 +83,9 @@ const AdminPage = () => {
         <div>
           {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
           {activeTab === 'manageEvents' && <ManageEvents events={events} onEdit={handleEdit} />}
-          {activeTab === 'sendAlert' && <AlertsAdmin />}
-          {activeTab === 'manageAlerts' && <ManageAlerts alerts={alerts} />}
+          {activeTab === 'sendAlert' && <AlertsAdmin currentAlert={alertToEdit} onDone={handleDoneAlertEditing} />}
+          
+          {activeTab === 'manageAlerts' && <ManageAlerts alerts={alerts} onEdit={handleAlertEdit} />}
         </div>
       )}
     </div>

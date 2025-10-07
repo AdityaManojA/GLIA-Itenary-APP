@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-const AlertsAdmin = () => {
+const AlertsAdmin = ({ currentAlert, onDone }) => {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [feedback, setFeedback] = useState('');
+
+  useEffect(() => {
+    if (currentAlert) {
+      setTitle(currentAlert.title || '');
+      setMessage(currentAlert.message || '');
+    } else {
+      setTitle('');
+      setMessage('');
+    }
+  }, [currentAlert]);
 
   const handleSendAlert = async (e) => {
     e.preventDefault();
@@ -18,28 +28,39 @@ const AlertsAdmin = () => {
     setIsSending(true);
     setFeedback('');
 
-    try {
-      await addDoc(collection(db, 'notifications'), {
+    const alertPayload = {
         title: title,
         message: message,
-        createdAt: serverTimestamp()
-      });
-      setFeedback('✅ Alert sent successfully!');
-      setTitle('');
-      setMessage('');
+    };
+
+    try {
+        if (currentAlert) {
+            const alertDocRef = doc(db, 'notifications', currentAlert.id);
+            await updateDoc(alertDocRef, alertPayload);
+            setFeedback('✅ Alert updated successfully!');
+        } else {
+            alertPayload.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'notifications'), alertPayload);
+            setFeedback('✅ Alert sent successfully!');
+            setTitle('');
+            setMessage('');
+        }
     } catch (error) {
-      console.error("Error sending alert: ", error);
-      setFeedback('❌ Failed to send alert.');
+        console.error("Error sending/updating alert: ", error);
+        setFeedback(`❌ Failed to ${currentAlert ? 'update' : 'send'} alert.`);
     } finally {
-      setIsSending(false);
-      setTimeout(() => setFeedback(''), 3000);
+        setIsSending(false);
+        if (onDone) onDone();
+        setTimeout(() => setFeedback(''), 4000);
     }
   };
 
   return (
-    <div className="card glass-effect" style={{ textAlign: 'left' }}>
-      <h2>Send a New Alert</h2>
-      <p style={{ opacity: 0.8, marginTop: 0 }}>This will send a notification to all active users.</p>
+    <div style={{ textAlign: 'left' }}>
+      <h2>{currentAlert ? 'Edit Alert' : 'Send a New Alert'}</h2>
+      <p style={{ opacity: 0.8, marginTop: 0, color: 'var(--text-secondary)' }}>
+        {currentAlert ? 'Update the title and message below.' : 'This will send a notification to all active users.'}
+      </p>
       <form onSubmit={handleSendAlert} className="event-form">
         <div className="input-group">
           <label htmlFor="alert-title">Notification Title</label>
@@ -54,6 +75,7 @@ const AlertsAdmin = () => {
         </div>
         <div className="input-group">
           <label htmlFor="alert-message">Notification Message</label>
+          {/* The inline style has been removed from the textarea below */}
           <textarea
             id="alert-message"
             value={message}
@@ -61,12 +83,18 @@ const AlertsAdmin = () => {
             placeholder="e.g., The keynote speech has been moved to Hall B."
             required
             rows="4"
-            style={{ width: '100%', padding: '0.9rem 1rem', borderRadius: '8px', border: '1px solid rgba(142, 182, 155, 0.3)', background: 'rgba(11, 43, 38, 0.5)', color: 'var(--font-light)', fontSize: '1rem', boxSizing: 'border-box' }}
           />
         </div>
-        <button type="submit" className="auth-button" disabled={isSending}>
-          {isSending ? 'Sending...' : 'Send Alert'}
-        </button>
+        <div className="event-actions" style={{ justifyContent: 'center', marginTop: '1rem' }}>
+            {currentAlert && (
+                <button type="button" className="delete-btn" onClick={onDone} style={{backgroundColor: '#6c757d'}}>
+                    Cancel
+                </button>
+            )}
+            <button type="submit" className="auth-button" disabled={isSending}>
+                {isSending ? 'Saving...' : (currentAlert ? 'Save Changes' : 'Send Alert')}
+            </button>
+        </div>
         {feedback && <p style={{ textAlign: 'center', marginTop: '1rem', fontWeight: '500' }}>{feedback}</p>}
       </form>
     </div>
@@ -74,3 +102,4 @@ const AlertsAdmin = () => {
 };
 
 export default AlertsAdmin;
+
