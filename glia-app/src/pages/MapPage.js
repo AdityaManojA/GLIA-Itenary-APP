@@ -11,7 +11,7 @@ const maps = [
     url: "https://www.google.com/maps/d/embed?mid=195fYKK-5nyiBckRT4LGH80eqdt2a-rY"
   },
   {
-    title: "CONFERENCE VENUE",
+    title: "CONFERENCE VENUE (Uday Samudra Leisure Beach Hotel)",
     url: "https://maps.google.com/maps?q=8.402355,76.973196&z=15&output=embed"
   }
 ];
@@ -23,7 +23,7 @@ const MapPage = () => {
       <div className="maps-container">
         {maps.map((map, index) => (
           <div key={index} className="map-wrapper">
-            <h2>{map.title}</h2>
+            <h3 style={{ textAlign: 'center', marginBottom: '2rem' }}>{map.title}</h3>
             <iframe
               src={map.url}
               width="100%"
