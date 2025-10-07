@@ -10,11 +10,10 @@ const EventForm = ({ currentEvent, onDone }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [imageError, setImageError] = useState('');
 
-  // Updated state to match new fields
   const [title, setTitle] = useState('');
   const [speakerName, setSpeakerName] = useState('');
-  const [speakerTopic, setSpeakerTopic] = useState(''); // New field
-  const [chairpersons, setChairpersons] = useState(''); // New field
+  const [speakerTopic, setSpeakerTopic] = useState('');
+  const [chairpersons, setChairpersons] = useState('');
   const [venue, setVenue] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -34,8 +33,8 @@ const EventForm = ({ currentEvent, onDone }) => {
     if (currentEvent) {
       setTitle(currentEvent.title || '');
       setSpeakerName(currentEvent.speakerName || '');
-      setSpeakerTopic(currentEvent.speakerTopic || ''); // New field
-      setChairpersons(currentEvent.chairpersons || ''); // New field
+      setSpeakerTopic(currentEvent.speakerTopic || '');
+      setChairpersons(currentEvent.chairpersons || '');
       setVenue(currentEvent.venue || '');
       setStartTime(formatDateForInput(currentEvent.startTime));
       setEndTime(formatDateForInput(currentEvent.endTime));
@@ -44,8 +43,8 @@ const EventForm = ({ currentEvent, onDone }) => {
     } else {
       setTitle('');
       setSpeakerName('');
-      setSpeakerTopic(''); // New field
-      setChairpersons(''); // New field
+      setSpeakerTopic('');
+      setChairpersons('');
       setVenue('');
       setStartTime('');
       setEndTime('');
@@ -76,12 +75,11 @@ const EventForm = ({ currentEvent, onDone }) => {
     setIsSubmitting(true);
     setFeedback({ message: '', type: '' });
 
-    // Updated payload with new fields
     const eventDataPayload = {
       title,
       speakerName,
-      speakerTopic, // New field
-      chairpersons, // New field
+      speakerTopic,
+      chairpersons,
       venue,
       startTime: Timestamp.fromDate(new Date(startTime)),
       endTime: Timestamp.fromDate(new Date(endTime)),
@@ -103,7 +101,7 @@ const EventForm = ({ currentEvent, onDone }) => {
       } else {
         await addDoc(collection(db, 'schedule'), eventDataPayload);
         setFeedback({ message: '✅ Event saved successfully!', type: 'success' });
-        e.target.reset(); // This now clears the controlled components via useEffect
+        e.target.reset(); 
       }
     } catch (error) {
       console.error("Error saving event: ", error);
@@ -127,19 +125,16 @@ const EventForm = ({ currentEvent, onDone }) => {
           <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
 
-        {/* Text changed here */}
         <div className="input-group">
           <label htmlFor="speakerName">Speaker + Institution (Optional)</label>
           <input id="speakerName" type="text" value={speakerName} onChange={e => setSpeakerName(e.target.value)} />
         </div>
         
-        {/* Designation replaced with Speaker Topic */}
         <div className="input-group">
           <label htmlFor="speakerTopic">Speaker Topic (Optional)</label>
           <input id="speakerTopic" type="text" value={speakerTopic} onChange={e => setSpeakerTopic(e.target.value)} />
         </div>
         
-        {/* New field for Chairperson(s) */}
         <div className="input-group">
           <label htmlFor="chairpersons">Chairperson(s) (Optional)</label>
           <input id="chairpersons" type="text" value={chairpersons} onChange={e => setChairpersons(e.target.value)} placeholder="e.g., Dr. Smith, Dr. Jones" />
@@ -152,9 +147,17 @@ const EventForm = ({ currentEvent, onDone }) => {
           {imageError && <p className="error-text">{imageError}</p>}
         </div>
 
+        {/* VENUE INPUT CHANGED TO DROPDOWN */}
         <div className="input-group">
           <label htmlFor="venue">Venue / Hall</label>
-          <input id="venue" type="text" value={venue} onChange={e => setVenue(e.target.value)} required />
+          <select id="venue" value={venue} onChange={e => setVenue(e.target.value)} required>
+            <option value="" disabled>Select a venue</option>
+            <option value="HALL 1">HALL 1</option>
+            <option value="HALL 2">HALL 2</option>
+            <option value="POSTER V1">POSTER V1</option>
+            <option value="POSTER V2">POSTER V2</option>
+            <option value="LUNCH">LUNCH</option>
+          </select>
         </div>
 
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -186,3 +189,4 @@ const EventForm = ({ currentEvent, onDone }) => {
 };
 
 export default EventForm;
+
