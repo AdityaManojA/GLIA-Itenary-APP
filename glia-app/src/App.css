@@ -262,6 +262,13 @@ body {
   margin-bottom: 1rem; 
 }
 .event-info { flex: 1; min-width: 0; }
+.event-details-list {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
 
 .event-right-column {
   display: flex;
@@ -387,6 +394,17 @@ body {
   background-color: #F5F5F5;
   border-radius: 8px;
   flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.live-display-main-content {
+  flex-grow: 1;
+}
+
+.live-display-action {
+  margin-left: 1rem;
 }
 
 .no-event-message {
@@ -512,3 +530,4 @@ body {
     padding-bottom: 1rem; 
   }
 }
+

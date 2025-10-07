@@ -44,7 +44,11 @@ const HomePage = ({ user }) => {
         <p>Here's what's happening at IAN 2025.</p>
       </div>
 
-      <HappeningNow />
+      {/* This component handles the two-column live display */}
+      <HappeningNow 
+        itinerary={itinerary}
+        toggleItinerary={toggleItinerary}
+      />
 
       <AlertsList />
     </div>
@@ -52,3 +56,4 @@ const HomePage = ({ user }) => {
 };
 
 export default HomePage;
+
