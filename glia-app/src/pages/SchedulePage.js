@@ -1,13 +1,9 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config'; 
 import FullSchedule from '../components/FullSchedule'; 
 
 const SchedulePage = () => {
-
-  const [activeTab, setActiveTab] = useState('home');
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,18 +26,14 @@ const SchedulePage = () => {
   }, []);
 
   return (
-    <main className="app-main">
-      <div className="tabs-nav">
-        <button onClick={() => setActiveTab('schedule')} className={activeTab === 'schedule' ? 'tab-active' : ''}>Full Schedule</button>
-      </div>
+    <div className="card glass-effect">
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Conference Schedule</h1>
       {loading ? (
-        <div className="text-center"><p>Loading schedule...</p></div>
+        <div style={{ textAlign: 'center' }}><p>Loading schedule...</p></div>
       ) : (
-        <div>
-          {activeTab === 'schedule' && <FullSchedule events={events} />}
-        </div>
+        <FullSchedule events={events} />
       )}
-    </main>
+    </div>
   );
 };
 
