@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
 import EventForm from '../components/EventForm';
-import Scanner from '../components/Scanner';
 import AlertsAdmin from '../components/AlertsAdmin';
 import ManageEvents from '../components/ManageEvents';
-import participants from '../data/participants.json'; // Import participants data
+import Scanner from '../components/Scanner';
+import participants from '../data/participants.json';
 
 const AdminPage = () => {
-  const [activeTab, setActiveTab] = useState('scanner'); 
+  const [activeTab, setActiveTab] = useState('manageEvents'); 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [eventToEdit, setEventToEdit] = useState(null);
@@ -42,7 +42,7 @@ const AdminPage = () => {
   };
 
   return (
-    <main className="app-main">
+    <div className="card glass-effect">
       <div className="tabs-nav">
         <button onClick={() => { setEventToEdit(null); setActiveTab('addEvent'); }} className={activeTab === 'addEvent' ? 'tab-active' : ''}>
           {eventToEdit ? 'Edit Event' : 'Add Event'}
@@ -57,15 +57,13 @@ const AdminPage = () => {
         <div>
           {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
           {activeTab === 'manageEvents' && <ManageEvents events={events} onEdit={handleEdit} />}
-          
-          
           {activeTab === 'scanner' && <Scanner participants={participants} />}
-          
           {activeTab === 'alerts' && <AlertsAdmin />}
         </div>
       )}
-    </main>
+    </div>
   );
 };
 
 export default AdminPage;
+
