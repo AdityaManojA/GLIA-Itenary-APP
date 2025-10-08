@@ -7,6 +7,7 @@ const ScannedList = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Sets up a real-time listener for scanned coupons, ordered by the scan time
         const q = query(collection(db, 'scanned_coupons'), orderBy('scannedAt', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const scannedData = snapshot.docs.map(doc => ({
@@ -16,7 +17,7 @@ const ScannedList = () => {
             setScans(scannedData);
             setLoading(false);
         });
-        return () => unsubscribe();
+        return () => unsubscribe(); // Cleanup function
     }, []);
 
     const handleDownload = () => {
@@ -31,7 +32,10 @@ const ScannedList = () => {
 
         // Create a row for each scan
         scans.forEach(scan => {
+            // Convert Firestore Timestamp to local string
             const timestamp = scan.scannedAt ? scan.scannedAt.toDate().toLocaleString() : 'N/A';
+            
+            // Wrap data in quotes to handle commas within names/IDs
             const row = [
                 `"${scan.attendeeId}"`,
                 `"${scan.attendeeName}"`,
@@ -59,6 +63,8 @@ const ScannedList = () => {
     const groupScans = (scans) => {
         return scans.reduce((acc, scan) => {
             if (!scan.scannedAt) return acc;
+            
+            // Format date for grouping header (e.g., "Wednesday, October 29, 2025")
             const date = scan.scannedAt.toDate().toLocaleDateString('en-US', {
                 year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
             });
@@ -86,9 +92,11 @@ const ScannedList = () => {
             {Object.keys(groupedScans).length === 0 ? (
                 <p>No coupons have been scanned yet.</p>
             ) : (
+                // Sort by date descending
                 Object.keys(groupedScans).sort((a, b) => new Date(b) - new Date(a)).map(date => (
                     <div key={date}>
                         <h3 className="coupon-date-header">{date}</h3>
+                        {/* Sort meals alphabetically */}
                         {Object.keys(groupedScans[date]).sort().map(meal => (
                             <div key={meal} className="coupon-meal-group">
                                 <h4>{meal} ({groupedScans[date][meal].length} scanned)</h4>
