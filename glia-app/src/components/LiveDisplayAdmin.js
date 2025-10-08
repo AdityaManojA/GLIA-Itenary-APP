@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy, doc, setDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// New sub-component to display event details
+// Sub-component for the detailed event display
 const CurrentEventDetails = ({ event }) => {
   if (!event) {
     return (
@@ -23,12 +23,35 @@ const CurrentEventDetails = ({ event }) => {
       {event.speakerName && <p>{event.speakerName}</p>}
       {event.speakerTopic && <p><em>{event.speakerTopic}</em></p>}
       {startTime && endTime && (
-        <p>🕒 {startTime.toLocaleTimeString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})} - {endTime.toLocaleTimeString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'})}</p>
+        <p>🕒 {startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
       )}
       {event.chairpersons && <p><strong>Chairs:</strong> {event.chairpersons}</p>}
     </div>
   );
 };
+
+// NEW Sub-component to display the full list of events for a hall
+const FullEventList = ({ title, events }) => {
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+  
+  return (
+    <div className="admin-event-list-column">
+      <h4>{title}</h4>
+      <ul className="admin-event-list">
+        {events.map(event => (
+          <li key={event.id} className="admin-event-item">
+            <span className="event-date">{formatDate(event.startTime)}</span>
+            <p className="event-item-title">{event.title}</p>
+            {event.speakerTopic && <p className="event-item-topic">{event.speakerTopic}</p>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 
 const LiveDisplayAdmin = () => {
   const [hall1Events, setHall1Events] = useState([]);
@@ -142,6 +165,12 @@ const LiveDisplayAdmin = () => {
           <p className="admin-feedback-text">{feedback.hall2}</p>
           <CurrentEventDetails event={getCurrentEvent('hall2')} />
         </div>
+      </div>
+      
+      {/* NEW: Full event lists for admin reference */}
+      <div className="admin-full-schedule-view">
+        <FullEventList title="HALL 1 Full Schedule" events={hall1Events} />
+        <FullEventList title="HALL 2 Full Schedule" events={hall2Events} />
       </div>
     </div>
   );
