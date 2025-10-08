@@ -8,7 +8,8 @@ import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
 import AlertsPage from './pages/AlertsPage';
 import ItineraryPage from './pages/ItineraryPage';
-import MapPage from './pages/MapPage'; // Import MapPage
+import MapPage from './pages/MapPage'; 
+import Scanner from './components/Scanner';
 
 function App() {
   const [user, setUser] = useState(null); 
@@ -39,6 +40,8 @@ function App() {
         return <SchedulePage />;
       case 'admin':
         return isAdmin ? <AdminPage /> : <HomePage user={user} />;
+        case 'scanner':
+        return isAdmin ? <Scanner /> : <HomePage user={user} />;
       case 'alerts':
         return <AlertsPage />;
       case 'itinerary':

@@ -33,6 +33,12 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
         
         {isAdmin && (
           <button onClick={() => setCurrentPage('admin')}>Admin</button>
+          
+        )}
+
+         {isAdmin && (
+          <button onClick={() => setCurrentPage('scanner')}>Scanner</button>
+          
         )}
       </nav>
     </header>
