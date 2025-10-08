@@ -9,31 +9,39 @@ const AuthPage = ({ onLoginSuccess }) => {
   const handleLogin = async (username, password) => {
     setError('');
     const auth = getAuth();
-    const isAdmin = username.toLowerCase() === 'admin2025ian';
+    const usernameLower = username.toLowerCase();
 
     try {
-      let userToSet;
+      let completeUser;
 
-      if (isAdmin) {
-        // ADMIN PATH: Signs in with email and password to get the permanent Admin UID.
+      if (usernameLower === 'admin2025ian') {
+        // --- ADMIN LOGIN PATH ---
         if (password !== 'Admin321') {
           setError('Incorrect password.');
           return;
         }
         const adminEmail = 'adityamanoja@gmail.com';
-        // This signs in the pre-existing admin user.
         const userCredential = await signInWithEmailAndPassword(auth, adminEmail, password);
-        userToSet = { 
-          reg_no: 'admin2025ian', 
-          name: 'admin', 
-          email: adminEmail, 
-          // This UID will now match the one in your security rules.
-          uid: userCredential.user.uid 
+        completeUser = {
+          reg_no: 'admin2025ian', name: 'admin', email: adminEmail,
+          uid: userCredential.user.uid, role: 'admin' // Assign admin role
+        };
+
+      } else if (usernameLower === 'scanner2025ian') {
+        // --- NEW SCANNER LOGIN PATH ---
+        if (password !== 'Scanner321') {
+            setError('Incorrect password.');
+            return;
+        }
+        const userCredential = await signInAnonymously(auth);
+        completeUser = {
+            reg_no: 'scanner2025ian', name: 'Scanner',
+            uid: userCredential.user.uid, role: 'scanner' // Assign scanner role
         };
 
       } else {
-        // REGULAR USER PATH: Finds user in JSON and signs in anonymously.
-        const foundUser = participants.find(p => p.reg_no.toLowerCase() === username.toLowerCase());
+        // --- REGULAR USER LOGIN PATH ---
+        const foundUser = participants.find(p => p.reg_no.toLowerCase() === usernameLower);
         if (!foundUser) {
           setError('Invalid Attendee ID.');
           return;
@@ -42,20 +50,15 @@ const AuthPage = ({ onLoginSuccess }) => {
           setError('Incorrect password.');
           return;
         }
-        // Creates a new, temporary session for the attendee.
         const userCredential = await signInAnonymously(auth);
-        userToSet = { ...foundUser, uid: userCredential.user.uid };
+        completeUser = { ...foundUser, uid: userCredential.user.uid, role: 'attendee' }; // Assign attendee role
       }
-      
-      onLoginSuccess(userToSet);
+
+      onLoginSuccess(completeUser);
 
     } catch (authError) {
       console.error("Firebase sign-in failed:", authError);
-      if (authError.code === 'auth/invalid-credential' || authError.code === 'auth/wrong-password' || authError.code === 'auth/user-not-found') {
-        setError("Admin authentication failed. Please check the user's credentials in the Firebase Console.");
-      } else {
-        setError("Could not create a secure session. Please try again.");
-      }
+      setError("Could not create a secure session. Please try again.");
     }
   };
 

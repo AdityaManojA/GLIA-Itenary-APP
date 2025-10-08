@@ -1,7 +1,9 @@
 import React from 'react';
 
 const Header = ({ user, onLogout, setCurrentPage }) => {
-  const isAdmin = user && user.email === 'adityamanoja@gmail.com';
+
+  const isAdmin = user && user.role === 'admin';
+  const isScanner = user && user.role === 'scanner';
 
   return (
     <header className="app-header">
@@ -24,21 +26,21 @@ const Header = ({ user, onLogout, setCurrentPage }) => {
       )}
 
       <nav className="main-nav">
+        {/* Buttons for all users */}
         <button onClick={() => setCurrentPage('home')}>Home</button>
         <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
         <button onClick={() => setCurrentPage('map')}>Map</button>
         <button onClick={() => setCurrentPage('itinerary')}>My Itinerary</button>
         <button onClick={() => setCurrentPage('alerts')}>Alerts</button>
         
-        
+        {/* Admin-only button */}
         {isAdmin && (
           <button onClick={() => setCurrentPage('admin')}>Admin</button>
-          
         )}
 
-         {isAdmin && (
+        {/* Button for Admin OR Scanner */}
+        {(isAdmin || isScanner) && (
           <button onClick={() => setCurrentPage('scanner')}>Scanner</button>
-          
         )}
       </nav>
     </header>

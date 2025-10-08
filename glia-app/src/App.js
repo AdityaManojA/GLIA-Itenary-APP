@@ -35,7 +35,9 @@ function App() {
   };
 
   const renderPage = () => {
-    const isAdmin = user && user.email === 'adityamanoja@gmail.com';
+    const isAdmin = user && user.role === 'admin';
+    const isScanner = user && user.role === 'scanner';
+
     switch (currentPage) {
       case 'schedule':
         return <SchedulePage />;
@@ -48,7 +50,7 @@ function App() {
       case 'map':
         return <MapPage />;
       case 'scanner':
-        return isAdmin ? <ScannerPage /> : <HomePage user={user} />;
+        return (isAdmin || isScanner) ? <ScannerPage /> : <HomePage user={user} />;
       case 'home':
       default:
         return <HomePage user={user} />;
@@ -64,7 +66,6 @@ function App() {
       ) : (
         <div className="app-container">
           <Header user={user} onLogout={handleLogout} setCurrentPage={setCurrentPage} />
-          {/* We don't use app-main here so pages can control their own top-level layout */}
           {renderPage()}
         </div>
       )}
