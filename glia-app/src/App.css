@@ -673,7 +673,6 @@ body {
   word-break: break-all;
 }
 
-
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
   .app-main, .app-header, .glass-form { padding: 1rem; }

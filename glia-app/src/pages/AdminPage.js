@@ -6,6 +6,7 @@ import AlertsAdmin from '../components/AlertsAdmin';
 import ManageEvents from '../components/ManageEvents';
 import ManageAlerts from '../components/ManageAlerts';
 import LiveDisplayAdmin from '../components/LiveDisplayAdmin';
+import ScannedList from '../components/ScannedList';
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('manageEvents'); 
@@ -16,6 +17,7 @@ const AdminPage = () => {
   const [alertToEdit, setAlertToEdit] = useState(null);
 
   useEffect(() => {
+    // Fetch events
     const eventsQuery = query(collection(db, 'schedule'), orderBy('startTime'));
     const unsubscribeEvents = onSnapshot(eventsQuery, (snapshot) => {
       const eventsData = snapshot.docs.map(doc => ({
@@ -31,6 +33,7 @@ const AdminPage = () => {
       setLoading(false);
     });
 
+    // Fetch alerts
     const alertsQuery = query(collection(db, 'notifications'), orderBy('createdAt', 'desc'));
     const unsubscribeAlerts = onSnapshot(alertsQuery, (snapshot) => {
       const alertsData = snapshot.docs.map(doc => ({
@@ -78,9 +81,10 @@ const AdminPage = () => {
         </button>
         <button onClick={() => setActiveTab('manageAlerts')} className={activeTab === 'manageAlerts' ? 'tab-active' : ''}>Manage Alerts</button>
         <button onClick={() => setActiveTab('liveDisplay')} className={activeTab === 'liveDisplay' ? 'tab-active' : ''}>Live Display</button>
+        <button onClick={() => setActiveTab('scannedList')} className={activeTab === 'scannedList' ? 'tab-active' : ''}>Scanned List</button>
       </div>
       {loading ? (
-        <div className="text-center" style={{textAlign: 'center'}}><p>Loading Admin Panel...</p></div>
+        <div className="text-center"><p>Loading Admin Panel...</p></div>
       ) : (
         <div>
           {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
@@ -88,6 +92,7 @@ const AdminPage = () => {
           {activeTab === 'sendAlert' && <AlertsAdmin currentAlert={alertToEdit} onDone={handleDoneAlertEditing} />}
           {activeTab === 'manageAlerts' && <ManageAlerts alerts={alerts} onEdit={handleAlertEdit} />}
           {activeTab === 'liveDisplay' && <LiveDisplayAdmin />}
+          {activeTab === 'scannedList' && <ScannedList />}
         </div>
       )}
     </div>

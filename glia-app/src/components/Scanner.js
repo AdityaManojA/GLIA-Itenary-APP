@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import participants from '../data/participants.json';
 
 const Scanner = () => {
-    const [uiState, setUiState] = useState('choice'); // 'choice', 'camera', 'preview'
+    const [uiState, setUiState] = useState('choice');
     const [scanResult, setScanResult] = useState(null);
-    const [feedback, setFeedback] = useState('Scan or upload an image to see the result.');
-    const [capturedImage, setCapturedImage] = useState(null); // Holds the captured image data URL
-    const [isCameraReady, setIsCameraReady] = useState(false); // State to track if video stream is ready
+    const [feedback, setFeedback] = useState('Select a meal and date, then scan a QR code.');
+    const [isProcessing, setIsProcessing] = useState(false);
+    
+    // Updated state to use a dropdown with specific dates
+    const [mealType, setMealType] = useState('Breakfast');
+    const [scanDate, setScanDate] = useState('2025-10-29'); // Default to the first day
 
     const videoRef = useRef(null);
-    const canvasRef = useRef(null); // This ref is now for a hidden canvas
+    const canvasRef = useRef(null);
     const fileInputRef = useRef(null);
     const streamRef = useRef(null);
 
-    // Function to safely stop the camera stream
     const stopCamera = () => {
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => track.stop());
@@ -22,34 +27,49 @@ const Scanner = () => {
     };
 
     useEffect(() => {
-        // Stop the camera if the UI state changes away from 'camera'
-        if (uiState !== 'camera') {
-            stopCamera();
-            setIsCameraReady(false);
-        }
-
         if (uiState === 'camera' && videoRef.current) {
-            setIsCameraReady(false); // Set to false while camera is initializing
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
                 .then(stream => {
                     streamRef.current = stream;
-                    if (videoRef.current) {
-                      videoRef.current.srcObject = stream;
-                    }
+                    if(videoRef.current) videoRef.current.srcObject = stream;
                 })
                 .catch(err => {
-                    console.error("Camera access error:", err);
-                    setFeedback('Error: Could not access camera. Please grant permission.');
+                    setFeedback('Error: Could not access camera.');
                     setUiState('choice');
                 });
         }
-
-        // Cleanup function to ensure camera stops when component is unmounted
-        return () => {
-            stopCamera();
-        };
+        return () => stopCamera();
     }, [uiState]);
 
+    const saveData = async (decodedText) => {
+        setIsProcessing(true);
+        const participant = participants.find(p => p.reg_no.toLowerCase() === decodedText.toLowerCase());
+        
+        if (!participant) {
+            setFeedback(`Error: Attendee ID "${decodedText}" not found.`);
+            setIsProcessing(false);
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, 'scanned_coupons'), {
+                attendeeId: participant.reg_no,
+                attendeeName: participant.name,
+                meal: mealType,
+                date: scanDate,
+                scannedAt: serverTimestamp()
+            });
+            setFeedback(`✅ Success! Coupon for ${participant.name} saved.`);
+            setScanResult(decodedText);
+        } catch (error) {
+            setFeedback('❌ Error: Could not save data. Check date restrictions or permissions.');
+            console.error("Error saving coupon data: ", error);
+        }
+        
+        setTimeout(() => {
+            setIsProcessing(false);
+        }, 2000);
+    };
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -61,8 +81,7 @@ const Scanner = () => {
         const fileScanner = new Html5Qrcode("reader");
         fileScanner.scanFile(file, true)
             .then(decodedText => {
-                setFeedback('Scan Successful!');
-                setScanResult(decodedText);
+                saveData(decodedText);
             })
             .catch(err => {
                 setFeedback('Error: Could not decode QR code from image.');
@@ -71,29 +90,21 @@ const Scanner = () => {
     };
     
     const handleCapturePhoto = () => {
-        if (!videoRef.current || !canvasRef.current || !isCameraReady) {
-            console.error("Capture button clicked before camera was fully ready.");
-            return;
-        }
-
+        if (!videoRef.current || !canvasRef.current) return;
         const video = videoRef.current;
         const canvas = canvasRef.current;
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
         stopCamera();
-        
-        const dataURL = canvas.toDataURL('image/png');
-        setCapturedImage(dataURL); // Save the captured image data
         setUiState('preview');
     };
 
     const handleScanCaptured = () => {
-        if (!capturedImage) return;
+        if (!canvasRef.current) return;
+        const dataURL = canvasRef.current.toDataURL('image/png');
         
-        // Convert the captured image Data URL to a File object for scanning
-        fetch(capturedImage)
+        fetch(dataURL)
             .then(res => res.blob())
             .then(blob => {
                 const file = new File([blob], "capture.png", { type: "image/png" });
@@ -101,64 +112,64 @@ const Scanner = () => {
             });
         
         setUiState('choice');
-        setCapturedImage(null); // Clear the captured image
-    };
-    
-    // This function will be called once the video stream has loaded its metadata
-    const onVideoReady = () => {
-        setIsCameraReady(true);
     };
 
     return (
         <div className="card glass-effect">
-            <h2 style={{ textAlign: 'center' }}>QR Code Scanner</h2>
+            <h2 style={{ textAlign: 'center' }}>Food Coupon Scanner</h2>
+            
+            <div className="scanner-setup">
+                <div className="input-group">
+                    <label htmlFor="scan-date">Date</label>
+                    {/* UPDATED: Changed from text input to a select dropdown */}
+                    <select id="scan-date" value={scanDate} onChange={e => setScanDate(e.target.value)}>
+                        <option value="2025-10-29">October 29</option>
+                        <option value="2025-10-30">October 30</option>
+                        <option value="2025-10-31">October 31</option>
+                        <option value="2025-11-01">November 1</option>
+                    </select>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="meal-type">Meal</label>
+                    <select id="meal-type" value={mealType} onChange={e => setMealType(e.target.value)}>
+                        <option>Breakfast</option>
+                        <option>Lunch</option>
+                        <option>Dinner</option>
+                    </select>
+                </div>
+            </div>
 
             {uiState === 'choice' && (
                 <div className="scanner-choice-container">
-                    <button onClick={() => setUiState('camera')} className="auth-button">
-                        Take a Photo
-                    </button>
+                    <button onClick={() => setUiState('camera')} className="auth-button" disabled={isProcessing}>Take a Photo</button>
                     <p className="or-text">OR</p>
-                    <button onClick={() => fileInputRef.current.click()} className="auth-button">
-                        Choose Image
-                    </button>
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        style={{ display: 'none' }}
-                        onChange={handleFileChange}
-                    />
+                    <button onClick={() => fileInputRef.current.click()} className="auth-button" disabled={isProcessing}>Choose Image</button>
+                    <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                 </div>
             )}
 
             {uiState === 'camera' && (
                 <div className="camera-container">
-                    <video ref={videoRef} className="camera-preview" autoPlay playsInline onLoadedData={onVideoReady}></video>
-                    <button onClick={handleCapturePhoto} className="auth-button" disabled={!isCameraReady}>
-                        {isCameraReady ? 'Capture Photo' : 'Starting Camera...'}
-                    </button>
+                    <video ref={videoRef} className="camera-preview" autoPlay playsInline></video>
+                    <button onClick={handleCapturePhoto} className="auth-button">Capture Photo</button>
                     <button onClick={() => setUiState('choice')} className="reset-btn" style={{ width: '100%', marginTop: '0.5rem' }}>Cancel</button>
                 </div>
             )}
 
             {uiState === 'preview' && (
                 <div className="camera-container">
-                    {/* Display the captured image for preview */}
-                    <img src={capturedImage} alt="Captured QR Code" className="camera-preview" />
+                    <canvas ref={canvasRef} className="camera-preview"></canvas>
                     <button onClick={handleScanCaptured} className="auth-button">Scan This Photo</button>
                     <button onClick={() => setUiState('camera')} className="reset-btn" style={{ width: '100%', marginTop: '0.5rem' }}>Retake Photo</button>
                 </div>
             )}
 
-            {/* Hidden elements needed by the libraries */}
             <div id="reader" style={{ display: 'none' }}></div>
-            <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
             
             <div className="scan-result-panel">
                 <p className="feedback-text">{feedback}</p>
                 {scanResult && (
-                    <p className="scan-result-text">{scanResult}</p>
+                    <p className="scan-result-text">Last scan: {scanResult}</p>
                 )}
             </div>
         </div>

@@ -8,8 +8,8 @@ import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
 import AlertsPage from './pages/AlertsPage';
 import ItineraryPage from './pages/ItineraryPage';
-import MapPage from './pages/MapPage'; 
-import Scanner from './components/Scanner';
+import MapPage from './pages/MapPage';
+import ScannerPage from './pages/ScannerPage';
 
 function App() {
   const [user, setUser] = useState(null); 
@@ -31,6 +31,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
+    setCurrentPage('home'); // Redirect to home on logout
   };
 
   const renderPage = () => {
@@ -40,15 +41,14 @@ function App() {
         return <SchedulePage />;
       case 'admin':
         return isAdmin ? <AdminPage /> : <HomePage user={user} />;
-        case 'scanner':
-        return isAdmin ? <Scanner /> : <HomePage user={user} />;
       case 'alerts':
         return <AlertsPage />;
       case 'itinerary':
         return <ItineraryPage />;
-      // This case tells the app what to do when the map button is clicked
       case 'map':
         return <MapPage />;
+      case 'scanner':
+        return isAdmin ? <ScannerPage /> : <HomePage user={user} />;
       case 'home':
       default:
         return <HomePage user={user} />;
@@ -64,9 +64,8 @@ function App() {
       ) : (
         <div className="app-container">
           <Header user={user} onLogout={handleLogout} setCurrentPage={setCurrentPage} />
-          <main className="app-main">
-            {renderPage()}
-          </main>
+          {/* We don't use app-main here so pages can control their own top-level layout */}
+          {renderPage()}
         </div>
       )}
     </>
