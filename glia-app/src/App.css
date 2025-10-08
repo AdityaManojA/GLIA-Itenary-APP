@@ -601,6 +601,16 @@ body {
   margin: 0.25rem 0 0 0;
 }
 
+/* --- Styles for Scanner --- */
+.feedback-message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
 
 /* --- Responsive Styles --- */
 @media (max-width: 768px) {
