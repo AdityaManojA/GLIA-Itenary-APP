@@ -14,9 +14,34 @@ const sortDates = (dateA, dateB) => {
     return indexA - indexB;
 };
 
+// 💡 FUNCTION: Filter out duplicates based on the three criteria
+const filterDuplicates = (scans) => {
+    const uniqueScans = new Map();
+    
+    // Sort scans by 'scannedAt' descending (newest first)
+    const sortedScans = scans.sort((a, b) => b.scannedAt.toDate() - a.scannedAt.toDate());
+
+    sortedScans.forEach(scan => {
+        // Create a unique key: ID|Meal|Date
+        const key = `${scan.attendeeId}|${scan.meal}|${scan.date}`;
+        
+        // Since the array is sorted newest first, we only keep the first entry found for the key
+        if (!uniqueScans.has(key)) {
+            uniqueScans.set(key, scan);
+        }
+    });
+
+    return Array.from(uniqueScans.values());
+};
+
+
 const SortedLiveScans = () => {
     const [scans, setScans] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    // Filtered scans (unique entries only) used for both display and download
+    const uniqueFilteredScans = filterDuplicates(scans);
+
 
     useEffect(() => {
         // Fetch all scanned data in real-time, ordered by newest scan first
@@ -35,18 +60,20 @@ const SortedLiveScans = () => {
         return () => unsubscribe();
     }, []);
 
-    const handleDownload = () => {
-        if (scans.length === 0) {
+    // 💡 UPDATED: Handles download for CSV/XLSX with robust CSV data
+    const handleDownload = (fileFormat) => {
+        const dataToDownload = uniqueFilteredScans;
+        
+        if (dataToDownload.length === 0) {
             alert("There is no data to download.");
             return;
         }
 
-        // Generate CSV content using the raw, unsorted scans (or you can use the sorted one)
         const headers = ["Attendee ID", "Attendee Name", "Meal", "Date", "Scanned At"];
         const csvRows = [headers.join(',')];
 
         // Format data into CSV rows
-        scans.forEach(scan => {
+        dataToDownload.forEach(scan => {
             const timestamp = scan.scannedAt ? scan.scannedAt.toDate().toLocaleString() : 'N/A';
             const row = [
                 `"${scan.attendeeId}"`,
@@ -59,12 +86,19 @@ const SortedLiveScans = () => {
         });
 
         const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         
+        // Use BOM ('\ufeff') to force Excel to correctly interpret UTF-8 CSV
+        const blob = new Blob(['\ufeff', csvString], { type: 'text/csv;charset=utf-8;' });
+        
+        // Use the extension requested by the user, knowing both are CSV content.
+        const extension = fileFormat === 'xlsx' ? 'xlsx' : 'csv'; 
+        const filenameBase = 'unique-scans';
+
         // Trigger download
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
-        link.setAttribute("download", "sorted-live-scans.csv");
+        link.setAttribute("download", `${filenameBase}.${extension}`);
+        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -102,17 +136,27 @@ const SortedLiveScans = () => {
         return <p>Loading live scans...</p>;
     }
 
-    const sortedScans = groupAndSortScans(scans);
+    // Use the UNIQUE scans for display
+    const sortedScans = groupAndSortScans(uniqueFilteredScans);
 
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h2>Live Scan Summary (Sorted)</h2>
-                <button onClick={handleDownload} className="auth-button" style={{ marginTop: 0 }}>Download Full CSV</button>
+                <h2>Live Scan Summary (Unique Entries Only)</h2>
+                
+                {/* 💡 Two Download Buttons */}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button onClick={() => handleDownload('csv')} className="auth-button" style={{ marginTop: 0 }}>
+                        Download as CSV
+                    </button>
+                    <button onClick={() => handleDownload('xlsx')} className="auth-button" style={{ marginTop: 0 }}>
+                        Download as XLSX
+                    </button>
+                </div>
             </div>
             
             {Object.keys(sortedScans).length === 0 ? (
-                <p>No coupons have been scanned yet.</p>
+                <p>No unique coupons have been scanned yet.</p>
             ) : (
                 <div className="sorted-scans-container">
                     {Object.keys(sortedScans).map(date => (
@@ -127,7 +171,6 @@ const SortedLiveScans = () => {
                                     <div key={meal} className="coupon-meal-group" style={{ marginBottom: '1rem' }}>
                                         <h4>{meal} ({mealScans.length} Scans)</h4>
                                         
-                                        {/* 💡 Rendering as a table */}
                                         <table className="scans-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
                                             <thead>
                                                 <tr style={{ borderBottom: '2px solid #ccc' }}>
