@@ -14,7 +14,7 @@ const sortDates = (dateA, dateB) => {
     return indexA - indexB;
 };
 
-// 💡 FUNCTION: Filter out duplicates based on the three criteria
+// FUNCTION: Filter out duplicates based on the three criteria (Attendee ID, Meal, Date)
 const filterDuplicates = (scans) => {
     const uniqueScans = new Map();
     
@@ -60,8 +60,8 @@ const SortedLiveScans = () => {
         return () => unsubscribe();
     }, []);
 
-    // 💡 UPDATED: Handles download for CSV/XLSX with robust CSV data
-    const handleDownload = (fileFormat) => {
+    // Handles single CSV download
+    const handleDownload = () => {
         const dataToDownload = uniqueFilteredScans;
         
         if (dataToDownload.length === 0) {
@@ -87,17 +87,13 @@ const SortedLiveScans = () => {
 
         const csvString = csvRows.join('\n');
         
-        // Use BOM ('\ufeff') to force Excel to correctly interpret UTF-8 CSV
+        // Use BOM ('\ufeff') and standard CSV MIME type
         const blob = new Blob(['\ufeff', csvString], { type: 'text/csv;charset=utf-8;' });
         
-        // Use the extension requested by the user, knowing both are CSV content.
-        const extension = fileFormat === 'xlsx' ? 'xlsx' : 'csv'; 
-        const filenameBase = 'unique-scans';
-
         // Trigger download
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
-        link.setAttribute("download", `${filenameBase}.${extension}`);
+        link.setAttribute("download", `unique-scans.csv`);
         
         document.body.appendChild(link);
         link.click();
@@ -142,15 +138,12 @@ const SortedLiveScans = () => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h2>Live Scan Summary (Unique Entries Only)</h2>
+                <h2>Live Scan Summary</h2>
                 
-                {/* 💡 Two Download Buttons */}
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={() => handleDownload('csv')} className="auth-button" style={{ marginTop: 0 }}>
+                {/* Single CSV Download Button */}
+                <div>
+                    <button onClick={handleDownload} className="auth-button" style={{ marginTop: 0 }}>
                         Download as CSV
-                    </button>
-                    <button onClick={() => handleDownload('xlsx')} className="auth-button" style={{ marginTop: 0 }}>
-                        Download as XLSX
                     </button>
                 </div>
             </div>
