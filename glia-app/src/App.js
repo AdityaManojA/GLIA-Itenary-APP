@@ -16,7 +16,6 @@ function App() {
     const [currentPage, setCurrentPage] = useState('home');
     const [isLoadingInitialUser, setIsLoadingInitialUser] = useState(true); 
 
-    }
     useEffect(() => {
         const savedUser = localStorage.getItem('user');
         if (savedUser) {
@@ -51,7 +50,7 @@ function App() {
                 return isAdmin ? <AdminPage /> : <HomePage user={user} />;
             case 'alerts':
                 return <AlertsPage />;
-            // ❌ REMOVED: 'itinerary' case
+          
             case 'map':
                 return <MapPage />;
             case 'scanner':
