@@ -200,7 +200,7 @@ const HappeningNow = () => {
           </div>
         )}
 
-        {/* ROW 2: Halls 3 & 4 (Bay & Waves) and LUNCH */}
+
         {isRow2Active && (
                     
                     <div className={`live-display-row ${isRow2SingleColumn ? 'single-column-row' : 'two-column-row'}`}>

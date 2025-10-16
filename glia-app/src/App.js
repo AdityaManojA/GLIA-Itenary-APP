@@ -10,6 +10,7 @@ import AdminPage from './pages/AdminPage';
 import AlertsPage from './pages/AlertsPage';
 import MapPage from './pages/MapPage';
 import ScannerPage from './pages/ScannerPage';
+import CodeAndConductPage from './pages/CodeAndConductPage';
 
 function App() {
  const [user, setUser] = useState(null);
@@ -55,6 +56,8 @@ function App() {
     return <MapPage />;
    case 'scanner':
     return (isAdmin || isScanner) ? <ScannerPage /> : <HomePage user={user} />;
+    case 'code_conduct':
+                return <CodeAndConductPage />;
    case 'home':
    default:
     return <HomePage user={user} />;
