@@ -1,8 +1,10 @@
+// src/components/HappeningNow.js
+
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// EventDisplayCard (Logic to hide speaker/chairperson for LUNCH remains)
+// EventDisplayCard (MODIFIED to hide speaker info AND venue for LUNCH events)
 const EventDisplayCard = ({ event }) => {
   if (!event) {
     return (
@@ -41,9 +43,12 @@ const EventDisplayCard = ({ event }) => {
           </p>
         )}
         
-        <p className="live-display-venue">
-          📍 {event.venue}
-        </p>
+        {/* ❌ VENUE DISPLAY: Hide for LUNCH events */}
+        {!isMealEvent && (
+                    <p className="live-display-venue">
+            📍 {event.venue}
+          </p>
+                )}
         
         {/* Chairpersons: Hide for LUNCH events */}
         {event.chairpersons && !isMealEvent && (
@@ -59,14 +64,13 @@ const EventDisplayCard = ({ event }) => {
 
 // HappeningNow component with structured layout logic
 const HappeningNow = () => {
-    // 💡 UPDATED STATE: Hall 3 & 4 replaces Poster V1/V2
   const [vizhinjamEvent, setVizhinjamEvent] = useState(null);
   const [lightHouseEvent, setLightHouseEvent] = useState(null);
   const [bayAndWavesEvent, setBayAndWavesEvent] = useState(null);
   const [lunchEvent, setLunchEvent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 💡 NEW VENUE CONSTANTS
+  // NEW VENUE CONSTANTS
     const HALL1_NAME = 'Hall 1 (Vizhinjam)';
     const HALL2_NAME = 'Hall 2 (Light House)';
     const HALL3_4_NAME = 'Halls 3 & 4 (Bay & Waves)';
@@ -108,7 +112,6 @@ const HappeningNow = () => {
      
       // Hall 1 (Vizhinjam) Logic
       if (unsubscribeVizhinjamAuto) unsubscribeVizhinjamAuto();
-      // Note: Overrides still use 'hall1' and 'hall2' keys in Firestore for backward compatibility
       if (overrideData.hall1) {
         const event = await fetchEventById(overrideData.hall1);
         setVizhinjamEvent(event);
@@ -161,7 +164,11 @@ const HappeningNow = () => {
   const hasLunchEvent = lunchEvent !== null;
 
   const isRow1Active = hasVizhinjamEvent || hasLightHouseEvent;
-  const isRow2Active = hasBayAndWavesEvent || hasLunchEvent; // New grouping for layout
+  const isRow2Active = hasBayAndWavesEvent || hasLunchEvent;
+    
+    // Check if only one event is active in Row 2
+    const isRow2SingleColumn = (hasBayAndWavesEvent && !hasLunchEvent) || (!hasBayAndWavesEvent && hasLunchEvent);
+
 
   const totalActiveRows = (isRow1Active ? 1 : 0) + (isRow2Active ? 1 : 0);
 
@@ -193,9 +200,10 @@ const HappeningNow = () => {
           </div>
         )}
 
-        {/* ROW 2: Halls 3 & 4 (Bay & Waves) and LUNCH. Conditionally display as two columns or single column */}
+        {/* ROW 2: Halls 3 & 4 (Bay & Waves) and LUNCH */}
         {isRow2Active && (
-                    <div className="live-display-row two-column-row">
+                    
+                    <div className={`live-display-row ${isRow2SingleColumn ? 'single-column-row' : 'two-column-row'}`}>
                         
                         {hasBayAndWavesEvent && (
                             <div className="live-display-column">
@@ -210,12 +218,6 @@ const HappeningNow = () => {
                                 <EventDisplayCard event={lunchEvent} /> 
                             </div>
                         )}
-
-                        {/* Filler for 2-column layout when only one is active */}
-                        {((hasBayAndWavesEvent && !hasLunchEvent) || (!hasBayAndWavesEvent && hasLunchEvent)) && (
-                            <div className="live-display-column-placeholder"></div>
-                        )}
-
                     </div>
                 )}
       </div>
