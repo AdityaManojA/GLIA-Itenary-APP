@@ -87,7 +87,7 @@ const AdminPage = () => {
     </button>
     <button onClick={() => setActiveTab('manageAlerts')} className={activeTab === 'manageAlerts' ? 'tab-active' : ''}>Manage Alerts</button>
     <button onClick={() => setActiveTab('liveDisplay')} className={activeTab === 'liveDisplay' ? 'tab-active' : ''}>Live Display</button>
-    <button onClick={() => setActiveTab('scannedList')} className={activeTab === 'scannedList' ? 'tab-active' : ''}>Scanned List</button>
+   
 
     <button onClick={() => setActiveTab('sortedLiveScans')} className={activeTab === 'sortedLiveScans' ? 'tab-active' : ''}>Sorted Live Scans</button>
    </div>
