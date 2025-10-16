@@ -23,8 +23,9 @@ const Header = ({ user, onLogout, currentPage, setCurrentPage }) => {
     
     // 💡 ADDED 'code_conduct' TO THE BASE NAVIGATION ARRAY
     const navPages = ['home', 'schedule', 'map', 'alerts', 'code_conduct'];
-    if (isAdmin) navPages.push('admin');
     if (isAdmin || isScanner) navPages.push('scanner');
+    if (isAdmin) navPages.push('admin');
+    
 
 
   return (
