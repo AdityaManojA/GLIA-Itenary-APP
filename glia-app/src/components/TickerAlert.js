@@ -30,23 +30,30 @@ const TickerAlert = () => {
     }, []);
 
     if (loading || !latestAlert) {
-
         return (
             <div className="ticker-bar">
-                <p className="ticker-content">{loading ? 'No New Alert' : 'No active announcements.'}</p>
+                <p className="ticker-scroll-text" 
+                   style={{ animation: 'none', paddingLeft: '1rem', color: '#FFF', position: 'relative' }}>
+                    {loading ? 'Loading latest announcements...' : 'No active announcements.'}
+                </p>
             </div>
         );
     }
+    const baseAlertText = `🚨 ${latestAlert.title}: ${latestAlert.message} 🚨`;
+    const largeGap = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0'; 
 
 
-    const alertText = `🔔 ${latestAlert.title}: ${latestAlert.message} 🔔 `;
+    let repeatedAlertText = '';
+    for (let i = 0; i < 5; i++) {
+        repeatedAlertText += baseAlertText + largeGap;
+    }
 
     return (
-        
+
         <div className="ticker-bar">
-            
-            <p className="ticker-scroll-text" data-text={alertText}>
-                {alertText}
+
+            <p className="ticker-scroll-text">
+                {repeatedAlertText}
             </p>
         </div>
     );

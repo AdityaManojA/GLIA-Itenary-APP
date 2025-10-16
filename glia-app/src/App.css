@@ -54,6 +54,7 @@ position: relative;
 background-color: var(--surface-color);
 color: var(--text-primary);
 box-shadow: 0 2px 4px var(--shadow-dark);
+z-index: 10;
 }
 
 .app-header h1, .app-header p {
@@ -80,7 +81,7 @@ top: 1.5rem;
 right: 1.5rem;
 text-align: right;
 color: var(--text-secondary);
-z-index: 10;
+z-index: 11;
 }
 .header-user-info p { margin: 0.5rem 0 0; font-size: 0.8rem; opacity: 0.8; }
 
@@ -205,7 +206,14 @@ width: 100%;
 
 .error-text { color: var(--primary-color); text-align: center; margin-top: 1rem; font-weight: 600; }
 
-.home-page-layout { display: flex; flex-direction: column; gap: 1.5rem; }
+.home-page-layout { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.5rem; 
+    padding: 0; 
+    max-width: 100%;
+    margin: 0;
+}
 
 .event-title { color: var(--text-primary); font-size: 1.8rem; margin-bottom: 0.5rem; }
 .event-title-list { font-weight: bold; margin: 0 0 0.25rem 0; }
@@ -349,13 +357,12 @@ transition: opacity 0.2s ease;
 }
 
 .live-display-column {
-  flex: 1 1 50%; /* Default to 50% width for two columns */
+  flex: 1 1 50%; 
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
-/* 💡 FIX: Force the column to take full width when it's the only direct child */
 .live-display-row .live-display-column:only-child {
     flex: 1 1 100%;
 }
@@ -383,14 +390,14 @@ background-color: #F5F5F5;
 border-radius: 8px;
 flex-grow: 1;
 display: flex;
-flex-direction: column; /* Ensure vertical layout for content */
+flex-direction: column; 
 justify-content: center;
 align-items: center;
 }
 
 .live-display-main-content {
 flex-grow: 1;
-width: 100%; /* Take full width of the card */
+width: 100%; 
 }
 
 .live-display-action {
@@ -443,13 +450,12 @@ font-weight: 500;
 margin-bottom: 0.5rem;
 }
 
-/* Style for Venue */
 .live-display-venue {
     font-size: 0.9rem;
     color: var(--primary-color);
     text-align: center;
     font-weight: 700;
-    margin: 0 0 1rem 0; /* Add margin above chairpersons/footer */
+    margin: 0 0 1rem 0; 
 }
 
 .live-display-chairs {
@@ -681,6 +687,55 @@ word-break: break-all;
  color: var(--text-secondary);
 }
 
+@keyframes marquee {
+    0%   { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.ticker-bar {
+    background-color: var(--primary-color); 
+    color: #FFFFFF;
+    width: 100%;
+    overflow: hidden; 
+    z-index: 9; 
+    padding: 0.5rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box; 
+    height: 2.5rem; 
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.ticker-scroll-text {
+    position: absolute; 
+    white-space: nowrap;
+    display: inline-block;
+    padding-left: 100%; 
+    animation: marquee 40s linear infinite; 
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5rem; 
+    margin: 0;
+    color: #FFF; 
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    padding-right: 10vw; 
+}
+
+.ticker-bar:hover .ticker-scroll-text {
+    animation-play-state: paused;
+}
+
+.welcome-header, .card {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    box-sizing: border-box;
+}
+
 @media (max-width: 768px) {
 .app-main, .app-header, .glass-form { padding: 1rem; }
 
@@ -744,4 +799,8 @@ padding-bottom: 1rem;
     flex: 1 1 100%;
     margin-bottom: 0;
   }
+.welcome-header, .card {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
 }
