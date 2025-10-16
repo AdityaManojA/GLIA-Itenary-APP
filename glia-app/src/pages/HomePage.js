@@ -1,12 +1,9 @@
-import React from 'react'; // Removed useState, useEffect
-import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore'; // REMOVED: Firestore imports are now irrelevant here
+import React from 'react'; 
 import AlertsList from '../components/AlertsList';
 import HappeningNow from '../components/HappeningNow';
 
 const HomePage = ({ user }) => {
-    // ❌ REMOVED: itinerary state and useEffect for fetching itinerary
-    
-    // ❌ REMOVED: toggleItinerary function
+
     
     const getFirstName = (fullName) => {
         if (!fullName) return 'Attendee';

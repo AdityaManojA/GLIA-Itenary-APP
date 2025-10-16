@@ -1,0 +1,2317 @@
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const AlertsAdmin = ({ currentAlert, onDone }) => {
+  const [title, setTitle] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [feedback, setFeedback] = useState('');
+
+  useEffect(() => {
+    if (currentAlert) {
+      setTitle(currentAlert.title || '');
+      setMessage(currentAlert.message || '');
+    } else {
+      setTitle('');
+      setMessage('');
+    }
+  }, [currentAlert]);
+
+  const handleSendAlert = async (e) => {
+    e.preventDefault();
+    if (!title || !message) {
+      setFeedback('Title and message are required.');
+      return;
+    }
+    
+    setIsSending(true);
+    setFeedback('');
+
+    const alertPayload = {
+        title: title,
+        message: message,
+    };
+
+    try {
+        if (currentAlert) {
+            const alertDocRef = doc(db, 'notifications', currentAlert.id);
+            await updateDoc(alertDocRef, alertPayload);
+            setFeedback('✅ Alert updated successfully!');
+        } else {
+            alertPayload.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'notifications'), alertPayload);
+            setFeedback('✅ Alert sent successfully!');
+            setTitle('');
+            setMessage('');
+        }
+    } catch (error) {
+        console.error("Error sending/updating alert: ", error);
+        setFeedback(`❌ Failed to ${currentAlert ? 'update' : 'send'} alert.`);
+    } finally {
+        setIsSending(false);
+        if (onDone) onDone();
+        setTimeout(() => setFeedback(''), 4000);
+    }
+  };
+
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <h2>{currentAlert ? 'Edit Alert' : 'Send a New Alert'}</h2>
+      <p style={{ opacity: 0.8, marginTop: 0, color: 'var(--text-secondary)' }}>
+        {currentAlert ? 'Update the title and message below.' : 'This will send a notification to all active users.'}
+      </p>
+      <form onSubmit={handleSendAlert} className="event-form">
+        <div className="input-group">
+          <label htmlFor="alert-title">Notification Title</label>
+          <input
+            id="alert-title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., Schedule Change"
+            required
+          />
+        </div>
+        <div className="input-group">
+          <label htmlFor="alert-message">Notification Message</label>
+          {/* The inline style has been removed from the textarea below */}
+          <textarea
+            id="alert-message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="e.g., The keynote speech has been moved to Hall B."
+            required
+            rows="4"
+          />
+        </div>
+        <div className="event-actions" style={{ justifyContent: 'center', marginTop: '1rem' }}>
+            {currentAlert && (
+                <button type="button" className="delete-btn" onClick={onDone} style={{backgroundColor: '#6c757d'}}>
+                    Cancel
+                </button>
+            )}
+            <button type="submit" className="auth-button" disabled={isSending}>
+                {isSending ? 'Saving...' : (currentAlert ? 'Save Changes' : 'Send Alert')}
+            </button>
+        </div>
+        {feedback && <p style={{ textAlign: 'center', marginTop: '1rem', fontWeight: '500' }}>{feedback}</p>}
+      </form>
+    </div>
+  );
+};
+
+export default AlertsAdmin;
+import React, { useState, useEffect } from 'react';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const AlertsList = () => {
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'notifications'), 
+      orderBy('createdAt', 'desc'), 
+      limit(5) //Limiter for how many alers need to be shown
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const alertsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAlerts(alertsData);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return 'Just now';
+    const date = timestamp.toDate();
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  return (
+    <div className="alerts-list-container glass-effect">
+      <h3>Recent Alerts</h3>
+      {loading ? (
+        <p>Loading alerts...</p>
+      ) : alerts.length === 0 ? (
+        <p className="no-alerts-message">No recent alerts.</p>
+      ) : (
+        <ul className="alerts-list">
+          {alerts.map(alert => (
+            <li key={alert.id} className="alert-item-redesigned">
+              <div className="alert-icon">
+                <span> -🔔- </span>
+              </div>
+              <div className="alert-content">
+                <div className="alert-header">
+                  <strong className="alert-title">{alert.title}</strong>
+                  <span className="alert-timestamp">{formatTimestamp(alert.createdAt)}</span>
+                </div>
+                <p className="alert-message">{alert.message}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default AlertsList;
+import React, { useState, useEffect } from 'react';
+import { collection, addDoc, doc, updateDoc, Timestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase/config';
+
+const EventForm = ({ currentEvent, onDone }) => {
+  const [feedback, setFeedback] = useState({ message: '', type: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [imageError, setImageError] = useState('');
+
+  const [title, setTitle] = useState('');
+  const [speakerName, setSpeakerName] = useState('');
+  const [speakerTopic, setSpeakerTopic] = useState('');
+  const [chairpersons, setChairpersons] = useState('');
+  const [venue, setVenue] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (`0${d.getMonth() + 1}`).slice(-2);
+    const day = (`0${d.getDate()}`).slice(-2);
+    const hours = (`0${d.getHours()}`).slice(-2);
+    const minutes = (`0${d.getMinutes()}`).slice(-2);
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
+  useEffect(() => {
+    if (currentEvent) {
+      setTitle(currentEvent.title || '');
+      setSpeakerName(currentEvent.speakerName || '');
+      setSpeakerTopic(currentEvent.speakerTopic || '');
+      setChairpersons(currentEvent.chairpersons || '');
+      setVenue(currentEvent.venue || '');
+      setStartTime(formatDateForInput(currentEvent.startTime));
+      setEndTime(formatDateForInput(currentEvent.endTime));
+      setImagePreview(currentEvent.speakerImageURL || '');
+      setImageFile(null);
+    } else {
+      setTitle('');
+      setSpeakerName('');
+      setSpeakerTopic('');
+      setChairpersons('');
+      setVenue('');
+      setStartTime('');
+      setEndTime('');
+      setImagePreview('');
+      setImageFile(null);
+    }
+  }, [currentEvent]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      setImageFile(null);
+      setImagePreview(currentEvent ? currentEvent.speakerImageURL : '');
+      setImageError('');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setImageError('File is too large. Max 2MB.');
+      return;
+    }
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+    setImageError('');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setFeedback({ message: '', type: '' });
+
+    const eventDataPayload = {
+      title,
+      speakerName,
+      speakerTopic,
+      chairpersons,
+      venue,
+      startTime: Timestamp.fromDate(new Date(startTime)),
+      endTime: Timestamp.fromDate(new Date(endTime)),
+    };
+
+    try {
+      let speakerImageURL = currentEvent?.speakerImageURL || '';
+      if (imageFile) {
+        const imageRef = ref(storage, `speaker_images/${Date.now()}_${imageFile.name}`);
+        const snapshot = await uploadBytes(imageRef, imageFile);
+        speakerImageURL = await getDownloadURL(snapshot.ref);
+      }
+      eventDataPayload.speakerImageURL = speakerImageURL;
+
+      if (currentEvent) {
+        const eventDocRef = doc(db, 'schedule', currentEvent.id);
+        await updateDoc(eventDocRef, eventDataPayload);
+        setFeedback({ message: '✅ Event updated successfully!', type: 'success' });
+      } else {
+        await addDoc(collection(db, 'schedule'), eventDataPayload);
+        setFeedback({ message: '✅ Event saved successfully!', type: 'success' });
+        e.target.reset(); 
+      }
+    } catch (error) {
+      console.error("Error saving event: ", error);
+      setFeedback({ message: `❌ Error: ${error.message}`, type: 'error' });
+    } finally {
+      setIsSubmitting(false);
+      onDone();
+      setTimeout(() => setFeedback({ message: '', type: '' }), 5000);
+    }
+  };
+
+  return (
+    <div className="card glass-effect" style={{ textAlign: 'left' }}>
+      <h2>{currentEvent ? 'Edit Conference Event' : 'Add New Conference Event'}</h2>
+      <p style={{ opacity: 0.8, marginTop: 0 }}>
+        {currentEvent ? 'Update the details below.' : 'Fill out the details below to add a new item to the schedule.'}
+      </p>
+      <form onSubmit={handleSubmit} className="event-form">
+        <div className="input-group">
+          <label htmlFor="title">Event Title</label>
+          <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} required />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="speakerName">Speaker + Institution (Optional)</label>
+          <input id="speakerName" type="text" value={speakerName} onChange={e => setSpeakerName(e.target.value)} />
+        </div>
+        
+        <div className="input-group">
+          <label htmlFor="speakerTopic">Speaker Topic (Optional)</label>
+          <input id="speakerTopic" type="text" value={speakerTopic} onChange={e => setSpeakerTopic(e.target.value)} />
+        </div>
+        
+        <div className="input-group">
+          <label htmlFor="chairpersons">Chairperson(s) (Optional)</label>
+          <input id="chairpersons" type="text" value={chairpersons} onChange={e => setChairpersons(e.target.value)} placeholder="e.g., Dr. Smith, Dr. Jones" />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="speakerImage">Speaker Image (Optional, max 2MB)</label>
+          <input id="speakerImage" type="file" accept="image/*" onChange={handleImageChange} />
+          {imagePreview && <img src={imagePreview} alt="Preview" style={{ maxHeight: '100px', marginTop: '10px', borderRadius: '8px' }} />}
+          {imageError && <p className="error-text">{imageError}</p>}
+        </div>
+
+        {/* VENUE INPUT CHANGED TO DROPDOWN */}
+        <div className="input-group">
+          <label htmlFor="venue">Venue / Hall</label>
+          <select id="venue" value={venue} onChange={e => setVenue(e.target.value)} required>
+            <option value="" disabled>Select a venue</option>
+            <option value="HALL 1">HALL 1</option>
+            <option value="HALL 2">HALL 2</option>
+            <option value="POSTER V1">POSTER V1</option>
+            <option value="POSTER V2">POSTER V2</option>
+            <option value="LUNCH">LUNCH</option>
+          </select>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <div className="input-group" style={{ flex: 1, minWidth: '200px' }}>
+            <label htmlFor="startTime">Start Time</label>
+            <input id="startTime" type="datetime-local" value={startTime} onChange={e => setStartTime(e.target.value)} required />
+          </div>
+          <div className="input-group" style={{ flex: 1, minWidth: '200px' }}>
+            <label htmlFor="endTime">End Time</label>
+            <input id="endTime" type="datetime-local" value={endTime} onChange={e => setEndTime(e.target.value)} required />
+          </div>
+        </div>
+        
+        <div className="event-actions" style={{ justifyContent: 'center' }}>
+            {currentEvent && (
+                <button type="button" className="delete-btn" onClick={onDone} style={{backgroundColor: '#6c757d'}}>
+                    Cancel
+                </button>
+            )}
+            <button type="submit" className="auth-button" disabled={isSubmitting || !!imageError}>
+                {isSubmitting ? 'Saving...' : (currentEvent ? 'Save Changes' : 'Save Event')}
+            </button>
+        </div>
+        
+        {feedback.message && <p style={{ textAlign: 'center', marginTop: '1rem', fontWeight: '500' }}>{feedback.message}</p>}
+      </form>
+    </div>
+  );
+};
+
+export default EventForm;
+
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const FoodCouponsList = () => {
+    const [scans, setScans] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const q = query(collection(db, 'scanned_coupons'), orderBy('scannedAt', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const scannedData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setScans(scannedData);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const groupScans = (scans) => {
+        return scans.reduce((acc, scan) => {
+            if (!scan.scannedAt) return acc; // Skip scans that don't have a timestamp yet
+            const date = scan.scannedAt.toDate().toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+            });
+            const meal = scan.meal;
+
+            if (!acc[date]) {
+                acc[date] = {};
+            }
+            if (!acc[date][meal]) {
+                acc[date][meal] = [];
+            }
+            acc[date][meal].push(scan);
+            return acc;
+        }, {});
+    };
+
+    if (loading) {
+        return <p>Loading coupon list...</p>;
+    }
+
+    const groupedScans = groupScans(scans);
+
+    return (
+        <div>
+            <h2>Scanned Food Coupons List</h2>
+            {Object.keys(groupedScans).length === 0 ? (
+                <p>No coupons have been scanned yet.</p>
+            ) : (
+                Object.keys(groupedScans).sort((a, b) => new Date(b) - new Date(a)).map(date => (
+                    <div key={date}>
+                        <h3 className="coupon-date-header">{date}</h3>
+                        {Object.keys(groupedScans[date]).sort().map(meal => ( // Sort meals alphabetically
+                            <div key={meal} className="coupon-meal-group">
+                                <h4>{meal} ({groupedScans[date][meal].length} scanned)</h4>
+                                <ul className="coupon-list">
+                                    {groupedScans[date][meal].map(scan => (
+                                        <li key={scan.id}>
+                                            <span>{scan.attendeeName} ({scan.attendeeId})</span>
+                                            <span className="scan-timestamp">
+                                                {scan.scannedAt.toDate().toLocaleTimeString()}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                ))
+            )}
+        </div>
+    );
+};
+
+export default FoodCouponsList;
+
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
+
+const FullSchedule = ({ events }) => {
+
+
+ const groupedEvents = events.reduce((acc, event) => {
+  const eventDate = event.startTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  if (!acc[eventDate]) acc[eventDate] = [];
+  acc[eventDate].push(event);
+  return acc;
+ }, {});
+
+ if (events.length === 0) {
+  return <p className="text-center text-muted">No events scheduled yet.</p>;
+ }
+
+ return (
+  <div className="schedule-container">
+   {Object.entries(groupedEvents).map(([date, dateEvents]) => (
+    <div key={date}>
+     <h3 className="schedule-date-header">{date}</h3>
+     <ul className="schedule-list">
+      {dateEvents.map(event => {
+       // Removed: const isSaved = itinerary.has(event.id);
+       return (
+        <li key={event.id} className="schedule-list-item">
+         {event.speakerImageURL ? (
+          <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-small" />
+         ) : (
+          <div className="speaker-image-placeholder">
+           <span>👤</span>
+          </div>
+         )}
+         <div className="event-info">
+          <p className="event-title-list">{event.title}</p>
+ 
+          {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
+
+          {event.speakerTopic && <p className="speaker-topic-list">{event.speakerTopic}</p>}
+          <div className="event-details-list">
+           <span>📍 {event.venue}</span>
+           <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {event.endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+          </div>
+         </div>
+         
+
+         <div className="event-right-column">
+          {event.chairpersons && (
+           <div className="chairpersons-info">
+            <strong>Chairperson(s):</strong>
+            <p>{event.chairpersons}</p>
+           </div>
+          )}
+
+         </div>
+        </li>
+       );
+      })}
+     </ul>
+    </div>
+   ))}
+  </div>
+ );
+};
+
+export default FullSchedule;
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, where, orderBy, doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+// EventDisplayCard (No changes needed here, keeping the original code)
+const EventDisplayCard = ({ event }) => { 
+    if (!event) {
+        return (
+            <div className="live-display-card">
+                <p className="no-event-message">No event currently scheduled for this hall.</p>
+            </div>
+        );
+    }
+
+    const startTime = event.startTime?.toDate ? event.startTime.toDate() : event.startTime;
+    const endTime = event.endTime?.toDate ? event.endTime.toDate() : event.endTime;
+
+    return (
+        <div className="live-display-card">
+            <div className="live-display-main-content">
+                {event.speakerImageURL && (
+                    <img src={event.speakerImageURL} alt={event.speakerName} className="live-display-speaker-image" />
+                )}
+                <h3 className="live-display-title">{event.title}</h3>
+                {event.speakerName && <p className="live-display-speaker">{event.speakerName}</p>}
+                {event.speakerTopic && <p className="live-display-topic">{event.speakerTopic}</p>}
+                {startTime && endTime && (
+                    <p className="live-display-time">
+                        🕒 {startTime.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                )}
+                {event.chairpersons && (
+                    <div className="live-display-chairs">
+                        <strong>Chairperson(s):</strong> {event.chairpersons}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+
+// HappeningNow component with structured layout logic
+const HappeningNow = () => {
+    const [hall1Event, setHall1Event] = useState(null);
+    const [hall2Event, setHall2Event] = useState(null);
+    const [posterV1Event, setPosterV1Event] = useState(null); 
+    const [posterV2Event, setPosterV2Event] = useState(null); 
+    const [lunchEvent, setLunchEvent] = useState(null); 
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        let unsubscribeHall1Auto = null;
+        let unsubscribeHall2Auto = null;
+        let unsubscribePosterV1Auto = null;
+        let unsubscribePosterV2Auto = null;
+        let unsubscribeLunchAuto = null;
+        
+        const overrideDocRef = doc(db, 'live_display', 'override');
+        const scheduleColRef = collection(db, 'schedule');
+
+        const fetchEventById = async (eventId) => {
+            if (!eventId) return null;
+            const eventDoc = await getDoc(doc(db, 'schedule', eventId));
+            return eventDoc.exists() ? { id: eventDoc.id, ...eventDoc.data() } : null;
+        };
+
+        const fetchLiveEventForHall = (hallName, callback) => {
+            const now = new Date();
+            const q = query(
+                scheduleColRef,
+                where('venue', '==', hallName),
+                where('startTime', '<=', now),
+                orderBy('startTime', 'desc') 
+            );
+
+            return onSnapshot(q, (snapshot) => {
+                const startedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const liveEvent = startedEvents.find(event => event.endTime.toDate() >= now);
+                callback(liveEvent || null);
+            });
+        };
+
+        const unsubscribeOverride = onSnapshot(overrideDocRef, async (docSnap) => {
+            const overrideData = docSnap.exists() ? docSnap.data() : {};
+            
+            // Hall 1 Logic
+            if (unsubscribeHall1Auto) unsubscribeHall1Auto();
+            if (overrideData.hall1) {
+                const event = await fetchEventById(overrideData.hall1);
+                setHall1Event(event);
+            } else {
+                unsubscribeHall1Auto = fetchLiveEventForHall('HALL 1', setHall1Event);
+            }
+
+            // Hall 2 Logic
+            if (unsubscribeHall2Auto) unsubscribeHall2Auto();
+            if (overrideData.hall2) {
+                const event = await fetchEventById(overrideData.hall2);
+                setHall2Event(event);
+            } else {
+                unsubscribeHall2Auto = fetchLiveEventForHall('HALL 2', setHall2Event);
+            }
+            
+            // POSTER V1 Logic (No override needed for posters/lunch as per typical use case)
+            if (unsubscribePosterV1Auto) unsubscribePosterV1Auto();
+            unsubscribePosterV1Auto = fetchLiveEventForHall('POSTER V1', setPosterV1Event);
+            
+            // POSTER V2 Logic
+            if (unsubscribePosterV2Auto) unsubscribePosterV2Auto();
+            unsubscribePosterV2Auto = fetchLiveEventForHall('POSTER V2', setPosterV2Event);
+
+            // LUNCH Logic
+            if (unsubscribeLunchAuto) unsubscribeLunchAuto();
+            unsubscribeLunchAuto = fetchLiveEventForHall('LUNCH', setLunchEvent);
+
+            setLoading(false);
+        });
+
+        return () => {
+            unsubscribeOverride();
+            if (unsubscribeHall1Auto) unsubscribeHall1Auto();
+            if (unsubscribeHall2Auto) unsubscribeHall2Auto();
+            if (unsubscribePosterV1Auto) unsubscribePosterV1Auto();
+            if (unsubscribePosterV2Auto) unsubscribePosterV2Auto();
+            if (unsubscribeLunchAuto) unsubscribeLunchAuto();
+        };
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="card glass-effect">
+                <h2 style={{ textAlign: 'center' }}>Happening Now</h2>
+                <p style={{ textAlign: 'center' }}>Loading live schedule...</p>
+            </div>
+        );
+    }
+    
+    // Determine which events are live
+    const hasHall1Event = hall1Event !== null;
+    const hasHall2Event = hall2Event !== null;
+    const hasPosterV1Event = posterV1Event !== null;
+    const hasPosterV2Event = posterV2Event !== null;
+    const hasLunchEvent = lunchEvent !== null;
+
+    const isRow1Active = hasHall1Event || hasHall2Event;
+    const isRow2Active = hasPosterV1Event || hasPosterV2Event;
+    const isRow3Active = hasLunchEvent;
+
+    const totalActiveRows = (isRow1Active ? 1 : 0) + (isRow2Active ? 1 : 0) + (isRow3Active ? 1 : 0);
+
+    return (
+        <div className="card glass-effect">
+            <h2 style={{ textAlign: 'center' }}>Happening Now</h2>
+            
+            <div className="live-display-container-wrapper">
+                {totalActiveRows === 0 && (
+                    <p style={{ textAlign: 'center', width: '100%', padding: '20px' }}>
+                        Nothing is currently scheduled or live.
+                    </p>
+                )}
+
+                {/* ROW 1: HALL 1 and HALL 2 */}
+                {isRow1Active && (
+                    <div className="live-display-row two-column-row">
+                        {/* HALL 1 */}
+                        <div className="live-display-column">
+                            <h3>HALL 1</h3>
+                            <EventDisplayCard event={hall1Event} /> 
+                        </div>
+
+                        {/* HALL 2 */}
+                        <div className="live-display-column">
+                            <h3>HALL 2</h3>
+                            <EventDisplayCard event={hall2Event} /> 
+                        </div>
+                    </div>
+                )}
+
+                {/* ROW 2: POSTER V1 and POSTER V2 */}
+                {isRow2Active && (
+                    <div className="live-display-row two-column-row">
+                        {/* POSTER V1 */}
+                        {hasPosterV1Event && (
+                            <div className="live-display-column">
+                                <h3>POSTER V1</h3>
+                                <EventDisplayCard event={posterV1Event} /> 
+                            </div>
+                        )}
+
+                        {/* POSTER V2 */}
+                        {hasPosterV2Event && (
+                            <div className="live-display-column">
+                                <h3>POSTER V2</h3>
+                                <EventDisplayCard event={posterV2Event} /> 
+                            </div>
+                        )}
+                        
+                        {/* Placeholder to ensure two columns wide even if only one poster is active */}
+                        {(hasPosterV1Event && !hasPosterV2Event) || (!hasPosterV1Event && hasPosterV2Event) ? (
+                            <div className="live-display-column-placeholder"></div>
+                        ) : null}
+                    </div>
+                )}
+
+                {/* ROW 3: LUNCH */}
+                {isRow3Active && (
+                    <div className="live-display-row single-column-row">
+                        <div className="live-display-column">
+                            <h3>LUNCH</h3>
+                            <EventDisplayCard event={lunchEvent} /> 
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default HappeningNow;
+import React from 'react';
+
+const Header = ({ user, onLogout, setCurrentPage }) => {
+
+    const isAdmin = user && user.role === 'admin';
+    const isScanner = user && user.role === 'scanner';
+
+    return (
+        <header className="app-header">
+            
+            <div className="header-logos-container">
+                <img src="/lh1.png" alt="Logo 1" className="header-logo-small" />
+                <img src="/lh2.png" alt="Logo 2" className="header-logo-small" />
+                <img src="/lh3.png" alt="Logo 3" className="header-logo-small" />
+            </div>
+            
+            {user && (
+                <div className="header-user-info">
+                    <button onClick={onLogout} className="main-nav-button">
+                        Sign Out
+                    </button>
+                    <p>
+                        <span>Logged in as: </span>{user.name}
+                    </p>
+                </div>
+            )}
+
+            <nav className="main-nav">
+                {/* Buttons for all users */}
+                <button onClick={() => setCurrentPage('home')}>Home</button>
+                <button onClick={() => setCurrentPage('schedule')}>Schedule</button>
+                <button onClick={() => setCurrentPage('map')}>Map</button>
+                {/* ❌ REMOVED: My Itinerary button */}
+                <button onClick={() => setCurrentPage('alerts')}>Alerts</button>
+                
+                {/* Admin-only button */}
+                {isAdmin && (
+                    <button onClick={() => setCurrentPage('admin')}>Admin</button>
+                )}
+
+                {/* Button for Admin OR Scanner */}
+                {(isAdmin || isScanner) && (
+                    <button onClick={() => setCurrentPage('scanner')}>Scanner</button>
+                )}
+            </nav>
+        </header>
+    );
+};
+
+export default Header;
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy, doc, setDoc, updateDoc, deleteField } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+// Sub-component for the detailed event display
+const CurrentEventDetails = ({ event }) => {
+  if (!event) {
+    return (
+      <div className="current-event-details">
+        <p><strong>Currently Displaying:</strong></p>
+        <p>Automatic (Time-based)</p>
+      </div>
+    );
+  }
+
+  const startTime = event.startTime?.toDate ? event.startTime.toDate() : event.startTime;
+  const endTime = event.endTime?.toDate ? event.endTime.toDate() : event.endTime;
+
+  return (
+    <div className="current-event-details">
+      <p><strong>Currently Displaying:</strong></p>
+      <p className="details-title">{event.title}</p>
+      {event.speakerName && <p>{event.speakerName}</p>}
+      {event.speakerTopic && <p><em>{event.speakerTopic}</em></p>}
+      {startTime && endTime && (
+        <p>🕒 {startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+      )}
+      {event.chairpersons && <p><strong>Chairs:</strong> {event.chairpersons}</p>}
+    </div>
+  );
+};
+
+// NEW Sub-component to display the full list of events for a hall
+const FullEventList = ({ title, events }) => {
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
+  
+  return (
+    <div className="admin-event-list-column">
+      <h4>{title}</h4>
+      <ul className="admin-event-list">
+        {events.map(event => (
+          <li key={event.id} className="admin-event-item">
+            <span className="event-date">{formatDate(event.startTime)}</span>
+            <p className="event-item-title">{event.title}</p>
+            {event.speakerTopic && <p className="event-item-topic">{event.speakerTopic}</p>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+
+const LiveDisplayAdmin = () => {
+  const [hall1Events, setHall1Events] = useState([]);
+  const [hall2Events, setHall2Events] = useState([]);
+  const [override, setOverride] = useState({ hall1: null, hall2: null });
+  const [loading, setLoading] = useState(true);
+  const [feedback, setFeedback] = useState({ hall1: '', hall2: '' });
+
+  const overrideDocRef = doc(db, 'live_display', 'override');
+
+  useEffect(() => {
+    const q = query(collection(db, 'schedule'), orderBy('startTime'));
+    const unsubscribeEvents = onSnapshot(q, (snapshot) => {
+      const allEvents = snapshot.docs.map(doc => ({ 
+        id: doc.id, 
+        ...doc.data(),
+        startTime: doc.data().startTime.toDate(),
+        endTime: doc.data().endTime.toDate(),
+      }));
+      setHall1Events(allEvents.filter(e => e.venue === 'HALL 1'));
+      setHall2Events(allEvents.filter(e => e.venue === 'HALL 2'));
+      setLoading(false);
+    });
+
+    const unsubscribeOverride = onSnapshot(overrideDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setOverride(docSnap.data());
+      } else {
+        setDoc(overrideDocRef, {});
+      }
+    });
+
+    return () => {
+      unsubscribeEvents();
+      unsubscribeOverride();
+    };
+  }, []); 
+
+  const showFeedback = (hall, message) => {
+    setFeedback(prev => ({ ...prev, [hall]: message }));
+    setTimeout(() => {
+      setFeedback(prev => ({ ...prev, [hall]: '' }));
+    }, 2500);
+  };
+  
+  const handleNavigate = (hall, direction) => {
+    const events = hall === 'hall1' ? hall1Events : hall2Events;
+    if (events.length === 0) return;
+
+    const currentId = override[hall];
+    let currentIndex = events.findIndex(e => e.id === currentId);
+
+    if (currentIndex === -1) {
+      const now = new Date();
+      const liveIndex = events.findIndex(e => e.startTime <= now && e.endTime >= now);
+      currentIndex = liveIndex !== -1 ? liveIndex : 0;
+    }
+
+    let nextIndex = currentIndex + direction;
+
+    if (nextIndex >= events.length) nextIndex = 0;
+    if (nextIndex < 0) nextIndex = events.length - 1;
+
+    const nextEventId = events[nextIndex]?.id;
+    if (nextEventId) {
+      updateDoc(overrideDocRef, { [hall]: nextEventId })
+        .then(() => showFeedback(hall, 'Display updated!'));
+    }
+  };
+
+  const handleReset = (hall) => {
+    updateDoc(overrideDocRef, { [hall]: deleteField() })
+      .then(() => showFeedback(hall, 'Reset to Automatic.'));
+  };
+  
+  const getCurrentEvent = (hall) => {
+    const events = hall === 'hall1' ? hall1Events : hall2Events;
+    return events.find(e => e.id === override[hall]);
+  };
+
+  if (loading) return <p>Loading events...</p>;
+
+  return (
+    <div>
+      <h2>Manual Live Display Override</h2>
+      <p style={{ opacity: 0.8, marginTop: 0, color: 'var(--text-secondary)' }}>
+        Use these controls to manually set what's displayed on the "Happening Now" screen.
+      </p>
+
+      <div className="live-admin-controls">
+        <div className="hall-control">
+          <h4>HALL 1</h4>
+          <div className="control-row">
+            <button onClick={() => handleNavigate('hall1', -1)}>&lt;</button>
+            <span className="current-event-title">Navigate</span>
+            <button onClick={() => handleNavigate('hall1', 1)}>&gt;</button>
+          </div>
+          <button className="reset-btn" onClick={() => handleReset('hall1')}>Reset to Auto</button>
+          <p className="admin-feedback-text">{feedback.hall1}</p>
+          <CurrentEventDetails event={getCurrentEvent('hall1')} />
+        </div>
+
+        <div className="hall-control">
+          <h4>HALL 2</h4>
+          <div className="control-row">
+            <button onClick={() => handleNavigate('hall2', -1)}>&lt;</button>
+            <span className="current-event-title">Navigate</span>
+            <button onClick={() => handleNavigate('hall2', 1)}>&gt;</button>
+          </div>
+          <button className="reset-btn" onClick={() => handleReset('hall2')}>Reset to Auto</button>
+          <p className="admin-feedback-text">{feedback.hall2}</p>
+          <CurrentEventDetails event={getCurrentEvent('hall2')} />
+        </div>
+      </div>
+      
+      {/* NEW: Full event lists for admin reference */}
+      <div className="admin-full-schedule-view">
+        <FullEventList title="HALL 1 Full Schedule" events={hall1Events} />
+        <FullEventList title="HALL 2 Full Schedule" events={hall2Events} />
+      </div>
+    </div>
+  );
+};
+
+export default LiveDisplayAdmin;
+
+import React, { useState } from 'react';
+
+const LoginForm = ({ onLogin, error }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onLogin(username, password);
+  };
+
+  return (
+    <div className="auth-form-container">
+      <form onSubmit={handleSubmit} className="glass-form glass-effect">
+        <h1>Attendee Login</h1>
+        
+        <div className="input-group">
+          <label htmlFor="username">Attendee ID</label>
+          <input 
+            id="username"
+            type="text" 
+            value={username} 
+            onChange={e => setUsername(e.target.value)} 
+            placeholder="Enter your assigned ID" 
+            required 
+          />
+        </div>
+        
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
+          <input 
+            id="password"
+            type="password" 
+            value={password} 
+            onChange={e => setPassword(e.target.value)} 
+            placeholder="Enter the event password" 
+            required 
+          />
+        </div>
+        
+        <button type="submit" className="auth-button">Login</button>
+        
+        {error && <p className="error-text">{error}</p>}
+        
+      </form>
+    </div>
+  );
+};
+
+export default LoginForm;
+
+import React from 'react';
+import { doc, deleteDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const ManageAlerts = ({ alerts, onEdit }) => {
+
+  const handleDelete = async (alertId, alertTitle) => {
+    if (window.confirm(`Are you sure you want to delete the alert: "${alertTitle}"?`)) {
+      try {
+        const alertDocRef = doc(db, 'notifications', alertId);
+        await deleteDoc(alertDocRef);
+        alert('Alert deleted successfully!');
+      } catch (error) {
+        console.error("Error deleting alert: ", error);
+        alert('Failed to delete alert.');
+      }
+    }
+  };
+
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return 'No date';
+    return timestamp.toDate().toLocaleString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  return (
+    <div className="manage-alerts-container">
+      <h2>Manage Sent Alerts</h2>
+      {alerts.length === 0 ? (
+        <p style={{ textAlign: 'center' }}>No alerts have been sent yet.</p>
+      ) : (
+        <ul className="alerts-list">
+          {alerts.map(alert => (
+            <li key={alert.id} className="alert-item-redesigned">
+              <div className="alert-icon">
+                <span>🔔</span>
+              </div>
+              <div className="alert-content">
+                <div className="alert-header">
+                  <strong className="alert-title">{alert.title}</strong>
+                  <span className="alert-timestamp">{formatTimestamp(alert.createdAt)}</span>
+                </div>
+                <p className="alert-message">{alert.message}</p>
+              </div>
+              <div className="event-actions">
+                <button className="edit-btn" onClick={() => onEdit(alert)}>
+                  Edit
+                </button>
+                <button className="delete-btn" onClick={() => handleDelete(alert.id, alert.title)}>
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default ManageAlerts;
+
+import React, { useState, useEffect } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const MapAdmin = () => {
+  const [mapUrl, setMapUrl] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMapUrl = async () => {
+      const mapDocRef = doc(db, 'site_content', 'map');
+      const docSnap = await getDoc(mapDocRef);
+      if (docSnap.exists()) {
+        const url = docSnap.data().url;
+        const srcRegex = /src="([^"]+)"/;
+        const match = url.match(srcRegex);
+        if (match && match[1]) {
+          setMapUrl(match[1]);
+        }
+      }
+      setLoading(false);
+    };
+    fetchMapUrl();
+  }, []);
+
+  if (loading) {
+    return <p>Loading map preview...</p>;
+  }
+
+  return (
+    <div>
+      <h2>Live Map Preview</h2>
+      <p style={{ opacity: 0.8, marginTop: 0, color: 'var(--text-secondary)' }}>
+        This is the map currently displayed on your site. To update it, please edit the URL directly in your Firestore database under `site_content/map`.
+      </p>
+      {mapUrl ? (
+        <div className="map-container" style={{ marginTop: '1rem' }}>
+          <iframe
+            src={mapUrl}
+            width="100%"
+            height="450"
+            style={{ border: 0, borderRadius: '8px' }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Venue Map Preview"
+          ></iframe>
+        </div>
+      ) : (
+        <p>No map URL has been set in the database yet.</p>
+      )}
+    </div>
+  );
+};
+
+export default MapAdmin;
+
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const ScannedList = () => {
+    const [scans, setScans] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Sets up a real-time listener for scanned coupons, ordered by the scan time
+        const q = query(collection(db, 'scanned_coupons'), orderBy('scannedAt', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const scannedData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setScans(scannedData);
+            setLoading(false);
+        });
+        return () => unsubscribe(); // Cleanup function
+    }, []);
+
+    const handleDownload = () => {
+        if (scans.length === 0) {
+            alert("There is no data to download.");
+            return;
+        }
+
+        // Create CSV headers
+        const headers = ["Attendee ID", "Attendee Name", "Meal", "Date", "Scanned At"];
+        const csvRows = [headers.join(',')];
+
+        // Create a row for each scan
+        scans.forEach(scan => {
+            // Convert Firestore Timestamp to local string
+            const timestamp = scan.scannedAt ? scan.scannedAt.toDate().toLocaleString() : 'N/A';
+            
+            // Wrap data in quotes to handle commas within names/IDs
+            const row = [
+                `"${scan.attendeeId}"`,
+                `"${scan.attendeeName}"`,
+                `"${scan.meal}"`,
+                `"${scan.date}"`,
+                `"${timestamp}"`
+            ];
+            csvRows.push(row.join(','));
+        });
+
+        const csvString = csvRows.join('\n');
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+
+        // Create a link and trigger the download
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "scanned-coupons-list.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const groupScans = (scans) => {
+        return scans.reduce((acc, scan) => {
+            if (!scan.scannedAt) return acc;
+            
+            // Format date for grouping header (e.g., "Wednesday, October 29, 2025")
+            const date = scan.scannedAt.toDate().toLocaleDateString('en-US', {
+                year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+            });
+            const meal = scan.meal;
+
+            if (!acc[date]) acc[date] = {};
+            if (!acc[date][meal]) acc[date][meal] = [];
+            acc[date][meal].push(scan);
+            return acc;
+        }, {});
+    };
+
+    if (loading) {
+        return <p>Loading scanned list...</p>;
+    }
+
+    const groupedScans = groupScans(scans);
+
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2>Scanned Coupons List</h2>
+                <button onClick={handleDownload} className="auth-button" style={{ marginTop: 0 }}>Download as CSV</button>
+            </div>
+            {Object.keys(groupedScans).length === 0 ? (
+                <p>No coupons have been scanned yet.</p>
+            ) : (
+                // Sort by date descending
+                Object.keys(groupedScans).sort((a, b) => new Date(b) - new Date(a)).map(date => (
+                    <div key={date}>
+                        <h3 className="coupon-date-header">{date}</h3>
+                        {/* Sort meals alphabetically */}
+                        {Object.keys(groupedScans[date]).sort().map(meal => (
+                            <div key={meal} className="coupon-meal-group">
+                                <h4>{meal} ({groupedScans[date][meal].length} scanned)</h4>
+                                <ul className="coupon-list">
+                                    {groupedScans[date][meal].map(scan => (
+                                        <li key={scan.id}>
+                                            <span>{scan.attendeeName} ({scan.attendeeId})</span>
+                                            <span className="scan-timestamp">
+                                                {scan.scannedAt.toDate().toLocaleTimeString()}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                ))
+            )}
+        </div>
+    );
+};
+
+export default ScannedList;
+import React, { useState, useEffect, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import participants from '../data/participants.json';
+
+// Define the ID for the QR code reader container
+const qrcodeRegionId = "reader";
+
+const Scanner = () => {
+    // uiState: 'choice', 'scanning', or 'file_scan'
+    const [uiState, setUiState] = useState('choice'); 
+    const [scanResult, setScanResult] = useState(null);
+    const [feedback, setFeedback] = useState('Select a meal and date, then choose a scanning method.');
+    const [isProcessing, setIsProcessing] = useState(false);
+    
+    const [mealType, setMealType] = useState('Breakfast');
+    const [scanDate, setScanDate] = useState('2025-10-29');
+
+    // Ref for the Html5QrcodeScanner instance for real-time scanning
+    const html5QrCodeRef = useRef(null);
+    const fileInputRef = useRef(null); // Ref for the hidden file input
+    const fileScannerRef = useRef(null); // Ref for the file scanning instance
+
+    // --- Scanner Control Functions ---
+    
+    const stopScanner = () => {
+        if (html5QrCodeRef.current) {
+            if (html5QrCodeRef.current.isScanning) { 
+                html5QrCodeRef.current.stop()
+                    .then(() => {
+                        console.log("QR Code scanning stopped.");
+                        // This hides the camera feed div
+                        document.getElementById(qrcodeRegionId).style.display = 'none'; 
+                    })
+                    .catch(err => console.error("Error stopping QR Code scanning: ", err));
+            }
+            html5QrCodeRef.current = null;
+        }
+    };
+
+    const startScanner = () => {
+        if (isProcessing) return;
+        stopScanner(); // Ensure any existing scanner is stopped
+
+        const html5QrCode = new Html5Qrcode(qrcodeRegionId);
+        html5QrCodeRef.current = html5QrCode;
+        
+        document.getElementById(qrcodeRegionId).style.display = 'block';
+
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            videoConstraints: {
+                facingMode: { ideal: "environment" }
+            }
+        };
+
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                const cameraId = devices[0].id;
+                html5QrCode.start(
+                    cameraId,
+                    config,
+                    (decodedText, decodedResult) => {
+                        // Success callback: check processing state before handling scan
+                        if (!isProcessing) {
+                            handleScanSuccess(decodedText, 'realtime');
+                        }
+                    },
+                    (errorMessage) => {
+                        // Failure callback (ignored for continuous scanning)
+                    }
+                ).catch((err) => {
+                    setFeedback('❌ Error: Could not start camera/scanner. Check permissions.');
+                    setUiState('choice');
+                    console.error("Failed to start scanning:", err);
+                });
+                setUiState('scanning');
+                setFeedback('Scanning active. Point camera at a QR code...');
+            } else {
+                setFeedback('❌ Error: No camera found.');
+                setUiState('choice');
+            }
+        }).catch(err => {
+            setFeedback('❌ Error: Could not access camera devices.');
+            setUiState('choice');
+        });
+    };
+
+    // --- Effect Hook for Cleanup ---
+    useEffect(() => {
+        return () => stopScanner(); // Cleanup function
+    }, []);
+
+    // --- Data and Scan Handling ---
+
+    const saveData = async (decodedText, participant) => {
+        if (!participant) {
+            setFeedback(`❌ Error: Attendee ID "${decodedText}" not found.`);
+            return false;
+        }
+        
+        const attendeeId = participant.reg_no;
+        
+        const checkQuery = query(
+            collection(db, 'scanned_coupons'),
+            where('attendeeId', '==', attendeeId),
+            where('meal', '==', mealType),
+            where('date', '==', scanDate)
+        );
+
+        const snapshot = await getDocs(checkQuery);
+        if (!snapshot.empty) {
+            
+            const duplicateDoc = snapshot.docs[0].data();
+            let scanTime = 'an unknown time';
+            
+            if (duplicateDoc.scannedAt && duplicateDoc.scannedAt.toDate) {
+                scanTime = duplicateDoc.scannedAt.toDate().toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+            
+            setFeedback(`⚠️ Warning: Coupon for ${participant.name} (${attendeeId}) already scanned for ${mealType} on ${scanDate} at ${scanTime}.`);
+            
+            return false;
+        }
+
+        try {
+            await addDoc(collection(db, 'scanned_coupons'), {
+                attendeeId: attendeeId,
+                attendeeName: participant.name,
+                meal: mealType,
+                date: scanDate,
+                scannedAt: serverTimestamp()
+            });
+            setFeedback(`✅ Success! Coupon for ${participant.name} saved.`);
+            setScanResult(decodedText);
+            return true;
+        } catch (error) {
+            setFeedback('❌ Error: Could not save data. Check permissions.');
+            console.error("Error saving coupon data: ", error);
+            return false;
+        }
+    };
+
+    const handleScanSuccess = async (decodedText, source) => {
+        // This blocks repeated calls while the delay is active
+        if (isProcessing) return; 
+
+        setIsProcessing(true);
+        setFeedback(`Processing scan from ${source}...`);
+        setScanResult(null);
+        
+        // 1. STOP THE SCANNER AND FREEZE THE VIEW
+        if (source === 'realtime') {
+            stopScanner(); // This stops the camera feed and hides the div.
+        }
+
+        // Find participant
+        const participant = participants.find(p => p.reg_no.toLowerCase() === decodedText.toLowerCase());
+
+        // Process data (save or show duplicate warning)
+        await saveData(decodedText, participant);
+
+        // 2. After the delay, clear 'isProcessing' and REVERT TO CHOICE
+        setTimeout(() => {
+            setIsProcessing(false);
+            setScanResult(null); 
+            
+            // Revert to 'choice' state to show the 'Start Real-time Scan' button
+            setUiState('choice');
+            
+            // The success/warning message remains visible for the rest of the 5s delay
+            setFeedback(prevFeedback => {
+                if (prevFeedback.startsWith('✅') || prevFeedback.startsWith('⚠️') || prevFeedback.startsWith('❌')) {
+                    return prevFeedback; // Keep the final message
+                }
+                return 'Ready to scan. Press "Start Real-time Scan" for the next coupon.';
+            });
+        }, 5000); // 5-second reading time
+    };
+    
+    // --- File/Image Scanning Functionality ---
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        stopScanner(); 
+        
+        setFeedback('Scanning image...');
+        setScanResult(null);
+        setIsProcessing(true);
+        setUiState('file_scan');
+
+        if (!fileScannerRef.current) {
+            fileScannerRef.current = new Html5Qrcode(qrcodeRegionId);
+        }
+
+        const fileScanner = fileScannerRef.current;
+        
+        fileScanner.scanFile(file, true)
+            .then(decodedText => {
+                handleScanSuccess(decodedText, 'file');
+            })
+            .catch(err => {
+                console.error("File scan failed:", err);
+                setFeedback('❌ Error: Could not decode QR code from image. Try a higher resolution picture.');
+                setScanResult(null);
+                setIsProcessing(false);
+                setUiState('choice');
+            });
+        
+        event.target.value = null; 
+    };
+
+    const handleStopClick = () => {
+        stopScanner();
+        setUiState('choice');
+        setFeedback('Scan stopped. Choose an option to continue.');
+    };
+
+    return (
+        <div className="card glass-effect">
+            <h2 style={{ textAlign: 'center' }}>Food Coupon Scanner</h2>
+
+            <div className="scanner-setup">
+                <div className="input-group">
+                    <label htmlFor="scan-date">Date</label>
+                    <select id="scan-date" value={scanDate} onChange={e => { setScanDate(e.target.value); setScanResult(null); }}>
+                        <option value="2025-10-29">October 29</option>
+                        <option value="2025-10-30">October 30</option>
+                        <option value="2025-10-31">October 31</option>
+                        <option value="2025-11-01">November 1</option>
+                    </select>
+                </div>
+                <div className="input-group">
+                    <label htmlFor="meal-type">Meal</label>
+                    <select id="meal-type" value={mealType} onChange={e => { setMealType(e.target.value); setScanResult(null); }}>
+                        <option>Breakfast</option>
+                        <option>Lunch</option>
+                        <option>Dinner</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id={qrcodeRegionId} style={{ 
+                width: '100%', 
+                marginBottom: '1rem', 
+                border: uiState === 'scanning' ? '2px solid #007bff' : 'none', 
+                aspectRatio: '1/1',
+                // Display is controlled by startScanner/stopScanner functions
+                display: uiState === 'scanning' ? 'block' : 'none' 
+            }}>
+            </div>
+
+            <div className="scanner-choice-container">
+                {uiState === 'choice' || uiState === 'file_scan' ? (
+                    <>
+                        <button onClick={startScanner} className="auth-button" disabled={isProcessing}>Start Real-time Scan</button>
+                        <p className="or-text">OR</p>
+                        <button onClick={() => fileInputRef.current.click()} className="auth-button" disabled={isProcessing}>Upload Image</button>
+                        <input 
+                            ref={fileInputRef} 
+                            type="file" 
+                            accept="image/*" 
+                            style={{ display: 'none' }} 
+                            onChange={handleFileChange} 
+                        />
+                    </>
+                ) : (
+                    // When in 'scanning' state but we just stopped the camera, 
+                    // we show the stop button (or nothing) but the message remains visible below.
+                    <button onClick={handleStopClick} className="reset-btn" style={{ visibility: 'hidden' }}>Stop Scan</button>
+                )}
+            </div>
+            
+            <div className="scan-result-panel">
+                <p className={`feedback-text ${isProcessing ? 'processing' : ''}`}>
+                    {isProcessing && uiState === 'scanning' ? 'PROCESSING SCAN...' : ''}
+                    {isProcessing && uiState === 'file_scan' ? 'SCANNING IMAGE...' : ''}
+                    {!isProcessing ? feedback : ''}
+                </p>
+                {scanResult && (
+                    <p className="scan-result-text">Last successful scan: **{scanResult}**</p>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default Scanner;
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+// Define custom order arrays outside the component
+const mealOrder = ["Breakfast", "Lunch", "Dinner"];
+const dateOrder = ["2025-10-29", "2025-10-30", "2025-10-31", "2025-11-01"];
+
+// Helper function to sort dates based on the custom order array
+const sortDates = (dateA, dateB) => {
+    const indexA = dateOrder.indexOf(dateA);
+    const indexB = dateOrder.indexOf(dateB);
+    if (indexA === -1 || indexB === -1) return 0; // Fallback
+    return indexA - indexB;
+};
+
+// FUNCTION: Filter out duplicates based on the three criteria (Attendee ID, Meal, Date)
+const filterDuplicates = (scans) => {
+    const uniqueScans = new Map();
+    
+    // Sort scans by 'scannedAt' descending (newest first)
+    const sortedScans = scans.sort((a, b) => b.scannedAt.toDate() - a.scannedAt.toDate());
+
+    sortedScans.forEach(scan => {
+        // Create a unique key: ID|Meal|Date
+        const key = `${scan.attendeeId}|${scan.meal}|${scan.date}`;
+        
+        // Since the array is sorted newest first, we only keep the first entry found for the key
+        if (!uniqueScans.has(key)) {
+            uniqueScans.set(key, scan);
+        }
+    });
+
+    return Array.from(uniqueScans.values());
+};
+
+
+const SortedLiveScans = () => {
+    const [scans, setScans] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // Filtered scans (unique entries only) used for both display and download
+    const uniqueFilteredScans = filterDuplicates(scans);
+
+
+    useEffect(() => {
+        // Fetch all scanned data in real-time, ordered by newest scan first
+        const q = query(collection(db, 'scanned_coupons'), orderBy('scannedAt', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const scannedData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setScans(scannedData);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching scanned data: ", error);
+            setLoading(false);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // Handles single CSV download
+    const handleDownload = () => {
+        const dataToDownload = uniqueFilteredScans;
+        
+        if (dataToDownload.length === 0) {
+            alert("There is no data to download.");
+            return;
+        }
+
+        const headers = ["Attendee ID", "Attendee Name", "Meal", "Date", "Scanned At"];
+        const csvRows = [headers.join(',')];
+
+        // Format data into CSV rows
+        dataToDownload.forEach(scan => {
+            const timestamp = scan.scannedAt ? scan.scannedAt.toDate().toLocaleString() : 'N/A';
+            const row = [
+                `"${scan.attendeeId}"`,
+                `"${scan.attendeeName}"`,
+                `"${scan.meal}"`,
+                `"${scan.date}"`,
+                `"${timestamp}"`
+            ];
+            csvRows.push(row.join(','));
+        });
+
+        const csvString = csvRows.join('\n');
+        
+        // Use BOM ('\ufeff') and standard CSV MIME type
+        const blob = new Blob(['\ufeff', csvString], { type: 'text/csv;charset=utf-8;' });
+        
+        // Trigger download
+        const link = document.createElement("a");
+        link.setAttribute("href", URL.createObjectURL(blob));
+        link.setAttribute("download", `unique-scans.csv`);
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const groupAndSortScans = (data) => {
+        const grouped = data.reduce((acc, scan) => {
+            const date = scan.date;
+            const meal = scan.meal;
+            if (!acc[date]) acc[date] = {};
+            if (!acc[date][meal]) acc[date][meal] = [];
+            acc[date][meal].push(scan);
+            return acc;
+        }, {});
+
+        const sortedDates = Object.keys(grouped).sort(sortDates);
+        
+        const sortedResult = {};
+        sortedDates.forEach(date => {
+            sortedResult[date] = {};
+            mealOrder.forEach(meal => {
+                if (grouped[date] && grouped[date][meal]) {
+                    // Sort individual scan times within each meal group (newest first)
+                    sortedResult[date][meal] = grouped[date][meal].sort((a, b) => 
+                        b.scannedAt.toDate() - a.scannedAt.toDate()
+                    );
+                }
+            });
+        });
+
+        return sortedResult;
+    };
+
+    if (loading) {
+        return <p>Loading live scans...</p>;
+    }
+
+    // Use the UNIQUE scans for display
+    const sortedScans = groupAndSortScans(uniqueFilteredScans);
+
+    return (
+        <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <h2>Live Scan Summary</h2>
+                
+                {/* Single CSV Download Button */}
+                <div>
+                    <button onClick={handleDownload} className="auth-button" style={{ marginTop: 0 }}>
+                        Download as CSV
+                    </button>
+                </div>
+            </div>
+            
+            {Object.keys(sortedScans).length === 0 ? (
+                <p>No unique coupons have been scanned yet.</p>
+            ) : (
+                <div className="sorted-scans-container">
+                    {Object.keys(sortedScans).map(date => (
+                        <div key={date} className="scan-date-group" style={{ marginBottom: '2rem' }}>
+                            <h3 className="coupon-date-header">{new Date(date).toLocaleDateString([], { month: 'long', day: 'numeric', year: 'numeric' })}</h3>
+                            
+                            {mealOrder.map(meal => {
+                                const mealScans = sortedScans[date][meal];
+                                if (!mealScans || mealScans.length === 0) return null;
+
+                                return (
+                                    <div key={meal} className="coupon-meal-group" style={{ marginBottom: '1rem' }}>
+                                        <h4>{meal} ({mealScans.length} Scans)</h4>
+                                        
+                                        <table className="scans-table" style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+                                            <thead>
+                                                <tr style={{ borderBottom: '2px solid #ccc' }}>
+                                                    <th style={{ width: '40%', textAlign: 'left', padding: '8px 0' }}>Attendee Name</th>
+                                                    <th style={{ width: '30%', textAlign: 'left', padding: '8px 0' }}>Attendee ID</th>
+                                                    <th style={{ width: '30%', textAlign: 'left', padding: '8px 0' }}>Time Scanned</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {mealScans.map(scan => (
+                                                    <tr key={scan.id} style={{ borderBottom: '1px solid #eee' }}>
+                                                        <td style={{ padding: '8px 0', fontWeight: 'bold' }}>{scan.attendeeName}</td>
+                                                        <td style={{ padding: '8px 0' }}>{scan.attendeeId}</td>
+                                                        <td style={{ padding: '8px 0' }}>
+                                                            {scan.scannedAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default SortedLiveScans;
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase/config';
+import EventForm from '../components/EventForm';
+import AlertsAdmin from '../components/AlertsAdmin';
+import ManageEvents from '../components/ManageEvents';
+import ManageAlerts from '../components/ManageAlerts';
+import LiveDisplayAdmin from '../components/LiveDisplayAdmin';
+import ScannedList from '../components/ScannedList';
+// 💡 NEW: Import the new component (adjust path if needed)
+import SortedLiveScans from '../components/SortedLiveScans'; 
+
+
+const AdminPage = () => {
+  const [activeTab, setActiveTab] = useState('manageEvents'); 
+  const [events, setEvents] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [eventToEdit, setEventToEdit] = useState(null);
+  const [alertToEdit, setAlertToEdit] = useState(null);
+
+  useEffect(() => {
+    // Fetch events
+    const eventsQuery = query(collection(db, 'schedule'), orderBy('startTime'));
+    const unsubscribeEvents = onSnapshot(eventsQuery, (snapshot) => {
+      const eventsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        startTime: doc.data().startTime.toDate(),
+        endTime: doc.data().endTime.toDate(),
+      }));
+      setEvents(eventsData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching schedule: ", error);
+      setLoading(false);
+    });
+
+    // Fetch alerts
+    const alertsQuery = query(collection(db, 'notifications'), orderBy('createdAt', 'desc'));
+    const unsubscribeAlerts = onSnapshot(alertsQuery, (snapshot) => {
+      const alertsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAlerts(alertsData);
+    });
+
+    return () => {
+      unsubscribeEvents();
+      unsubscribeAlerts();
+    };
+  }, []);
+
+  const handleEdit = (event) => {
+    setEventToEdit(event);
+    setActiveTab('addEvent');
+  };
+
+  const handleDoneEditing = () => {
+    setEventToEdit(null);
+    setActiveTab('manageEvents');
+  };
+
+  const handleAlertEdit = (alert) => {
+    setAlertToEdit(alert);
+    setActiveTab('sendAlert');
+  };
+
+  const handleDoneAlertEditing = () => {
+    setAlertToEdit(null);
+    setActiveTab('manageAlerts');
+  };
+
+  return (
+    <div className="card glass-effect">
+      <div className="tabs-nav">
+        <button onClick={() => { setEventToEdit(null); setActiveTab('addEvent'); }} className={activeTab === 'addEvent' ? 'tab-active' : ''}>
+          {eventToEdit ? 'Edit Event' : 'Add Event'}
+        </button>
+        <button onClick={() => setActiveTab('manageEvents')} className={activeTab === 'manageEvents' ? 'tab-active' : ''}>Manage Events</button>
+        <button onClick={() => { setAlertToEdit(null); setActiveTab('sendAlert'); }} className={activeTab === 'sendAlert' ? 'tab-active' : ''}>
+          {alertToEdit ? 'Edit Alert' : 'Send Alert'}
+        </button>
+        <button onClick={() => setActiveTab('manageAlerts')} className={activeTab === 'manageAlerts' ? 'tab-active' : ''}>Manage Alerts</button>
+        <button onClick={() => setActiveTab('liveDisplay')} className={activeTab === 'liveDisplay' ? 'tab-active' : ''}>Live Display</button>
+        <button onClick={() => setActiveTab('scannedList')} className={activeTab === 'scannedList' ? 'tab-active' : ''}>Scanned List</button>
+        {/* 💡 NEW: Sorted Live Scans Tab */}
+        <button onClick={() => setActiveTab('sortedLiveScans')} className={activeTab === 'sortedLiveScans' ? 'tab-active' : ''}>Sorted Live Scans</button>
+      </div>
+      {loading ? (
+        <div className="text-center"><p>Loading Admin Panel...</p></div>
+      ) : (
+        <div>
+          {activeTab === 'addEvent' && <EventForm currentEvent={eventToEdit} onDone={handleDoneEditing} />}
+          {activeTab === 'manageEvents' && <ManageEvents events={events} onEdit={handleEdit} />}
+          {activeTab === 'sendAlert' && <AlertsAdmin currentAlert={alertToEdit} onDone={handleDoneAlertEditing} />}
+          {activeTab === 'manageAlerts' && <ManageAlerts alerts={alerts} onEdit={handleAlertEdit} />}
+          {activeTab === 'liveDisplay' && <LiveDisplayAdmin />}
+          {activeTab === 'scannedList' && <ScannedList />}
+          {/* 💡 NEW: Render the sorted list component */}
+          {activeTab === 'sortedLiveScans' && <SortedLiveScans />} 
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminPage;
+
+import React, { useState, useEffect } from 'react';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase/config';
+
+const AlertsPage = () => {
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'notifications'), 
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const alertsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setAlerts(alertsData);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return 'Just now';
+    const date = timestamp.toDate();
+    return date.toLocaleString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+  };
+
+  return (
+    <div className="card glass-effect">
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>All Notifications</h1>
+      {loading ? (
+        <p>Loading alerts...</p>
+      ) : alerts.length === 0 ? (
+        <p className="no-alerts-message" style={{ textAlign: 'center' }}>No notifications have been sent yet.</p>
+      ) : (
+        // UPDATED JSX structure below to match the new design
+        <ul className="alerts-list">
+          {alerts.map(alert => (
+            <li key={alert.id} className="alert-item-redesigned">
+              <div className="alert-icon">
+                <span>-🔔- </span>
+              </div>
+              <div className="alert-content">
+                <div className="alert-header">
+                  <strong className="alert-title">{alert.title}</strong>
+                  <span className="alert-timestamp">{formatTimestamp(alert.createdAt)}</span>
+                </div>
+                <p className="alert-message">{alert.message}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default AlertsPage;
+import React, { useState } from 'react';
+import LoginForm from '../components/LoginForm';
+import participants from '../data/participants.json';
+import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from 'firebase/auth'; 
+
+// 💡 HARDCODE A STATIC UID FOR ALL ATTENDEES (Keep this)
+const ATTENDEE_UID = 'SHARED_ATTENDEE_SESSION'; 
+// 💡 HARDCODE A STATIC UID FOR THE SCANNER (New)
+const SCANNER_UID = 'DEDICATED_SCANNER_SESSION'; 
+
+const AuthPage = ({ onLoginSuccess }) => {
+    const [error, setError] = useState('');
+
+    const handleLogin = async (username, password) => {
+        setError('');
+        const auth = getAuth();
+        const usernameLower = username.toLowerCase();
+
+        try {
+            // Ensure any previous session (including Scanner/Admin) is cleared
+            if (auth.currentUser) {
+                await signOut(auth);
+            }
+            
+            let completeUser;
+            let userCredential;
+
+            if (usernameLower === 'admin2025ian') {
+                // --- ADMIN LOGIN PATH (Unique UID) ---
+                if (password !== 'Admin321') {
+                    setError('Incorrect password.');
+                    return;
+                }
+                const adminEmail = 'adityamanoja@gmail.com';
+                userCredential = await signInWithEmailAndPassword(auth, adminEmail, password);
+                completeUser = {
+                    reg_no: 'admin2025ian', name: 'Admin', email: adminEmail,
+                    uid: userCredential.user.uid, role: 'admin'
+                };
+
+            } else if (usernameLower === 'scanner2025ian') {
+                // --- SCANNER LOGIN PATH (Static UID) ---
+                if (password !== 'Scanner321') {
+                    setError('Incorrect password.');
+                    return;
+                }
+                // Sign in anonymously to establish a session
+                userCredential = await signInAnonymously(auth); 
+                
+                // Overwrite the UID with the hardcoded static SCANNER UID
+                completeUser = {
+                    reg_no: 'scanner2025ian', name: 'Scanner',
+                    uid: SCANNER_UID, // <-- FORCED STATIC SCANNER UID
+                    role: 'scanner',
+                    email: '[Dedicated Scanner Session]' 
+                };
+
+            } else {
+                // --- REGULAR ATTENDEE LOGIN PATH (Shared UID) ---
+                const foundUser = participants.find(p => p.reg_no.toLowerCase() === usernameLower);
+                if (!foundUser) {
+                    setError('Invalid Attendee ID.');
+                    return;
+                }
+                if (password !== 'IAN2025') {
+                    setError('Incorrect password.');
+                    return;
+                }
+
+                // Sign in anonymously to establish a session
+                userCredential = await signInAnonymously(auth); 
+                
+                // Overwrite the UID with the hardcoded static ATTENDEE UID
+                completeUser = { 
+                    ...foundUser, 
+                    uid: ATTENDEE_UID, // <-- FORCED STATIC ATTENDEE UID
+                    role: 'attendee',
+                    email: '[Shared Attendee Session]'
+                };
+            }
+            
+            // LOGGING USER DETAILS TO CONSOLE
+            console.group(`Login Successful: ${completeUser.name} (${completeUser.role.toUpperCase()})`);
+            console.log("🔥 Firebase UID:", completeUser.uid); 
+            console.log("👤 User Role:", completeUser.role);
+            console.log("✉️ Identifier:", completeUser.email);
+            console.log("Complete User Object:", completeUser);
+            console.groupEnd();
+
+            onLoginSuccess(completeUser);
+
+        } catch (authError) {
+            console.error("Firebase sign-in failed:", authError);
+            setError("Could not create a secure session. Please check your network or try again.");
+        }
+    };
+
+    return (
+        <div className="auth-form-container">
+            <LoginForm 
+                onLogin={handleLogin} 
+                error={error} 
+            />
+        </div>
+    );
+};
+
+export default AuthPage;
+import React from 'react'; // Removed useState, useEffect
+import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore'; // REMOVED: Firestore imports are now irrelevant here
+import AlertsList from '../components/AlertsList';
+import HappeningNow from '../components/HappeningNow';
+
+const HomePage = ({ user }) => {
+    // ❌ REMOVED: itinerary state and useEffect for fetching itinerary
+    
+    // ❌ REMOVED: toggleItinerary function
+    
+    const getFirstName = (fullName) => {
+        if (!fullName) return 'Attendee';
+        const firstName = fullName.split(' ')[0];
+        if (!firstName) return 'Attendee';
+        return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+    };
+
+    return (
+        <div className="home-page-layout">
+            <div className="welcome-header">
+                <h1>Welcome, {getFirstName(user?.name)}</h1>
+                <p>Here's what's happening at IAN 2025.</p>
+            </div>
+
+            {/* HappeningNow component is now simpler, no itinerary props needed */}
+            <HappeningNow 
+                // ❌ REMOVED: itinerary={itinerary}
+                // ❌ REMOVED: toggleItinerary={toggleItinerary}
+            />
+
+            <AlertsList />
+        </div>
+    );
+};
+
+export default HomePage;
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
+
+
+import FullSchedule from '../components/FullSchedule';
+
+const ItineraryPage = () => {
+  const [itineraryEvents, setItineraryEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const user = auth.currentUser;
+
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    
+    const itineraryColRef = collection(db, 'users', user.uid, 'itinerary');
+    const unsubscribe = onSnapshot(itineraryColRef, async (snapshot) => {
+      const eventPromises = snapshot.docs.map(eventDoc => {
+        const eventId = eventDoc.id;
+        const eventRef = doc(db, 'schedule', eventId);
+        return getDoc(eventRef);
+      });
+
+      const eventDocs = await Promise.all(eventPromises);
+      
+      const eventsData = eventDocs
+        .filter(doc => doc.exists())
+        .map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            startTime: doc.data().startTime.toDate(),
+            endTime: doc.data().endTime.toDate(),
+        }));
+
+      
+      eventsData.sort((a, b) => a.startTime - b.startTime);
+
+      setItineraryEvents(eventsData);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  if (loading) {
+    return <div className="card glass-effect"><p>Loading your itinerary...</p></div>;
+  }
+
+  return (
+    <div className="card glass-effect">
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>My Itinerary</h1>
+      {itineraryEvents.length > 0 ? (
+        <FullSchedule events={itineraryEvents} />
+      ) : (
+        <p style={{ textAlign: 'center' }}>You haven't added any events to your itinerary yet. Go to the full schedule to select events.</p>
+      )}
+    </div>
+  );
+};
+
+export default ItineraryPage;
+
+import React from 'react';
+
+// The map links are now stored directly in the code with updated titles and order
+const maps = [
+  {
+    title: "PRE-CONFERENCE WORKSHOP VENUE",
+    url: "https://maps.google.com/maps?q=8.525263,76.907859&z=15&output=embed"
+  },
+  {
+    title: "IAN-2025 BUS SHUTTLE ROUTES",
+    url: "https://www.google.com/maps/d/embed?mid=195fYKK-5nyiBckRT4LGH80eqdt2a-rY"
+  },
+  {
+    title: "CONFERENCE VENUE (Uday Samudra Leisure Beach Hotel)",
+    url: "https://maps.google.com/maps?q=8.402355,76.973196&z=15&output=embed"
+  }
+];
+
+const MapPage = () => {
+  return (
+    <div className="card glass-effect">
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Venue Maps</h1>
+      <div className="maps-container">
+        {maps.map((map, index) => (
+          <div key={index} className="map-wrapper">
+            <h3 style={{ textAlign: 'center', marginBottom: '2rem' }}>{map.title}</h3>
+            <iframe
+              src={map.url}
+              width="100%"
+              height="450"
+              style={{ border: 0, borderRadius: '8px' }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={map.title}
+            ></iframe>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default MapPage;
+
+import React from 'react';
+import Scanner from '../components/Scanner';
+
+const ScannerPage = () => {
+    return (
+        <main className="app-main">
+            <Scanner />
+        </main>
+    );
+};
+
+export default ScannerPage;
+
+import React, { useState, useEffect } from 'react';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { db } from '../firebase/config'; 
+import FullSchedule from '../components/FullSchedule'; 
+
+const SchedulePage = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(collection(db, 'schedule'), orderBy('startTime'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const eventsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        startTime: doc.data().startTime.toDate(),
+        endTime: doc.data().endTime.toDate(),
+      }));
+      setEvents(eventsData);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching schedule: ", error);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <div className="card glass-effect">
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Conference Schedule</h1>
+      {loading ? (
+        <div style={{ textAlign: 'center' }}><p>Loading schedule...</p></div>
+      ) : (
+        <FullSchedule events={events} />
+      )}
+    </div>
+  );
+};
+
+export default SchedulePage;
+
+import React, { useState, useEffect } from 'react';
+import './App.css';
+
+import Header from './components/Header';
+import AuthPage from './pages/AuthPage';
+import HomePage from './pages/HomePage';
+import SchedulePage from './pages/SchedulePage';
+import AdminPage from './pages/AdminPage';
+import AlertsPage from './pages/AlertsPage';
+import MapPage from './pages/MapPage';
+import ScannerPage from './pages/ScannerPage';
+
+function App() {
+    const [user, setUser] = useState(null); 
+    const [currentPage, setCurrentPage] = useState('home');
+    const [isLoadingInitialUser, setIsLoadingInitialUser] = useState(true); 
+
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+            setUser(JSON.parse(savedUser));
+        }
+        setIsLoadingInitialUser(false); 
+    }, []);
+
+    const handleLoginSuccess = (completeUserData) => {
+        // Clear the old user session before saving the new one 
+        localStorage.removeItem('user'); 
+        
+        localStorage.setItem('user', JSON.stringify(completeUserData));
+        setUser(completeUserData);
+        setCurrentPage('home');
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+        setCurrentPage('home'); // Redirect to home on logout
+    };
+
+    const renderPage = () => {
+        const isAdmin = user && user.role === 'admin';
+        const isScanner = user && user.role === 'scanner';
+
+        switch (currentPage) {
+            case 'schedule':
+                return <SchedulePage />;
+            case 'admin':
+                return isAdmin ? <AdminPage /> : <HomePage user={user} />;
+            case 'alerts':
+                return <AlertsPage />;
+          
+            case 'map':
+                return <MapPage />;
+            case 'scanner':
+                return (isAdmin || isScanner) ? <ScannerPage /> : <HomePage user={user} />;
+            case 'home':
+            default:
+                return <HomePage user={user} />;
+        }
+    };
+
+    if (isLoadingInitialUser) {
+        return <div className="loading-screen"><p>Loading session...</p></div>; 
+    }
+
+    return (
+        <>
+            {!user ? (
+                <div className="auth-page-background">
+                    <AuthPage onLoginSuccess={handleLoginSuccess} />
+                </div>
+            ) : (
+                <div className="app-container">
+                    <Header user={user} onLogout={handleLogout} setCurrentPage={setCurrentPage} />
+                    {renderPage()}
+                </div>
+            )}
+        </>
+    );
+}
+
+export default App;
+

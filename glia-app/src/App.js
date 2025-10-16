@@ -7,7 +7,6 @@ import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
 import AdminPage from './pages/AdminPage';
 import AlertsPage from './pages/AlertsPage';
-// ❌ REMOVED: ItineraryPage import
 import MapPage from './pages/MapPage';
 import ScannerPage from './pages/ScannerPage';
 

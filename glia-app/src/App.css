@@ -330,38 +330,43 @@ transition: opacity 0.2s ease;
 .edit-btn:hover, .delete-btn:hover { opacity: 0.8; }
 
 .live-display-container-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .live-display-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    border-bottom: 1px dashed #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed #e0e0e0;
 }
 .live-display-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .live-display-column {
-    flex: 1 1 50%; 
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
+  flex: 1 1 50%; /* Default to 50% width for two columns */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 💡 FIX: Force the column to take full width when it's the only direct child */
+.live-display-row .live-display-column:only-child {
+    flex: 1 1 100%;
 }
 
 .live-display-column-placeholder {
-    flex: 1 1 50%;
-    visibility: hidden;
+  flex: 1 1 50%;
+  visibility: hidden;
 }
 
 .single-column-row .live-display-column {
-    flex: 1 1 100%; 
+  flex: 1 1 100%; 
 }
 
 .live-display-column h3 {
@@ -378,12 +383,14 @@ background-color: #F5F5F5;
 border-radius: 8px;
 flex-grow: 1;
 display: flex;
-justify-content: space-between;
+flex-direction: column; /* Ensure vertical layout for content */
+justify-content: center;
 align-items: center;
 }
 
 .live-display-main-content {
 flex-grow: 1;
+width: 100%; /* Take full width of the card */
 }
 
 .live-display-action {
@@ -433,6 +440,16 @@ font-size: 0.9rem;
 color: var(--text-primary);
 text-align: center;
 font-weight: 500;
+margin-bottom: 0.5rem;
+}
+
+/* Style for Venue */
+.live-display-venue {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    text-align: center;
+    font-weight: 700;
+    margin: 0 0 1rem 0; /* Add margin above chairpersons/footer */
 }
 
 .live-display-chairs {
@@ -656,75 +673,75 @@ word-break: break-all;
 }
 
 .scans-table th {
-  font-weight: 600;
-  color: var(--text-primary);
+ font-weight: 600;
+ color: var(--text-primary);
 }
 .scans-table td {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
+ font-size: 0.95rem;
+ color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
 .app-main, .app-header, .glass-form { padding: 1rem; }
 
 .header-logos-container {
- gap: 1rem;
- margin-bottom: 1rem;
+gap: 1rem;
+margin-bottom: 1rem;
 }
 .header-logo-small {
- max-height: 40px;
+max-height: 40px;
 }
 .header-user-info {
- position: static;
- text-align: center;
- margin-top: 1rem;
- padding-bottom: 1rem; 
+position: static;
+text-align: center;
+margin-top: 1rem;
+padding-bottom: 1rem; 
 }
-    
-    .schedule-list-item {
-        flex-wrap: wrap; 
-        align-items: flex-start; /* Changed from stretch to fix image/content vertical alignment */
-    }
+  
+  .schedule-list-item {
+    flex-wrap: wrap; 
+    align-items: flex-start; 
+  }
 
-    .speaker-image-small, .speaker-image-placeholder {
-        margin-right: 1rem;
-        margin-top: 0;
-        flex-shrink: 0;
-    }
+  .speaker-image-small, .speaker-image-placeholder {
+    margin-right: 1rem;
+    margin-top: 0;
+    flex-shrink: 0;
+  }
 
-    .event-info {
-        flex-basis: calc(100% - 70px);
-        min-width: 0;
-        padding-right: 0; 
-    }
-    
-    .event-details-list {
-        flex-wrap: wrap; 
-    }
+  .event-info {
+    flex-basis: calc(100% - 70px);
+    min-width: 0;
+    padding-right: 0; 
+  }
+  
+  .event-details-list {
+    flex-wrap: wrap; 
+  }
 
-    .event-right-column {
-        flex-basis: 100%;
-        text-align: left; 
-        padding-left: 0;
-        margin-left: 0;
-        margin-top: 0.5rem;
-        align-items: flex-start;
-        flex-direction: column; /* Changed to column since the star button is removed, allowing chairpersons to use full width */
-        justify-content: flex-start;
-    }
+  .event-right-column {
+    flex-basis: 100%;
+    text-align: left; 
+    padding-left: 0;
+    margin-left: 0;
+    margin-top: 0.5rem;
+    align-items: flex-start;
+    flex-direction: column; 
+    justify-content: flex-start;
+  }
 
-    .chairpersons-info {
-        flex-basis: 100%; 
-        word-break: break-word;
-    }
-    
-    .live-display-row {
-        flex-direction: column;
-    }
-    
-    .live-display-column,
-    .live-display-column-placeholder {
-        flex: 1 1 100%;
-        margin-bottom: 0;
-    }
+  .chairpersons-info {
+    flex-basis: 100%; 
+    word-break: break-word;
+  }
+  
+  .live-display-row {
+    flex-direction: column;
+  }
+  
+  .live-display-column,
+  .live-display-column-placeholder {
+    flex: 1 1 100%;
+    margin-bottom: 0;
+  }
 }

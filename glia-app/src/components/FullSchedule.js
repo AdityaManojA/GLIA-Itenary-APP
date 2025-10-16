@@ -35,9 +35,9 @@ const FullSchedule = ({ events }) => {
          )}
          <div className="event-info">
           <p className="event-title-list">{event.title}</p>
-          {/* Display Speaker + Institution */}
+ 
           {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
-          {/* Display Speaker Topic */}
+
           {event.speakerTopic && <p className="speaker-topic-list">{event.speakerTopic}</p>}
           <div className="event-details-list">
            <span>📍 {event.venue}</span>
@@ -45,7 +45,7 @@ const FullSchedule = ({ events }) => {
           </div>
          </div>
          
-         {/* The right column now only contains chairpersons */}
+
          <div className="event-right-column">
           {event.chairpersons && (
            <div className="chairpersons-info">
@@ -53,7 +53,7 @@ const FullSchedule = ({ events }) => {
             <p>{event.chairpersons}</p>
            </div>
           )}
-          {/* Removed: <button onClick={...} className="itinerary-toggle-button"> */}
+
          </div>
         </li>
        );
