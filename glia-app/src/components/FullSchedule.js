@@ -3,11 +3,7 @@ import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firesto
 import { auth, db } from '../firebase/config';
 
 const FullSchedule = ({ events }) => {
- // Removed: [itinerary, setItinerary] state and its useEffect logic
- // Removed: const user = auth.currentUser;
- 
- // Removed: toggleItinerary function
- // Removed: useEffect hook for itinerary
+
 
  const groupedEvents = events.reduce((acc, event) => {
   const eventDate = event.startTime.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
