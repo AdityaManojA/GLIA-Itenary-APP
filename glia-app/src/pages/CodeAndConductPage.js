@@ -1,25 +1,56 @@
 // src/pages/CodeAndConductPage.js
 
-import React from 'react';
+import React, { useState } from 'react';
+import CodeOfConductModal from '../components/CodeOfConductModal';
+
+// Define the file names for the two pages
+const CODE_OF_CONDUCT_IMAGES = [
+    { 
+        url: '/Code of conduct_pg1.jpg',
+        alt: 'Code of Conduct Page 1' 
+    },
+    { 
+        url: '/Code of conduct_pg2.jpg',
+        alt: 'Code of Conduct Page 2' 
+    }
+];
 
 const CodeAndConductPage = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     return (
-        <div className="card glass-effect">
-            <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Code and Conduct</h1>
-            
-            <p>Welcome to the IAN 2025 Conference. We are dedicated to providing a harassment-free conference experience for everyone, regardless of gender, gender identity and expression, age, sexual orientation, disability, physical appearance, body size, race, ethnicity, religion (or lack thereof), or technology choices.</p>
-            
-            <h3 style={{ marginTop: '2rem' }}>Expected Behavior</h3>
-            <ul>
-                <li>Be considerate, respectful, and collaborative.</li>
-                <li>Refrain from demeaning, discriminatory, or harassing behavior and speech.</li>
-                <li>Be mindful of your surroundings and of your fellow participants.</li>
-            </ul>
-            
-            <h3 style={{ marginTop: '2rem' }}>Unacceptable Behavior</h3>
-            <p>Unacceptable behaviors include offensive comments, verbal harassment, intimidation, stalking, unwelcome physical contact, and unwelcome sexual attention.</p>
-            <p style={{ marginTop: '1rem', color: 'var(--primary-color)', fontWeight: 'bold' }}>Participants asked to stop any harassing behavior are expected to comply immediately.</p>
-        </div>
+        <>
+            <div className={`card glass-effect ${isModalOpen ? 'blurred-content' : ''}`}>
+                <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Code and Conduct</h1>
+                
+                <p style={{ textAlign: 'center', margin: '2rem 0' }}>
+                    {/* The button is the primary content of the page */}
+                    <button 
+                        onClick={openModal} 
+                        className="auth-button"
+                        style={{ maxWidth: '300px', display: 'block', margin: '1rem auto' }}
+                    >
+                        View Full Code of Conduct
+                    </button>
+                </p>
+
+                <p style={{ textAlign: 'center', opacity: 0.8 }}>
+                    Click the button above to view the full, official document.
+                </p>
+                
+            </div>
+
+            {/* Modal remains separate and conditional */}
+            {isModalOpen && (
+                <CodeOfConductModal 
+                    images={CODE_OF_CONDUCT_IMAGES} 
+                    onClose={closeModal} 
+                />
+            )}
+        </>
     );
 };
 
