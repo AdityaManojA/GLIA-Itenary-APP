@@ -1085,7 +1085,7 @@ padding-bottom: 1rem;
   filter: blur(40px); /* Increased blur */
   z-index: 1; 
   pointer-events: none;
-  transform: translate(-50%, -50%); /* Centering the element */
+  transform: translate(-50%, -50%); 
   animation: fluid-motion 15s ease-in-out infinite alternate;
 }
 }
