@@ -6,7 +6,6 @@ import AlertsAdmin from '../components/AlertsAdmin';
 import ManageEvents from '../components/ManageEvents';
 import ManageAlerts from '../components/ManageAlerts';
 import LiveDisplayAdmin from '../components/LiveDisplayAdmin';
-import ScannedList from '../components/ScannedList';
 import SortedLiveScans from '../components/SortedLiveScans';
 
 

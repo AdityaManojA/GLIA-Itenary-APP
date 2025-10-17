@@ -76,22 +76,25 @@ function App() {
     </div>
    ) : (
     <div className="app-container">
-     <Header 
-            user={user} 
-            onLogout={handleLogout} 
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage} 
-          />
-          <TickerAlert /> 
-     
-          {/* WRAPPER ADDED FOR ANIMATION */}
-          <div 
-            key={currentPage} /* CRITICAL: Forces re-mount on tab switch */
-            className="page-content-wrapper" 
-          >
-            {renderPage()}
-          </div>
-    </div>
+                    
+                    {/* 💡 NEW ABSTRACT BACKGROUND ELEMENT */}
+                    <div className="abstract-bg-spinner" /> 
+                    
+          <Header 
+                        user={user} 
+                        onLogout={handleLogout} 
+                        currentPage={currentPage}
+                        setCurrentPage={setCurrentPage} 
+                    />
+                    <TickerAlert /> 
+          
+                    <div 
+                        key={currentPage}
+                        className="page-content-wrapper" 
+                    >
+                        {renderPage()}
+                    </div>
+        </div>
    )}
   </>
  );

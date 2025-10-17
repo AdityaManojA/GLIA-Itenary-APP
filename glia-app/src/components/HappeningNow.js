@@ -1,10 +1,8 @@
-// src/components/HappeningNow.js
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// EventDisplayCard (MODIFIED to hide speaker info AND venue for LUNCH events)
+
 const EventDisplayCard = ({ event }) => {
   if (!event) {
     return (
@@ -17,24 +15,23 @@ const EventDisplayCard = ({ event }) => {
   const startTime = event.startTime?.toDate ? event.startTime.toDate() : event.startTime;
   const endTime = event.endTime?.toDate ? event.endTime.toDate() : event.endTime;
 
-  // Check if the event venue is LUNCH (case-insensitive)
   const isMealEvent = event.venue?.toUpperCase() === 'LUNCH'; 
 
   return (
     <div className="live-display-card">
       <div className="live-display-main-content">
         
-        {/* Speaker Image: Hide for LUNCH events */}
+
         {event.speakerImageURL && !isMealEvent && (
           <img src={event.speakerImageURL} alt={event.speakerName} className="live-display-speaker-image" />
         )}
         
         <h3 className="live-display-title">{event.title}</h3>
         
-        {/* Speaker Name: Hide for LUNCH events */}
+
         {event.speakerName && !isMealEvent && <p className="live-display-speaker">{event.speakerName}</p>}
         
-        {/* Speaker Topic: Hide for LUNCH events */}
+
         {event.speakerTopic && !isMealEvent && <p className="live-display-topic">{event.speakerTopic}</p>}
         
         {startTime && endTime && (
@@ -43,14 +40,12 @@ const EventDisplayCard = ({ event }) => {
           </p>
         )}
         
-        {/* ❌ VENUE DISPLAY: Hide for LUNCH events */}
         {!isMealEvent && (
                     <p className="live-display-venue">
             📍 {event.venue}
           </p>
                 )}
         
-        {/* Chairpersons: Hide for LUNCH events */}
         {event.chairpersons && !isMealEvent && (
           <div className="live-display-chairs">
             <strong>Chairperson(s):</strong> {event.chairpersons}
@@ -62,7 +57,7 @@ const EventDisplayCard = ({ event }) => {
 };
 
 
-// HappeningNow component with structured layout logic
+
 const HappeningNow = () => {
   const [vizhinjamEvent, setVizhinjamEvent] = useState(null);
   const [lightHouseEvent, setLightHouseEvent] = useState(null);
@@ -70,7 +65,6 @@ const HappeningNow = () => {
   const [lunchEvent, setLunchEvent] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // NEW VENUE CONSTANTS
     const HALL1_NAME = 'Hall 1 (Vizhinjam)';
     const HALL2_NAME = 'Hall 2 (Light House)';
     const HALL3_4_NAME = 'Halls 3 & 4 (Bay & Waves)';
@@ -200,9 +194,8 @@ const HappeningNow = () => {
           </div>
         )}
 
-
+        {/* ROW 2: Halls 3 & 4 (Bay & Waves) and LUNCH */}
         {isRow2Active && (
-                    
                     <div className={`live-display-row ${isRow2SingleColumn ? 'single-column-row' : 'two-column-row'}`}>
                         
                         {hasBayAndWavesEvent && (
@@ -214,7 +207,7 @@ const HappeningNow = () => {
                         
                         {hasLunchEvent && (
                             <div className="live-display-column">
-                                <h3>{LUNCH_NAME}</h3>
+                                
                                 <EventDisplayCard event={lunchEvent} /> 
                             </div>
                         )}
