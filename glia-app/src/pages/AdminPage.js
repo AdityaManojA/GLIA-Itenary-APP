@@ -56,8 +56,7 @@ const AdminPage = () => {
  };
 
  const handleDoneEditing = () => {
-    // 💡 FIX APPLIED HERE: Introduce a short delay before switching tabs
-    // This allows the Firestore listener time to process the update.
+
     setTimeout(() => {
         setEventToEdit(null);
         setActiveTab('manageEvents');

@@ -24,10 +24,10 @@ const CodeAndConductPage = () => {
     return (
         <>
             <div className={`card glass-effect ${isModalOpen ? 'blurred-content' : ''}`}>
-                <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Code and Conduct</h1>
+                <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Code of Conduct</h1>
                 
                 <p style={{ textAlign: 'center', margin: '2rem 0' }}>
-                    {/* The button is the primary content of the page */}
+
                     <button 
                         onClick={openModal} 
                         className="auth-button"

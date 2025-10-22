@@ -54,7 +54,7 @@ const Header = ({ user, onLogout, currentPage, setCurrentPage }) => {
                     const isAnimating = animatingPage === page;
                     
                     
-                    const buttonText = page === 'code_conduct' ? 'Code & Conduct' : 
+                    const buttonText = page === 'code_conduct' ? 'Code of Conduct' : 
                                        page.charAt(0).toUpperCase() + page.slice(1);
                     
                     return (

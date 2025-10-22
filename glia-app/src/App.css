@@ -39,11 +39,11 @@
 --button-text-dark: #571919;
 
 /* --- UPDATED VENUE COLORS FOR MORE CONTRAST --- */
---venue-hall1-bg: #faede5; /* Softer, slightly more yellow/peach-toned pink */
---venue-hall2-bg: #f7f0f1; /* Cooler, lighter, gray-pink for contrast */
+--venue-hall1-bg: #faede5; 
+--venue-hall2-bg: #f7f0f1; 
 --venue-hall3-bg: #f5ecec; 
 --venue-hall4-bg: #fffcf8; 
---venue-lunch-bg: #f0f0f0; /* Soft neutral gray (unchanged) */
+--venue-lunch-bg: #f0f0f0; 
 }
 
 body {
@@ -352,14 +352,15 @@ margin-top: 1rem;
   gap: 1.5rem; 
   padding: 0.5rem 0; 
   margin-bottom: 1rem; 
-  border-bottom: none; /* REMOVED the dashed border in favor of colored backgrounds */
+  border-bottom: none; 
     transition: background-color 0.3s ease;
+    position: relative; 
 }
 .schedule-list-item:last-child {
   border-bottom: none;
 }
 
-/* --- NEW VENUE BACKGROUND STYLES (UPDATED HALL 1 & 2) --- */
+/* --- VENUE BACKGROUND STYLES --- */
 .schedule-list-item.venue-hall1 {
   background-color: var(--venue-hall1-bg);
   border-radius: 8px;
@@ -567,15 +568,16 @@ display: flex;
 flex-direction: column; 
 justify-content: center;
 align-items: center;
+/* Ensure content doesn't overflow */
+box-sizing: border-box; 
+word-wrap: break-word; 
+word-break: break-word; 
+overflow-wrap: break-word; 
 }
 
 .live-display-main-content {
 flex-grow: 1;
 width: 100%; 
-}
-
-.live-display-action {
-margin-left: 1rem;
 }
 
 .no-event-message {
@@ -622,6 +624,10 @@ color: var(--text-primary);
 text-align: center;
 font-weight: 500;
 margin-bottom: 0.5rem;
+/* ADDED: Ensure time/venue details don't overflow */
+word-wrap: break-word;
+word-break: break-word;
+overflow-wrap: break-word;
 }
 
 .live-display-venue {
@@ -630,6 +636,10 @@ margin-bottom: 0.5rem;
   text-align: center;
   font-weight: 700;
   margin: 0 0 1rem 0; 
+/* ADDED: Ensure time/venue details don't overflow */
+word-wrap: break-word;
+word-break: break-word;
+overflow-wrap: break-word;
 }
 
 .live-display-chairs {
@@ -637,6 +647,10 @@ font-size: 0.9rem;
 text-align: center;
 color: var(--text-secondary);
 margin-top: 1rem;
+/* ADDED: Ensure chairperson text wraps */
+word-wrap: break-word;
+word-break: break-word;
+overflow-wrap: break-word;
 }
 .live-display-chairs strong {
 color: var(--text-primary);
@@ -986,12 +1000,27 @@ color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
-.app-main, .app-header, .glass-form { padding: 1rem; }
+/* FIX 2 & 4: Ensure app-main fills the width to remove red sidebars */
+.app-main { 
+    padding: 1rem; 
+    max-width: 100%; 
+    width: 100%;
+}
+.app-header, .glass-form { padding: 1rem; }
+
+/* FIX 5: CENTERING FIXES */
+.app-header {
+    padding: 1rem;
+    text-align: center;
+}
 
 .header-logos-container {
-gap: 1rem;
-margin-bottom: 1rem;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
+/* END CENTERING FIXES */
+
 .header-logo-small {
 max-height: 40px;
 }
@@ -1002,27 +1031,22 @@ margin-top: 1rem;
 padding-bottom: 1rem; 
 }
  
+/* --- START MOBILE SCHEDULE LIST FIXES --- */
+
+/* Base mobile schedule item styles (used by both schedule view and admin list) */
 .schedule-list-item {
+  display: flex;
+  flex-direction: row; 
   flex-wrap: wrap; 
   align-items: flex-start; 
   gap: 0.5rem;
-    border-bottom: 1px dashed #D0D0D0; /* Keep dashed border on mobile for non-colored items */
-}
-/* Remove dashed border for items with a specific background */
-.schedule-list-item.venue-hall1,
-.schedule-list-item.venue-hall2,
-.schedule-list-item.venue-hall3,
-.schedule-list-item.venue-hall4,
-.schedule-list-item.venue-lunch {
-  border-bottom: none; 
+    padding: 0.5rem 0; 
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed #D0D0D0;
+    position: relative; 
 }
 
-.event-info {
-  flex-basis: 100%;
-  order: 2; 
-  margin-left: 0; /* Reset margin for wrapped layout */
-}
-
+/* Ensure speaker image/placeholder stays at the top for both views */
 .speaker-image-small, .speaker-image-placeholder {
   order: 1;
   margin-right: 1rem;
@@ -1030,29 +1054,76 @@ padding-bottom: 1rem;
   flex-shrink: 0;
 }
 
-.event-details-list {
-  order: 3; 
-  flex-wrap: wrap; 
-  margin-top: 0.5rem;
+/* Event info takes the remaining space on the first row */
+.event-info {
+  flex-basis: calc(100% - 70px); /* Fill space next to image (60px + 10px gap) */
+  order: 2; 
+    margin-left: 0 !important; 
+    min-width: 0;
 }
 
-.event-right-column {
-  flex-basis: 100%;
-  order: 4; 
-  text-align: left; 
-  padding-left: 0;
-  margin-left: 0;
-  margin-top: 0.5rem;
-  align-items: flex-start;
-}
-/* Adjust mobile layout for padded items */
+/* Remove dashed border for items with a specific background */
 .schedule-list-item.venue-hall1,
 .schedule-list-item.venue-hall2,
 .schedule-list-item.venue-hall3,
 .schedule-list-item.venue-hall4,
 .schedule-list-item.venue-lunch {
-  padding: 1rem;
+  border-bottom: none; 
+    padding: 1rem 1.5rem; /* Base padding */
+    
+    /* FIX FOR OVERLAP (VENUE COLORED ITEMS): Increase top padding to push text below absolute buttons */
+    padding-top: 4.5rem; 
 }
+
+/* The details list and chairperson column always wrap to the next line (full width) */
+.event-details-list, .event-right-column {
+  flex-basis: 100%; 
+  margin-left: 0; 
+}
+.event-details-list {
+  order: 3;
+    margin-top: 0.5rem;
+}
+.event-right-column {
+  order: 4; 
+  margin-top: 0.5rem;
+}
+
+/* Admin Screen Button Placement Fix */
+
+.event-actions {
+    position: absolute; 
+    top: 1rem; 
+    right: 1rem; 
+    gap: 0.5rem;
+    order: 0;
+}
+
+/* Adjust padding-top on items *without* venue color to make room for absolute buttons */
+.schedule-list-item:not(.venue-hall1):not(.venue-hall2):not(.venue-hall3):not(.venue-hall4):not(.venue-lunch) {
+    /* Set padding to accommodate buttons (2.5rem padding + 0.5rem base padding = 3rem total padding) */
+    padding-top: 2.5rem; 
+}
+.schedule-list-item:not(.venue-hall1):not(.venue-hall2):not(.venue-hall3):not(.venue-hall4):not(.venue-lunch) .event-actions {
+    top: 0.5rem;
+    right: 0;
+}
+/* Ensure padded items (where padding is 1rem) align buttons correctly */
+.schedule-list-item.venue-hall1 .event-actions,
+.schedule-list-item.venue-hall2 .event-actions,
+.schedule-list-item.venue-hall3 .event-actions,
+.schedule-list-item.venue-hall4 .event-actions,
+.schedule-list-item.venue-lunch .event-actions {
+    top: 1rem;
+    right: 1rem;
+}
+/* Ensure Lunch events don't have speaker image/placeholder pushing content right */
+.schedule-list-item.venue-lunch .speaker-image-placeholder {
+    display: none;
+}
+
+
+/* --- END MOBILE SCHEDULE LIST FIXES --- */
 
 
 .live-display-row {
@@ -1075,17 +1146,8 @@ padding-bottom: 1rem;
 }
 
 .abstract-bg-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 400px; /* Increased size */
-  height: 400px; /* Increased size */
-  /* Use your primary color with higher transparency to make it glow */
-  background: radial-gradient(circle, rgba(168, 36, 36, 0.7) 0%, rgba(168, 36, 36, 0.0) 80%); 
-  filter: blur(40px); /* Increased blur */
-  z-index: 1; 
-  pointer-events: none;
-  transform: translate(-50%, -50%); 
-  animation: fluid-motion 15s ease-in-out infinite alternate;
+  /* FIX 3: Disable the abstract spinner/red glow effect on mobile */
+  display: none !important;
 }
+
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 const FullSchedule = ({ events }) => {
 
-  // New function to determine the CSS class based on the venue
+  // New function to determine the CSS class based on the venue (kept for styling)
   const getVenueClass = (venue) => {
     if (!venue) return '';
     const lowerCaseVenue = venue.toLowerCase();
@@ -40,14 +40,15 @@ return (
   <h3 className="schedule-date-header">{date}</h3>
   <ul className="schedule-list">
    {dateEvents.map(event => {
-    // Apply the venue class to the schedule list item
     const venueClass = getVenueClass(event.venue);
+    // Determine if it's a lunch event (case-insensitive check on title or venue)
+    const isLunch = event.title.toLowerCase().includes('lunch') || (event.venue && event.venue.toLowerCase().includes('lunch'));
+
    return (
-    // Updated line to include the dynamic class
     <li key={event.id} className={`schedule-list-item ${venueClass}`}>
     
     {/* Hide speaker info for non-session events like Lunch */}
-    {event.venue && event.venue.toUpperCase() !== 'LUNCH' ? (
+    {(!isLunch && event.speakerName) ? (
         event.speakerImageURL ? (
             <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-small" />
         ) : (
@@ -61,16 +62,19 @@ return (
      <p className="event-title-list">{event.title}</p>
 
      {/* Only show speaker if it's not a lunch/break event */}
-     {event.venue && event.venue.toUpperCase() !== 'LUNCH' && event.speakerName && (
+     {!isLunch && event.speakerName && (
         <p className="speaker-name-list">{event.speakerName}</p>
      )}
 
-     {event.venue && event.venue.toUpperCase() !== 'LUNCH' && event.speakerTopic && (
+     {!isLunch && event.speakerTopic && (
         <p className="speaker-topic-list">{event.speakerTopic}</p>
      )}
      
      <div className="event-details-list">
-     <span>📍 {event.venue}</span>
+        
+     {/* CONDITIONAL RENDER: Only show venue if it's NOT a lunch event */}
+     {!isLunch && event.venue && <span>📍 {event.venue}</span>}
+
      <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {event.endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
      </div>
     </div>
@@ -78,7 +82,7 @@ return (
 
     <div className="event-right-column">
      {/* Only show chairpersons if it's not a lunch/break event */}
-     {event.venue && event.venue.toUpperCase() !== 'LUNCH' && event.chairpersons && (
+     {!isLunch && event.chairpersons && (
      <div className="chairpersons-info">
       <strong>Chairperson(s):</strong>
       <p>{event.chairpersons}</p>
