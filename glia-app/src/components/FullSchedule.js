@@ -2,7 +2,7 @@ import React from 'react';
 
 const FullSchedule = ({ events }) => {
 
-  // New function to determine the CSS class based on the venue (kept for styling)
+  // Function to determine the CSS class based on the venue
   const getVenueClass = (venue) => {
     if (!venue) return '';
     const lowerCaseVenue = venue.toLowerCase();
@@ -11,6 +11,8 @@ const FullSchedule = ({ events }) => {
       return 'venue-hall1';
     } else if (lowerCaseVenue.includes('hall 2') || lowerCaseVenue.includes('light house')) {
       return 'venue-hall2';
+    } else if (lowerCaseVenue.includes('halls 3 & 4') || lowerCaseVenue.includes('bay & waves')) {
+      return 'venue-hall3-hall4'; 
     } else if (lowerCaseVenue.includes('hall 3')) {
       return 'venue-hall3';
     } else if (lowerCaseVenue.includes('hall 4')) {
@@ -41,14 +43,18 @@ return (
   <ul className="schedule-list">
    {dateEvents.map(event => {
     const venueClass = getVenueClass(event.venue);
-    // Determine if it's a lunch event (case-insensitive check on title or venue)
-    const isLunch = event.title.toLowerCase().includes('lunch') || (event.venue && event.venue.toLowerCase().includes('lunch'));
+    // Determine if it's a lunch or break event (case-insensitive check on title or venue)
+    const isLunchOrBreak = event.title.toLowerCase().includes('lunch') || 
+                          event.title.toLowerCase().includes('break') ||
+                          (event.venue && event.venue.toLowerCase().includes('lunch')) || 
+                          (event.venue && event.venue.toLowerCase().includes('break'));
+
 
    return (
     <li key={event.id} className={`schedule-list-item ${venueClass}`}>
     
-    {/* Hide speaker info for non-session events like Lunch */}
-    {(!isLunch && event.speakerName) ? (
+    {/* Hide speaker photo/placeholder if it's a lunch/break event */}
+    {(!isLunchOrBreak && event.speakerName) ? (
         event.speakerImageURL ? (
             <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-small" />
         ) : (
@@ -61,19 +67,18 @@ return (
     <div className="event-info">
      <p className="event-title-list">{event.title}</p>
 
-     {/* Only show speaker if it's not a lunch/break event */}
-     {!isLunch && event.speakerName && (
+     {/* Only show speaker name/details if it's not a lunch/break event */}
+     {!isLunchOrBreak && event.speakerName && (
         <p className="speaker-name-list">{event.speakerName}</p>
      )}
 
-     {!isLunch && event.speakerTopic && (
+     {!isLunchOrBreak && event.speakerTopic && (
         <p className="speaker-topic-list">{event.speakerTopic}</p>
      )}
      
      <div className="event-details-list">
-        
-     {/* CONDITIONAL RENDER: Only show venue if it's NOT a lunch event */}
-     {!isLunch && event.venue && <span>📍 {event.venue}</span>}
+  
+     {(!isLunchOrBreak && event.venue) && <span>📍 {event.venue}</span>}
 
      <span>🕒 {event.startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {event.endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
      </div>
@@ -82,7 +87,7 @@ return (
 
     <div className="event-right-column">
      {/* Only show chairpersons if it's not a lunch/break event */}
-     {!isLunch && event.chairpersons && (
+     {!isLunchOrBreak && event.chairpersons && (
      <div className="chairpersons-info">
       <strong>Chairperson(s):</strong>
       <p>{event.chairpersons}</p>
