@@ -39,13 +39,10 @@
 --button-text-dark: #571919;
 
 /* --- UPDATED VENUE COLORS FOR MORE CONTRAST --- */
---venue-hall1-bg: #faede5; 
---venue-hall2-bg: #f7f0f1; 
---venue-hall3-bg: #f5ecec; 
---venue-hall4-bg: #fffcf8; 
---venue-lunch-bg: #f0f0f0; 
-/* --- ADDED COMBINED HALL COLOR --- */
---venue-hall3-hall4-bg: #fbf5f5; 
+--venue-hall1-bg: #f2c9c9; 
+--venue-hall2-bg:  #ceddf6; 
+--venue-lunch-bg: #fffbf5; 
+--venue-hall3-hall4-bg:#f0c8ad;
 }
 
 body {
@@ -1039,6 +1036,12 @@ position: static;
 text-align: center;
 margin-top: 1rem;
 padding-bottom: 1rem; 
+}
+
+/* FIX: Remove default margin on the UL list itself */
+.schedule-list {
+    margin: 16px 0 0 0 !important; /* Ensure margin is zeroed out, especially the left margin */
+    padding: 0 !important; /* Ensure padding is zeroed out, especially the left padding */
 }
 
 /* --- START MOBILE SCHEDULE LIST FIXES --- */
