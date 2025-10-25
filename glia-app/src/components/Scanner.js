@@ -7,7 +7,7 @@ import participants from '../data/participants.json';
 // Define the ID for the QR code reader container
 const qrcodeRegionId = "reader";
 
-// Define inline styles to override problematic global/mobile CSS for the button layout
+// Define inline styles for the buttons to override problematic global/mobile CSS
 const buttonStyle = {
     // Force button to be a flex column to center wrapping text
     display: 'flex', 
@@ -63,6 +63,9 @@ const Scanner = () => {
   const [mealType, setMealType] = useState('Breakfast');
   const [scanDate, setScanDate] = useState('2025-10-29');
 
+    // NEW STATE: Stores the last 5 successful scans
+    const [scanHistory, setScanHistory] = useState([]);
+
   // Ref for the Html5QrcodeScanner instance for real-time scanning
   const html5QrCodeRef = useRef(null);
   const fileInputRef = useRef(null); // Ref for the hidden file input
@@ -87,7 +90,6 @@ const Scanner = () => {
 
   const startScanner = () => {
     if (isProcessing) return;
-    // Do NOT stop scanner here if already running for continuous flow
         
         // Only initialize if we don't have an instance yet
         if (!html5QrCodeRef.current) {
@@ -192,6 +194,15 @@ const Scanner = () => {
       console.log(`[SaveData] Successful save to Firebase.`);
       setFeedback(`✅ Success! Coupon for ${participant.name} saved.`);
       setScanResult(attendeeId); // Use cleaned ID for successful result display
+
+            // NEW LOGIC: Update scan history ONLY on successful save
+            const newEntry = {
+                id: attendeeId,
+                name: participant.name,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setScanHistory(prevHistory => [newEntry, ...prevHistory].slice(0, 5));
+
       return true;
     } catch (error) {
       console.error("[SaveData] Error saving coupon data: ", error);
@@ -287,6 +298,33 @@ const Scanner = () => {
     setFeedback('Scan stopped. Choose an option to continue.');
   };
 
+    // Component to display the history
+    const ScanHistoryBox = () => (
+        <div className="scan-history-box" style={{ 
+            marginTop: '1.5rem', 
+            padding: '1rem', 
+            border: '1px solid #ccc', 
+            borderRadius: '8px',
+            backgroundColor: '#fff',
+            fontSize: '0.9rem'
+        }}>
+            <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', borderBottom: '1px solid #eee', paddingBottom: '0.3rem' }}>
+                Last 5 Successful Scans:
+            </h4>
+            {scanHistory.length === 0 ? (
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>No history yet.</p>
+            ) : (
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                    {scanHistory.map((item, index) => (
+                        <li key={index} style={{ marginBottom: '0.3rem', fontWeight: '500' }}>
+                            <span style={{ color: 'var(--primary-color)' }}>{item.time}</span>: {item.name} ({item.id})
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+
   return (
     <div className="card glass-effect">
       <h2 style={{ textAlign: 'center' }}>Food Coupon Scanner</h2>
@@ -352,6 +390,10 @@ const Scanner = () => {
           <p className="scan-result-text">Last successful scan: {scanResult}</p>
         )}
       </div>
+            
+            {/* NEW: Display Scan History */}
+            {ScanHistoryBox()}
+
     </div>
   );
 };
