@@ -43,7 +43,7 @@ const scannerContainerStyle = {
     alignItems: 'center',
     gap: '0.5rem',
     
-    // Ensure the container uses 100% of the inner space 
+    // CRITICAL FIX: Ensure the container uses 100% of the inner space 
     width: '100%',
     padding: '0', 
     
@@ -87,11 +87,13 @@ const Scanner = () => {
 
   const startScanner = () => {
     if (isProcessing) return;
-    stopScanner(); // Ensure any existing scanner is stopped
+    // Do NOT stop scanner here if already running for continuous flow
+        
+        // Only initialize if we don't have an instance yet
+        if (!html5QrCodeRef.current) {
+            html5QrCodeRef.current = new Html5Qrcode(qrcodeRegionId);
+        }
 
-    const html5QrCode = new Html5Qrcode(qrcodeRegionId);
-    html5QrCodeRef.current = html5QrCode;
-    
     document.getElementById(qrcodeRegionId).style.display = 'block';
 
     const config = {
@@ -105,7 +107,7 @@ const Scanner = () => {
     Html5Qrcode.getCameras().then(devices => {
       if (devices && devices.length) {
         const cameraId = devices[0].id;
-        html5QrCode.start(
+        html5QrCodeRef.current.start(
           cameraId,
           config,
           (decodedText, decodedResult) => {
@@ -214,9 +216,9 @@ const Scanner = () => {
     console.log(`[ScanSuccess] Raw QR Text: "${decodedText}"`);
     console.log(`[ScanSuccess] Trimmed ID: "${cleanedId}"`);
     
-    // 2. STOP THE SCANNER AND FREEZE THE VIEW
-    if (source === 'realtime') {
-      stopScanner(); // This stops the camera feed and hides the div.
+    // 2. DO NOT STOP THE SCANNER IF REALTIME!
+    if (source === 'file') {
+      stopScanner(); // ONLY stop if scanning from a file upload
     }
 
     // Find participant using the cleaned ID
@@ -227,23 +229,22 @@ const Scanner = () => {
     // Process data (save or show duplicate warning)
     await saveData(cleanedId, participant); // Pass the cleaned ID
 
-    // 3. After the delay, clear 'isProcessing' and REVERT TO CHOICE
+    // 3. After the delay, clear 'isProcessing' and resume continuous scan
     setTimeout(() => {
       setIsProcessing(false);
       setScanResult(null); 
       
-      // Revert to 'choice' state to show the 'Start Real-time Scan' button
-      setUiState('choice');
+      // If source was realtime, go back to scanning state (keeping camera feed active)
+      if (source === 'realtime') {
+       setUiState('scanning');
+       setFeedback('Scanning active. Point camera at the next QR code...');
+      } else {
+       // If source was file, revert to choice state
+       setUiState('choice');
+      }
       
-      // The success/warning message remains visible for the rest of the 5s delay
-      setFeedback(prevFeedback => {
-        if (prevFeedback.startsWith('✅') || prevFeedback.startsWith('⚠️') || prevFeedback.startsWith('❌')) {
-          return prevFeedback; // Keep the final message
-        }
-        return 'Ready to scan. Press "Start Real-time Scan" for the next coupon.';
-      });
       console.log("-----------------------------------------");
-    }, 5000); // 5-second reading time
+    }, 2000); // Reduced visual feedback time to 2 seconds for faster continuous scanning
   };
   
   // --- File/Image Scanning Functionality ---
@@ -285,51 +286,6 @@ const Scanner = () => {
     setUiState('choice');
     setFeedback('Scan stopped. Choose an option to continue.');
   };
-    
-    // Define inline styles for the buttons to override problematic global/mobile CSS
-    const buttonStyle = {
-        // Force button to be a flex column to center wrapping text
-        display: 'flex', 
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-
-        // Ensure size and clear margins for proper flex distribution
-        height: '100px',
-        padding: '0.5rem',
-        lineHeight: '1.2',
-        fontSize: '1rem',
-        marginTop: '0', 
-        
-        // Set flexible horizontal width
-        flexGrow: 1, 
-        flexBasis: '45%', 
-        maxWidth: '45%', 
-    };
-
-    const orTextStyle = {
-        flexShrink: 0,
-        padding: '0 0.2rem',
-        lineHeight: '1.2',
-        margin: '0', 
-    };
-
-    const scannerContainerStyle = {
-        // Use flex for horizontal layout
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '0.5rem',
-        
-        // CRITICAL FIX: Ensure the container uses 100% of the inner space 
-        width: '100%',
-        padding: '0', 
-        
-        // Ensure this container stacks correctly vertically
-        marginTop: '1.5rem',
-        boxSizing: 'border-box',
-    };
 
   return (
     <div className="card glass-effect">
