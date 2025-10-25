@@ -1073,15 +1073,14 @@ padding-bottom: 1rem;
   flex-shrink: 0;
 }
 
-/* Event info takes the remaining space on the first row */
+
 .event-info {
-  flex-basis: calc(100% - 70px); /* Fill space next to image (60px + 10px gap) */
+  flex-basis: calc(100% - 70px); 
   order: 2; 
   margin-left: 0 !important; 
   min-width: 0;
 }
 
-/* Remove dashed border for items with a specific background */
 .schedule-list-item.venue-hall1,
 .schedule-list-item.venue-hall2,
 .schedule-list-item.venue-hall3,
@@ -1089,13 +1088,11 @@ padding-bottom: 1rem;
 .schedule-list-item.venue-hall3-hall4,
 .schedule-list-item.venue-lunch {
   border-bottom: none; 
-  padding: 1rem 1.5rem; /* Base padding */
+  padding: 1rem 1.5rem; 
   
-  /* FIX FOR OVERLAP (VENUE COLORED ITEMS): Increase top padding to push text below absolute buttons */
   padding-top: 4.5rem; 
 }
 
-/* The details list and chairperson column always wrap to the next line (full width) */
 .event-details-list, .event-right-column {
   flex-basis: 100%; 
   margin-left: 0; 
@@ -1109,7 +1106,6 @@ padding-bottom: 1rem;
   margin-top: 0.5rem;
 }
 
-/* Admin Screen Button Placement Fix */
 
 .event-actions {
   position: absolute; 
@@ -1119,16 +1115,15 @@ padding-bottom: 1rem;
   order: 0;
 }
 
-/* Adjust padding-top on items *without* venue color to make room for absolute buttons */
 .schedule-list-item:not(.venue-hall1):not(.venue-hall2):not(.venue-hall3):not(.venue-hall4):not(.venue-hall3-hall4):not(.venue-lunch) {
-  /* Set padding to accommodate buttons (2.5rem padding + 0.5rem base padding = 3rem total padding) */
+
   padding-top: 2.5rem; 
 }
 .schedule-list-item:not(.venue-hall1):not(.venue-hall2):not(.venue-hall3):not(.venue-hall4):not(.venue-hall3-hall4):not(.venue-lunch) .event-actions {
   top: 0.5rem;
   right: 0;
 }
-/* Ensure padded items (where padding is 1rem) align buttons correctly */
+
 .schedule-list-item.venue-hall1 .event-actions,
 .schedule-list-item.venue-hall2 .event-actions,
 .schedule-list-item.venue-hall3 .event-actions,
@@ -1138,13 +1133,12 @@ padding-bottom: 1rem;
   top: 1rem;
   right: 1rem;
 }
-/* Ensure Lunch events don't have speaker image/placeholder pushing content right */
+
 .schedule-list-item.venue-lunch .speaker-image-placeholder {
   display: none;
 }
 
 
-/* --- END MOBILE SCHEDULE LIST FIXES --- */
 
 
 .live-display-row {
@@ -1167,7 +1161,7 @@ margin-bottom: 0;
 }
 
 .abstract-bg-spinner {
- /* FIX 3: Disable the abstract spinner/red glow effect on mobile */
+
  display: none !important;
 }
 
