@@ -25,6 +25,23 @@ const HomePage = ({ user }) => {
       <HappeningNow />
 
       <AlertsList />
+      
+    <div className="qr-code-home-container">
+                <h3 className="qr-code-home-title">Quick Access / Scanning</h3>
+                <img 
+                    src="/ian2025qrcode.png" // Ensure this path is correct for your QR code image
+                    alt="IAN 2025 QR Code for ian2025.in" 
+                    className="qr-code-home-display" 
+                />
+                <a 
+                    href="https://ian2025.in" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="qr-code-website-text"
+                >
+                    ian2025.in
+                </a>
+            </div>
     </div>
   );
 };
