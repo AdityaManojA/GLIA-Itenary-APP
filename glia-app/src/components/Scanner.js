@@ -37,24 +37,23 @@ const orTextStyle = {
 };
 
 const scannerContainerStyle = {
-    // Use flex for horizontal layout
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '0.5rem',
     
-    // CRITICAL FIX: Ensure the container uses 100% of the inner space 
+
     width: '100%',
     padding: '0', 
     
-    // Ensure this container stacks correctly vertically
+
     marginTop: '1.5rem',
     boxSizing: 'border-box',
 };
 
 
 const Scanner = () => {
-  // uiState: 'choice', 'scanning', or 'file_scan'
+
   const [uiState, setUiState] = useState('choice'); 
   const [scanResult, setScanResult] = useState(null);
   const [feedback, setFeedback] = useState('Select a meal and date, then choose a scanning method.');
@@ -63,15 +62,14 @@ const Scanner = () => {
   const [mealType, setMealType] = useState('Breakfast');
   const [scanDate, setScanDate] = useState('2025-10-29');
 
-  // NEW STATE: Stores the last 10 successful scans
+
   const [scanHistory, setScanHistory] = useState([]);
 
   // Ref for the Html5QrcodeScanner instance for real-time scanning
   const html5QrCodeRef = useRef(null);
   const fileInputRef = useRef(null); // Ref for the hidden file input
-  const fileScannerRef = useRef(null); // Ref for the file scanning instance
+  const fileScannerRef = useRef(null); 
 
-  // --- Scanner Control Functions ---
   
   const stopScanner = () => {
     if (html5QrCodeRef.current) {
@@ -79,7 +77,7 @@ const Scanner = () => {
         html5QrCodeRef.current.stop()
           .then(() => {
             console.log("QR Code scanning stopped.");
-            // This hides the camera feed div
+
             document.getElementById(qrcodeRegionId).style.display = 'none'; 
           })
           .catch(err => console.error("Error stopping QR Code scanning: ", err));
@@ -91,7 +89,7 @@ const Scanner = () => {
   const startScanner = () => {
     if (isProcessing) return;
         
-        // Only initialize if we don't have an instance yet
+
         if (!html5QrCodeRef.current) {
             html5QrCodeRef.current = new Html5Qrcode(qrcodeRegionId);
         }
@@ -113,13 +111,13 @@ const Scanner = () => {
           cameraId,
           config,
           (decodedText, decodedResult) => {
-            // Success callback: check processing state before handling scan
+
             if (!isProcessing) {
               handleScanSuccess(decodedText, 'realtime');
             }
           },
           (errorMessage) => {
-            // Failure callback (ignored for continuous scanning)
+
           }
         ).catch((err) => {
           setFeedback('❌ Error: Could not start camera/scanner. Check permissions.');
@@ -138,12 +136,12 @@ const Scanner = () => {
     });
   };
 
-  // --- Effect Hook for Cleanup ---
+
   useEffect(() => {
-    return () => stopScanner(); // Cleanup function
+    return () => stopScanner(); 
   }, []);
 
-  // --- Data and Scan Handling ---
+
 
   const saveData = async (attendeeId, participant) => { 
     console.log(`[SaveData] Attempting to save data for cleaned ID: "${attendeeId}"`);
@@ -193,15 +191,13 @@ const Scanner = () => {
       });
       console.log(`[SaveData] Successful save to Firebase.`);
       setFeedback(`✅ Success! Coupon for ${participant.name} saved.`);
-      setScanResult(attendeeId); // Use cleaned ID for successful result display
-
-      // NEW LOGIC: Update scan history ONLY on successful save
+      setScanResult(attendeeId);
       const newEntry = {
         id: attendeeId,
         name: participant.name,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-            // Ensure no duplicates in history based on ID, and keep it to last 10
+           
             setScanHistory(prevHistory => {
                 const filtered = prevHistory.filter(item => item.id !== newEntry.id);
                 return [newEntry, ...filtered].slice(0, 10);
@@ -216,35 +212,33 @@ const Scanner = () => {
   };
 
   const handleScanSuccess = async (decodedText, source) => {
-    // This blocks repeated calls while the delay is active
+   
     if (isProcessing) return; 
 
     setIsProcessing(true);
     setFeedback(`Processing scan from ${source}...`);
     setScanResult(null);
     
-    // 1. CRITICAL FIX: TRIM WHITESPACE FROM THE DECODED TEXT
+    // FIX: TRIM WHITESPACE FROM THE DECODED TEXT
     const cleanedId = decodedText.trim();
     
-    // LOGS START HERE
+   
     console.log("-----------------------------------------");
     console.log(`[ScanSuccess] Raw QR Text: "${decodedText}"`);
     console.log(`[ScanSuccess] Trimmed ID: "${cleanedId}"`);
     
-    // 2. DO NOT STOP THE SCANNER IF REALTIME!
+    //DO NOT STOP THE SCANNER IF REALTIME!
     if (source === 'file') {
-      stopScanner(); // ONLY stop if scanning from a file upload
+      stopScanner(); 
     }
-
-    // Find participant using the cleaned ID
     const participant = participants.find(p => p.reg_no.toLowerCase() === cleanedId.toLowerCase());
     
     console.log(`[ScanSuccess] Participant Lookup Status (Found/Not Found): ${!!participant}`);
 
-    // Process data (save or show duplicate warning)
-    await saveData(cleanedId, participant); // Pass the cleaned ID
 
-    // 3. After the delay, clear 'isProcessing' and resume continuous scan
+    await saveData(cleanedId, participant); 
+
+
     setTimeout(() => {
       setIsProcessing(false);
       setScanResult(null); 
@@ -259,10 +253,7 @@ const Scanner = () => {
       }
       
       console.log("-----------------------------------------");
-    }, 2000); // Reduced visual feedback time to 2 seconds for faster continuous scanning
-  };
-  
-  // --- File/Image Scanning Functionality ---
+    }, 2000); 
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -302,7 +293,7 @@ const Scanner = () => {
     setFeedback('Scan stopped. Choose an option to continue.');
   };
 
-    // Component to display the history
+ 
     const ScanHistoryBox = () => (
         <div className="scan-history-box" style={{ 
             marginTop: '1.5rem', 
@@ -358,7 +349,7 @@ const Scanner = () => {
         marginBottom: '1rem', 
         border: uiState === 'scanning' ? '2px solid #007bff' : 'none', 
         aspectRatio: '1/1',
-        // Display is controlled by startScanner/stopScanner functions
+        
         display: uiState === 'scanning' ? 'block' : 'none' 
       }}>
       </div>
