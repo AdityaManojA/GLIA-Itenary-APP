@@ -4,26 +4,21 @@ import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'fire
 import { db } from '../firebase/config';
 import participants from '../data/participants.json';
 
-// Define the ID for the QR code reader container
 const qrcodeRegionId = "reader";
 
-// Define inline styles to override problematic global/mobile CSS for the button layout
 const buttonStyle = {
-    // Force button to be a flex column to center wrapping text
     display: 'flex', 
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
 
-    // Ensure size and clear margins for proper flex distribution
     height: '100px',
     padding: '0.5rem',
     lineHeight: '1.2',
     fontSize: '1rem',
     marginTop: '0', 
     
-    // Set flexible horizontal width
     flexGrow: 1, 
     flexBasis: '45%', 
     maxWidth: '45%', 
@@ -42,18 +37,15 @@ const scannerContainerStyle = {
     alignItems: 'center',
     gap: '0.5rem',
     
-
     width: '100%',
     padding: '0', 
     
-
     marginTop: '1.5rem',
     boxSizing: 'border-box',
 };
 
 
 const Scanner = () => {
-
   const [uiState, setUiState] = useState('choice'); 
   const [scanResult, setScanResult] = useState(null);
   const [feedback, setFeedback] = useState('Select a meal and date, then choose a scanning method.');
@@ -62,22 +54,18 @@ const Scanner = () => {
   const [mealType, setMealType] = useState('Breakfast');
   const [scanDate, setScanDate] = useState('2025-10-29');
 
-
   const [scanHistory, setScanHistory] = useState([]);
 
-  // Ref for the Html5QrcodeScanner instance for real-time scanning
   const html5QrCodeRef = useRef(null);
-  const fileInputRef = useRef(null); // Ref for the hidden file input
+  const fileInputRef = useRef(null); 
   const fileScannerRef = useRef(null); 
 
-  
   const stopScanner = () => {
     if (html5QrCodeRef.current) {
       if (html5QrCodeRef.current.isScanning) { 
         html5QrCodeRef.current.stop()
           .then(() => {
             console.log("QR Code scanning stopped.");
-
             document.getElementById(qrcodeRegionId).style.display = 'none'; 
           })
           .catch(err => console.error("Error stopping QR Code scanning: ", err));
@@ -89,10 +77,9 @@ const Scanner = () => {
   const startScanner = () => {
     if (isProcessing) return;
         
-
-        if (!html5QrCodeRef.current) {
-            html5QrCodeRef.current = new Html5Qrcode(qrcodeRegionId);
-        }
+    if (!html5QrCodeRef.current) {
+      html5QrCodeRef.current = new Html5Qrcode(qrcodeRegionId);
+    }
 
     document.getElementById(qrcodeRegionId).style.display = 'block';
 
@@ -111,13 +98,11 @@ const Scanner = () => {
           cameraId,
           config,
           (decodedText, decodedResult) => {
-
             if (!isProcessing) {
               handleScanSuccess(decodedText, 'realtime');
             }
           },
           (errorMessage) => {
-
           }
         ).catch((err) => {
           setFeedback('❌ Error: Could not start camera/scanner. Check permissions.');
@@ -136,12 +121,9 @@ const Scanner = () => {
     });
   };
 
-
   useEffect(() => {
-    return () => stopScanner(); 
+    return () => stopScanner();
   }, []);
-
-
 
   const saveData = async (attendeeId, participant) => { 
     console.log(`[SaveData] Attempting to save data for cleaned ID: "${attendeeId}"`);
@@ -191,16 +173,16 @@ const Scanner = () => {
       });
       console.log(`[SaveData] Successful save to Firebase.`);
       setFeedback(`✅ Success! Coupon for ${participant.name} saved.`);
-      setScanResult(attendeeId);
+      setScanResult(attendeeId); 
+
       const newEntry = {
         id: attendeeId,
         name: participant.name,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
-           
             setScanHistory(prevHistory => {
                 const filtered = prevHistory.filter(item => item.id !== newEntry.id);
-                return [newEntry, ...filtered].slice(0, 10);
+                return [newEntry, ...filtered].slice(0, 15);
             });
 
       return true;
@@ -212,49 +194,43 @@ const Scanner = () => {
   };
 
   const handleScanSuccess = async (decodedText, source) => {
-   
     if (isProcessing) return; 
 
     setIsProcessing(true);
     setFeedback(`Processing scan from ${source}...`);
     setScanResult(null);
     
-    // FIX: TRIM WHITESPACE FROM THE DECODED TEXT
     const cleanedId = decodedText.trim();
     
-   
     console.log("-----------------------------------------");
     console.log(`[ScanSuccess] Raw QR Text: "${decodedText}"`);
     console.log(`[ScanSuccess] Trimmed ID: "${cleanedId}"`);
     
-    //DO NOT STOP THE SCANNER IF REALTIME!
     if (source === 'file') {
-      stopScanner(); 
+      stopScanner();
     }
+
     const participant = participants.find(p => p.reg_no.toLowerCase() === cleanedId.toLowerCase());
     
     console.log(`[ScanSuccess] Participant Lookup Status (Found/Not Found): ${!!participant}`);
 
-
-    await saveData(cleanedId, participant); 
-
+    await saveData(cleanedId, participant);
 
     setTimeout(() => {
       setIsProcessing(false);
       setScanResult(null); 
       
-      // If source was realtime, go back to scanning state (keeping camera feed active)
       if (source === 'realtime') {
        setUiState('scanning');
        setFeedback('Scanning active. Point camera at the next QR code...');
       } else {
-       // If source was file, revert to choice state
        setUiState('choice');
       }
       
       console.log("-----------------------------------------");
     }, 2000); 
-
+  };
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -293,26 +269,81 @@ const Scanner = () => {
     setFeedback('Scan stopped. Choose an option to continue.');
   };
 
- 
+    const buttonStyle = {
+        display: 'flex', 
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        height: '100px',
+        padding: '0.5rem',
+        lineHeight: '1.2',
+        fontSize: '1rem',
+        marginTop: '0', 
+        flexGrow: 1, 
+        flexBasis: '45%', 
+        maxWidth: '45%', 
+    };
+
+    const orTextStyle = {
+        flexShrink: 0,
+        padding: '0 0.2rem',
+        lineHeight: '1.2',
+        margin: '0', 
+    };
+
+    const scannerContainerStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '0.5rem',
+        width: '100%',
+        padding: '0', 
+        marginTop: '1.5rem',
+        boxSizing: 'border-box',
+    };
+
     const ScanHistoryBox = () => (
-        <div className="scan-history-box" style={{ 
+        <div style={{ 
             marginTop: '1.5rem', 
             padding: '1rem', 
-            border: '1px solid #ccc', 
+            border: '1px solid #E0E0E0', 
             borderRadius: '8px',
-            backgroundColor: '#fff',
-            fontSize: '0.9rem'
+            backgroundColor: 'var(--surface-color)', /* Use UI color for background */
+            width: '100%',
+            boxSizing: 'border-box',
         }}>
-            <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', borderBottom: '1px solid #eee', paddingBottom: '0.3rem' }}>
-                Last 10 Successful Scans:
+            <h4 style={{ 
+                margin: '0 0 0.8rem 0', 
+                color: 'var(--primary-color)', 
+                borderBottom: '1px solid #D0D0D0', 
+                paddingBottom: '0.5rem',
+                fontSize: '1.2rem',
+                textAlign: 'center'
+            }}>
+                Last 15 Scans
             </h4>
             {scanHistory.length === 0 ? (
-                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>No history yet.</p>
+                <p style={{ margin: 0, color: 'var(--text-secondary)', textAlign: 'center', fontSize: '1rem' }}>
+                    No history yet.
+                </p>
             ) : (
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {scanHistory.map((item, index) => (
-                        <li key={item.id + item.time} style={{ marginBottom: '0.3rem', fontWeight: '500' }}>
-                            <span style={{ color: 'var(--primary-color)' }}>{item.time}</span>: {item.name} ({item.id})
+                        <li key={item.id + item.time} style={{ 
+                            marginBottom: '0.5rem', 
+                            fontWeight: '600', 
+                            fontSize: '1.05rem', /* Larger text for readability */
+                            color: 'var(--text-primary)',
+                            padding: '0.3rem 0',
+                            borderBottom: index < scanHistory.length - 1 ? '1px dashed #E0E0E0' : 'none'
+                        }}>
+                            <span style={{ 
+                                color: index === 0 ? 'var(--primary-color)' : 'var(--text-secondary)', /* Highlight the latest scan */
+                                fontWeight: index === 0 ? '700' : '500',
+                                display: 'inline-block',
+                                minWidth: '70px',
+                            }}>{item.time}</span>: {item.name} ({item.id})
                         </li>
                     ))}
                 </ul>
@@ -320,6 +351,16 @@ const Scanner = () => {
         </div>
     );
 
+    // Final Feedback Styling
+    const feedbackStyle = {
+        textAlign: 'center',
+        fontSize: '1.1rem',
+        fontWeight: '600',
+        padding: '1rem 0',
+        minHeight: '40px',
+        color: feedback.startsWith('❌') || feedback.startsWith('⚠️') ? 'var(--primary-color)' : 'var(--text-primary)',
+    };
+    
   return (
     <div className="card glass-effect">
       <h2 style={{ textAlign: 'center' }}>Food Coupon Scanner</h2>
@@ -349,7 +390,7 @@ const Scanner = () => {
         marginBottom: '1rem', 
         border: uiState === 'scanning' ? '2px solid #007bff' : 'none', 
         aspectRatio: '1/1',
-        
+
         display: uiState === 'scanning' ? 'block' : 'none' 
       }}>
       </div>
@@ -373,20 +414,17 @@ const Scanner = () => {
           <button onClick={handleStopClick} className="reset-btn" >Stop Scan</button>
         )}
       </div>
-      
-      <div className="scan-result-panel">
-        <p className={`feedback-text ${isProcessing ? 'processing' : ''}`} style={{ textAlign: 'center' }}>
-          {isProcessing && uiState === 'scanning' ? 'PROCESSING SCAN...' : ''}
-          {isProcessing && uiState === 'file_scan' ? 'SCANNING IMAGE...' : ''}
-          {!isProcessing ? feedback : ''}
+
+            <div style={{ padding: '0 1rem', width: '100%', boxSizing: 'border-box' }}>
+                <p style={feedbackStyle}>
+          {feedback}
         </p>
-        {scanResult && (
-          <p className="scan-result-text">Last successful scan: {scanResult}</p>
-        )}
-      </div>
+            </div>
       
       
-      {ScanHistoryBox()}
+      <div style={{ padding: '0 1rem', width: '100%', boxSizing: 'border-box' }}>
+                {ScanHistoryBox()}
+            </div>
 
     </div>
   );
