@@ -7,7 +7,7 @@ import participants from '../data/participants.json';
 // Define the ID for the QR code reader container
 const qrcodeRegionId = "reader";
 
-// Define inline styles for the buttons to override problematic global/mobile CSS
+// Define inline styles to override problematic global/mobile CSS for the button layout
 const buttonStyle = {
     // Force button to be a flex column to center wrapping text
     display: 'flex', 
@@ -63,8 +63,8 @@ const Scanner = () => {
   const [mealType, setMealType] = useState('Breakfast');
   const [scanDate, setScanDate] = useState('2025-10-29');
 
-    // NEW STATE: Stores the last 5 successful scans
-    const [scanHistory, setScanHistory] = useState([]);
+  // NEW STATE: Stores the last 10 successful scans
+  const [scanHistory, setScanHistory] = useState([]);
 
   // Ref for the Html5QrcodeScanner instance for real-time scanning
   const html5QrCodeRef = useRef(null);
@@ -195,13 +195,17 @@ const Scanner = () => {
       setFeedback(`✅ Success! Coupon for ${participant.name} saved.`);
       setScanResult(attendeeId); // Use cleaned ID for successful result display
 
-            // NEW LOGIC: Update scan history ONLY on successful save
-            const newEntry = {
-                id: attendeeId,
-                name: participant.name,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            };
-            setScanHistory(prevHistory => [newEntry, ...prevHistory].slice(0, 5));
+      // NEW LOGIC: Update scan history ONLY on successful save
+      const newEntry = {
+        id: attendeeId,
+        name: participant.name,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+            // Ensure no duplicates in history based on ID, and keep it to last 10
+            setScanHistory(prevHistory => {
+                const filtered = prevHistory.filter(item => item.id !== newEntry.id);
+                return [newEntry, ...filtered].slice(0, 10);
+            });
 
       return true;
     } catch (error) {
@@ -309,14 +313,14 @@ const Scanner = () => {
             fontSize: '0.9rem'
         }}>
             <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--text-primary)', borderBottom: '1px solid #eee', paddingBottom: '0.3rem' }}>
-                Last 5 Successful Scans:
+                Last 10 Successful Scans:
             </h4>
             {scanHistory.length === 0 ? (
                 <p style={{ margin: 0, color: 'var(--text-secondary)' }}>No history yet.</p>
             ) : (
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                     {scanHistory.map((item, index) => (
-                        <li key={index} style={{ marginBottom: '0.3rem', fontWeight: '500' }}>
+                        <li key={item.id + item.time} style={{ marginBottom: '0.3rem', fontWeight: '500' }}>
                             <span style={{ color: 'var(--primary-color)' }}>{item.time}</span>: {item.name} ({item.id})
                         </li>
                     ))}
@@ -374,9 +378,8 @@ const Scanner = () => {
             />
           </>
         ) : (
-          // When in 'scanning' state but we just stopped the camera, 
-          // we show the stop button (or nothing) but the message remains visible below.
-          <button onClick={handleStopClick} className="reset-btn" style={{ visibility: 'hidden' }}>Stop Scan</button>
+
+          <button onClick={handleStopClick} className="reset-btn" >Stop Scan</button>
         )}
       </div>
       
@@ -390,9 +393,9 @@ const Scanner = () => {
           <p className="scan-result-text">Last successful scan: {scanResult}</p>
         )}
       </div>
-            
-            {/* NEW: Display Scan History */}
-            {ScanHistoryBox()}
+      
+      
+      {ScanHistoryBox()}
 
     </div>
   );
