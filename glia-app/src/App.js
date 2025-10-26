@@ -11,6 +11,7 @@ import AlertsPage from './pages/AlertsPage';
 import MapPage from './pages/MapPage';
 import ScannerPage from './pages/ScannerPage';
 import CodeAndConductPage from './pages/CodeAndConductPage';
+import AbstractPage from './components/AbstractPage';
 
 function App() {
  const [user, setUser] = useState(null);
@@ -45,6 +46,8 @@ function App() {
   const isScanner = user && user.role === 'scanner';
 
   switch (currentPage) {
+    case 'abstract':
+        return <AbstractPage/>;
    case 'schedule':
     return <SchedulePage />;
    case 'admin':
