@@ -147,7 +147,6 @@ return (
   {imageError && <p className="error-text">{imageError}</p>}
   </div>
 
-  {/* VENUE INPUT CHANGED TO DROPDOWN */}
   <div className="input-group">
   <label htmlFor="venue">Venue / Hall</label>
   <select id="venue" value={venue} onChange={e => setVenue(e.target.value)} required>

@@ -21,7 +21,7 @@ const FoodCouponsList = () => {
 
     const groupScans = (scans) => {
         return scans.reduce((acc, scan) => {
-            if (!scan.scannedAt) return acc; // Skip scans that don't have a timestamp yet
+            if (!scan.scannedAt) return acc; 
             const date = scan.scannedAt.toDate().toLocaleDateString('en-US', {
                 year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
             });
@@ -53,7 +53,7 @@ const FoodCouponsList = () => {
                 Object.keys(groupedScans).sort((a, b) => new Date(b) - new Date(a)).map(date => (
                     <div key={date}>
                         <h3 className="coupon-date-header">{date}</h3>
-                        {Object.keys(groupedScans[date]).sort().map(meal => ( // Sort meals alphabetically
+                        {Object.keys(groupedScans[date]).sort().map(meal => ( 
                             <div key={meal} className="coupon-meal-group">
                                 <h4>{meal} ({groupedScans[date][meal].length} scanned)</h4>
                                 <ul className="coupon-list">

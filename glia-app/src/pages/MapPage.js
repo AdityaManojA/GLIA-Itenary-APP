@@ -2,10 +2,7 @@ import React from 'react';
 
 const PDF_DOWNLOAD_URL = './Shuttleroutes.pdf' 
 const maps = [
-{
- title: "PRE-CONFERENCE WORKSHOP VENUE", 
- url: "https://maps.google.com/maps?q=8.525263,76.907859&z=15&output=embed"
-},
+
 {
  title: "IAN-2025 BUS SHUTTLE ROUTES", 
  url: "https://www.google.com/maps/d/u/0/embed?mid=1QONjHLaKExHQFIcUHazgmzjnfKz6s_U&ehbc=2E312F&ll=8.499625385331845%2C77.08052227207112&z=12"

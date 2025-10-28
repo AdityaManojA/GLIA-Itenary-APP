@@ -2,7 +2,7 @@ import React from 'react';
 
 const FullSchedule = ({ events }) => {
 
-  // Function to determine the CSS class based on the venue
+ 
   const getVenueClass = (venue) => {
     if (!venue) return '';
     const lowerCaseVenue = venue.toLowerCase();
@@ -20,7 +20,7 @@ const FullSchedule = ({ events }) => {
     } else if (lowerCaseVenue.includes('lunch') || lowerCaseVenue.includes('break')) {
       return 'venue-lunch';
     }
-    return ''; // Default/no special class
+    return ''; 
   };
 
 
@@ -43,7 +43,7 @@ return (
   <ul className="schedule-list">
    {dateEvents.map(event => {
     const venueClass = getVenueClass(event.venue);
-    // Determine if it's a lunch or break event (case-insensitive check on title or venue)
+   
     const isLunchOrBreak = event.title.toLowerCase().includes('lunch') || 
                           event.title.toLowerCase().includes('break') ||
                           (event.venue && event.venue.toLowerCase().includes('lunch')) || 
@@ -52,8 +52,6 @@ return (
 
    return (
     <li key={event.id} className={`schedule-list-item ${venueClass}`}>
-    
-    {/* Hide speaker photo/placeholder if it's a lunch/break event */}
     {(!isLunchOrBreak && event.speakerName) ? (
         event.speakerImageURL ? (
             <img src={event.speakerImageURL} alt={event.speakerName} className="speaker-image-small" />

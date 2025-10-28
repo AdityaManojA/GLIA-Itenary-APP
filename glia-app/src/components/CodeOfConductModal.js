@@ -1,12 +1,9 @@
-// src/components/CodeOfConductModal.js
-
 import React from 'react';
 
 const CodeOfConductModal = ({ images, onClose }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            {/* Prevent closing when clicking inside the modal content */}
             <div className="modal-content-lg" onClick={(e) => e.stopPropagation()}>
                 
                 <button className="modal-close-btn" onClick={onClose}>
