@@ -1,4 +1,3 @@
-// src/components/Header.js
 
 import React, { useState } from 'react';
 
@@ -21,8 +20,8 @@ const Header = ({ user, onLogout, currentPage, setCurrentPage }) => {
     }, 700);
   };
   
-  // CRITICAL CHANGE: ADD 'abstract' to the navigation list
-  const navPages = ['home', 'schedule', 'abstract', 'map', 'alerts', 'code_conduct'];
+
+  const navPages = ['home', 'schedule', 'map', 'abstract','alerts', 'code_conduct'];
   if (isAdmin || isScanner) navPages.push('scanner');
   if (isAdmin) navPages.push('admin');
   
@@ -59,7 +58,7 @@ const Header = ({ user, onLogout, currentPage, setCurrentPage }) => {
           
           
           const buttonText = page === 'code_conduct' ? 'Code of Conduct' : 
-                             page === 'abstract' ? 'Abstract' : // Handle Abstract name
+                             page === 'abstract' ? 'Abstract' :
                              page.charAt(0).toUpperCase() + page.slice(1);
           
           return (

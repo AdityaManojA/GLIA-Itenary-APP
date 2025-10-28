@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, where, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// Global Constants for Hall/Venue Names
+
 const HALL1_NAME = 'Hall 1 (Vizhinjam)';
 const HALL2_NAME = 'Hall 2 (Light House)';
 const HALL3_4_NAME = 'Halls 3 & 4 (Bay & Waves)';
 const TEA_POSTER_NAME = 'Tea and Poster Session (supported by ISDN)'; 
 const LUNCH_NAME = 'LUNCH';
 
-// Helper to determine if an event is a meal/break event
+
 const isMealOrBreak = (event) => 
     event.venue === LUNCH_NAME || 
     event.venue === TEA_POSTER_NAME || 
@@ -29,7 +29,6 @@ const EventDisplayCard = ({ event }) => {
  const startTime = event.startTime?.toDate ? event.startTime.toDate() : event.startTime;
  const endTime = event.endTime?.toDate ? event.endTime.toDate() : event.endTime;
 
- // Use the new helper function
  const isMealEvent = isMealOrBreak(event); 
 
  return (
@@ -80,11 +79,11 @@ const HappeningNow = () => {
  const [lunchEvent, setLunchEvent] = useState(null); // Lunch event will now include all meal/break/poster sessions
  const [loading, setLoading] = useState(true);
 
-    // OVERRIDE KEY CONSTANTS
+ 
     const HALL1_KEY = 'hall1';
     const HALL2_KEY = 'hall2';
     const HALL3_4_KEY = 'hall3_4'; 
-    const LUNCH_BREAK_KEY = 'lunch_break'; // NEW KEY
+    const LUNCH_BREAK_KEY = 'lunch_break';
 
  useEffect(() => {
   let unsubscribeVizhinjamAuto = null;
@@ -101,15 +100,13 @@ const HappeningNow = () => {
    return eventDoc.exists() ? { id: eventDoc.id, ...eventDoc.data() } : null;
   };
 
-  // Generalized fetch for live events based on venue name
+
   const fetchLiveEventForHall = (hallName, callback) => {
    const now = new Date();
    
-   // For the LUNCH/BREAK event, we query the two possible venue names
+  
    const venueList = Array.isArray(hallName) ? hallName : [hallName];
   
-   // Since Firebase `where('venue', 'in', venueList)` does not allow multiple `orderBy` queries, 
-   // we query everything and filter in memory for combined events.
    if (venueList.length > 1) {
     const q = query(
      scheduleColRef,
@@ -119,7 +116,7 @@ const HappeningNow = () => {
     return onSnapshot(q, (snapshot) => {
      const startedEvents = snapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(event => venueList.includes(event.venue)); // Filter for the correct venue names
+      .filter(event => venueList.includes(event.venue)); 
           
           const liveEvent = startedEvents.find(event => event.endTime.toDate() >= now);
      callback(liveEvent || null);
@@ -127,7 +124,7 @@ const HappeningNow = () => {
    } else {
     const q = query(
      scheduleColRef,
-     where('venue', 'in', venueList), // Use 'in' operator for a single item array too
+     where('venue', 'in', venueList), 
      where('startTime', '<=', now),
      orderBy('startTime', 'desc')
     );
@@ -171,7 +168,7 @@ const HappeningNow = () => {
   
    // Lunch/Break/Poster Session Logic (Combined and uses override)
    if (unsubscribeLunchAuto) unsubscribeLunchAuto();
-   if (overrideData[LUNCH_BREAK_KEY]) { // CHECKING OVERRIDE FOR LUNCH/BREAK
+   if (overrideData[LUNCH_BREAK_KEY]) { 
     const event = await fetchEventById(overrideData[LUNCH_BREAK_KEY]);
     setLunchEvent(event);
    } else {
@@ -199,7 +196,7 @@ const HappeningNow = () => {
   );
  }
 
- // Determine which events are live
+
  const hasVizhinjamEvent = vizhinjamEvent !== null;
  const hasLightHouseEvent = lightHouseEvent !== null;
  const hasBayAndWavesEvent = bayAndWavesEvent !== null;
@@ -208,7 +205,7 @@ const HappeningNow = () => {
  const isRow1Active = hasVizhinjamEvent || hasLightHouseEvent;
  const isRow2Active = hasBayAndWavesEvent || hasLunchEvent;
 
-  // Check for single column layout in Row 2
+
   const activeEventsRow2Count = [hasBayAndWavesEvent, hasLunchEvent].filter(Boolean).length;
   const isRow2SingleColumn = activeEventsRow2Count === 1;
 
