@@ -67,7 +67,7 @@ return (
     <div className="event-info">
      <p className="event-title-list">{event.title}</p>
 
-     {/* Only show speaker name/details if it's not a lunch/break event */}
+
      {!isLunchOrBreak && event.speakerName && (
         <p className="speaker-name-list">{event.speakerName}</p>
      )}
@@ -86,7 +86,7 @@ return (
     
 
     <div className="event-right-column">
-     {/* Only show chairpersons if it's not a lunch/break event */}
+
      {!isLunchOrBreak && event.chairpersons && (
      <div className="chairpersons-info">
       <strong>Chairperson(s):</strong>
