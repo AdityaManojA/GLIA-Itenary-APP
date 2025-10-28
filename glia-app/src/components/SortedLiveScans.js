@@ -2,30 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// Define custom order arrays outside the component
+
 const mealOrder = ["Breakfast", "Lunch", "Dinner"];
 const dateOrder = ["2025-10-29", "2025-10-30", "2025-10-31", "2025-11-01"];
 
-// Helper function to sort dates based on the custom order array
 const sortDates = (dateA, dateB) => {
     const indexA = dateOrder.indexOf(dateA);
     const indexB = dateOrder.indexOf(dateB);
-    if (indexA === -1 || indexB === -1) return 0; // Fallback
+    if (indexA === -1 || indexB === -1) return 0;
     return indexA - indexB;
 };
 
-// FUNCTION: Filter out duplicates based on the three criteria (Attendee ID, Meal, Date)
+
 const filterDuplicates = (scans) => {
     const uniqueScans = new Map();
     
-    // Sort scans by 'scannedAt' descending (newest first)
     const sortedScans = scans.sort((a, b) => b.scannedAt.toDate() - a.scannedAt.toDate());
 
     sortedScans.forEach(scan => {
-        // Create a unique key: ID|Meal|Date
         const key = `${scan.attendeeId}|${scan.meal}|${scan.date}`;
         
-        // Since the array is sorted newest first, we only keep the first entry found for the key
         if (!uniqueScans.has(key)) {
             uniqueScans.set(key, scan);
         }
@@ -39,12 +35,10 @@ const SortedLiveScans = () => {
     const [scans, setScans] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Filtered scans (unique entries only) used for both display and download
     const uniqueFilteredScans = filterDuplicates(scans);
 
 
     useEffect(() => {
-        // Fetch all scanned data in real-time, ordered by newest scan first
         const q = query(collection(db, 'scanned_coupons'), orderBy('scannedAt', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const scannedData = snapshot.docs.map(doc => ({
@@ -60,7 +54,6 @@ const SortedLiveScans = () => {
         return () => unsubscribe();
     }, []);
 
-    // Handles single CSV download
     const handleDownload = () => {
         const dataToDownload = uniqueFilteredScans;
         
@@ -72,7 +65,6 @@ const SortedLiveScans = () => {
         const headers = ["Attendee ID", "Attendee Name", "Meal", "Date", "Scanned At"];
         const csvRows = [headers.join(',')];
 
-        // Format data into CSV rows
         dataToDownload.forEach(scan => {
             const timestamp = scan.scannedAt ? scan.scannedAt.toDate().toLocaleString() : 'N/A';
             const row = [
@@ -87,10 +79,9 @@ const SortedLiveScans = () => {
 
         const csvString = csvRows.join('\n');
         
-        // Use BOM ('\ufeff') and standard CSV MIME type
+
         const blob = new Blob(['\ufeff', csvString], { type: 'text/csv;charset=utf-8;' });
         
-        // Trigger download
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
         link.setAttribute("download", `unique-scans.csv`);
@@ -132,7 +123,7 @@ const SortedLiveScans = () => {
         return <p>Loading live scans...</p>;
     }
 
-    // Use the UNIQUE scans for display
+    
     const sortedScans = groupAndSortScans(uniqueFilteredScans);
 
     return (
@@ -140,7 +131,7 @@ const SortedLiveScans = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h2>Live Scan Summary</h2>
                 
-                {/* Single CSV Download Button */}
+                
                 <div>
                     <button onClick={handleDownload} className="auth-button" style={{ marginTop: 0 }}>
                         Download as CSV
