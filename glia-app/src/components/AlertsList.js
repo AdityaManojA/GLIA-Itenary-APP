@@ -10,7 +10,7 @@ const AlertsList = () => {
     const q = query(
       collection(db, 'notifications'), 
       orderBy('createdAt', 'desc'), 
-      limit(5) //Limiter for how many alers need to be shown
+      limit(5)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {

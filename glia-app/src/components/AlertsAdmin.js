@@ -75,7 +75,6 @@ const AlertsAdmin = ({ currentAlert, onDone }) => {
         </div>
         <div className="input-group">
           <label htmlFor="alert-message">Notification Message</label>
-          {/* The inline style has been removed from the textarea below */}
           <textarea
             id="alert-message"
             value={message}
