@@ -1,5 +1,5 @@
 import React from 'react';
-const PDF_DOWNLOAD_URL='./abstract.pdf';
+const PDF_DOWNLOAD_URL='./IAN2025ABSTRACT.pdf';
 const AbstractPage = () => {
     return (
         <div className="card glass-effect" style={{ textAlign: 'center', padding: '3rem' }}>
@@ -7,7 +7,7 @@ const AbstractPage = () => {
                 Abstract.
             </h1>
             <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)' }}>
-                The full conference abstract book will be available soon. Please check back later!
+                Click here to Download the full IAN-2025 Abstract booklet
             </p>
             <a 
        href={PDF_DOWNLOAD_URL}
