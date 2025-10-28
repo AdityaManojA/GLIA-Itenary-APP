@@ -8,7 +8,6 @@ import SortedLiveScans from './SortedLiveScans';
 const qrcodeRegionId = "reader";
 
 const Scanner = () => {
-    // Define style objects ONLY ONCE inside the component function
     const buttonStyle = {
         display: 'flex', 
         flexDirection: 'column',
@@ -65,7 +64,6 @@ const Scanner = () => {
   const [feedback, setFeedback] = useState('Select a meal and date, then choose a scanning method.');
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Setting default meal to Lunch since Breakfast is being removed
   const [mealType, setMealType] = useState('Lunch');
   const [scanDate, setScanDate] = useState('2025-10-29');
 
@@ -75,7 +73,6 @@ const Scanner = () => {
   const fileInputRef = useRef(null); 
   const fileScannerRef = useRef(null); 
 
-  // --- Scanner Control Functions ---
   
   const stopScanner = () => {
     if (html5QrCodeRef.current) {
@@ -138,15 +135,12 @@ const Scanner = () => {
     });
   };
 
-  // --- Effect Hook for Cleanup ---
   useEffect(() => {
         if (activeTab !== 'scanner') {
             stopScanner();
         }
     return () => stopScanner();
   }, [activeTab]);
-
-  // --- Data and Scan Handling ---
 
   const saveData = async (attendeeId, participant) => { 
     console.log(`[SaveData] Attempting to save data for cleaned ID: "${attendeeId}"`);
@@ -293,7 +287,6 @@ const Scanner = () => {
     setFeedback('Scan stopped. Choose an option to continue.');
   };
 
-    // Component to display the history
     const ScanHistoryBox = () => (
         <div className="card glass-effect" style={{ 
             marginTop: '1.5rem', 
@@ -327,15 +320,15 @@ const Scanner = () => {
                             display: 'flex',
                             flexDirection: 'column', 
                             textAlign: 'left',
-                            /* Use a subtle sub-card background for better visual separation */
+                            
                             backgroundColor: '#F5F5F5', 
                             borderRadius: '4px',
                             padding: '0.5rem 0.8rem',
                             
-                            /* Ensure consistent spacing and clear differentiation */
+                          
                             borderBottom: index < scanHistory.length - 1 ? '1px dashed var(--text-secondary)' : 'none' 
                         }}>
-                            {/* Time: Primary color (red), bold, matching the alert timestamp color scheme */}
+                            
                             <span style={{ 
                                 color: 'var(--primary-color)', 
                                 fontWeight: '700', 
@@ -343,7 +336,7 @@ const Scanner = () => {
                                 marginBottom: '0.1rem',
                             }}>{item.time}</span>
                             
-                            {/* Name (ID): Use black/primary text, bold, matching the alert title look */}
+                            
                             <span style={{
                                 color: 'var(--text-primary)',
                                 fontWeight: '700', 
@@ -370,7 +363,7 @@ const Scanner = () => {
 
   return (
     <div className="card glass-effect">
-            {/* Tabs Navigation */}
+            
             <nav className="tabs-nav" style={{ overflowX: 'auto', flexWrap: 'nowrap', paddingBottom: '0.5rem' }}>
                 <button 
                     onClick={() => setActiveTab('scanner')} 
@@ -387,10 +380,6 @@ const Scanner = () => {
                     Scanned List
                 </button>
             </nav>
-            
-            {/* CONTENT AREA */}
-            
-            {/* Scanner View */}
             {activeTab === 'scanner' && (
                 <>
                     <h2 style={{ textAlign: 'center' }}>Food Coupon Scanner</h2>
@@ -442,7 +431,7 @@ const Scanner = () => {
                         )}
                     </div>
                     
-                    {/* Feedback area (now directly styled) */}
+                    {/* Feedback area  */}
                     <div style={{ padding: '0 1rem', width: '100%', boxSizing: 'border-box' }}>
                         <p style={currentFeedbackStyle}>
                             {feedback}
@@ -455,8 +444,6 @@ const Scanner = () => {
                     </div>
                 </>
             )}
-
-            {/* Scanned List View (using the existing Admin component logic) */}
             {activeTab === 'scannedList' && (
                 <SortedLiveScans /> 
             )}

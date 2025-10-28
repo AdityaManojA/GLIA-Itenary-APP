@@ -17,7 +17,6 @@ const ManageEvents = ({ events, onEdit }) => {
     }
   };
 
-  // UPDATED: This function now formats the full date and time
   const formatDateTime = (date) => {
     if (!date) return '';
     return date.toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -37,7 +36,6 @@ const ManageEvents = ({ events, onEdit }) => {
                 {event.speakerName && <p className="speaker-name-list">{event.speakerName}</p>}
                 <div className="event-details-list">
                   <span>📍 {event.venue}</span>
-                  {/* UPDATED: Using the new date-time formatter */}
                   <span>🕒 {formatDateTime(event.startTime)} - {event.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
               </div>

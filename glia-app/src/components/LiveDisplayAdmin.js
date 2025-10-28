@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy, doc, setDoc, updateDoc, deleteField } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
-// Sub-component for the detailed event display
+
 const CurrentEventDetails = ({ event }) => {
 if (!event) {
 return (
@@ -30,7 +30,7 @@ return (
 );
 };
 
-// Sub-component to display the full list of events for a hall
+
 const FullEventList = ({ title, events }) => {
 const formatDate = (date) => {
 return new Date(date).toLocaleDateString([], {month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -61,18 +61,17 @@ const TEA_POSTER_NAME = 'Tea and Poster Session (supported by ISDN)'; // Kept fo
 
 
 const LiveDisplayAdmin = () => {
-// UPDATED STATE
 const [vizhinjamEvents, setVizhinjamEvents] = useState([]);
 const [lightHouseEvents, setLightHouseEvents] = useState([]);
 const [bayAndWavesEvents, setBayAndWavesEvents] = useState([]);
    const [lunchEvents, setLunchEvents] = useState([]); // Combined Lunch/Break/Poster events
-const [override, setOverride] = useState({ hall1: null, hall2: null, hall3_4: null, lunch_break: null }); // Using lunch_break key
+const [override, setOverride] = useState({ hall1: null, hall2: null, hall3_4: null, lunch_break: null }); 
 const [loading, setLoading] = useState(true);
-const [feedback, setFeedback] = useState({ hall1: '', hall2: '', hall3_4: '', lunch_break: '' }); // Using lunch_break key
+const [feedback, setFeedback] = useState({ hall1: '', hall2: '', hall3_4: '', lunch_break: '' }); 
 
 const overrideDocRef = doc(db, 'live_display', 'override');
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+
 useEffect(() => {
  const q = query(collection(db, 'schedule'), orderBy('startTime'));
  const unsubscribeEvents = onSnapshot(q, (snapshot) => {
@@ -83,12 +82,12 @@ useEffect(() => {
   endTime: doc.data().endTime.toDate(),
  }));
    
-  // UPDATED FILTERING
+
  setVizhinjamEvents(allEvents.filter(e => e.venue === HALL1_NAME));
  setLightHouseEvents(allEvents.filter(e => e.venue === HALL2_NAME));
  setBayAndWavesEvents(allEvents.filter(e => e.venue === HALL3_4_NAME));
       
-      // Filter for all meal/break events
+
       setLunchEvents(allEvents.filter(e => 
           e.venue === LUNCH_NAME || 
           e.venue === TEA_POSTER_NAME 
@@ -126,7 +125,7 @@ const getEventsArray = (hall) => {
     return lightHouseEvents;
          case 'hall3_4': 
              return bayAndWavesEvents;
-         case 'lunch_break': // Handles combined lunch/break events
+         case 'lunch_break': 
              return lunchEvents;
    default:
     return [];
@@ -204,7 +203,6 @@ return (
   </div>
  </div>
     
-    {/* NEW ROW FOR HALLS 3&4 and LUNCH/BREAK */}
     <div className="live-admin-controls">
         <div className="hall-control">
             <h4>{HALL3_4_NAME}</h4>
@@ -231,7 +229,6 @@ return (
         </div>
     </div>
 
- {/* Full event lists for admin reference */}
  <div className="admin-full-schedule-view">
   <FullEventList title={`${HALL1_NAME} Schedule`} events={vizhinjamEvents} />
   <FullEventList title={`${HALL2_NAME} Schedule`} events={lightHouseEvents} />
