@@ -2315,5 +2315,13 @@
   {
     "reg_no": "IAN/2025/X2",
     "name": "Attendee"
+  },
+  {
+     "reg_no": "IAN/2025/C1",
+    "name": "User"
+  },
+  {
+     "reg_no": "IAN/2025/C2",
+    "name": "User"
   }
 ]

@@ -1,27 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/config';
 
 
-const mealOrder = ["Breakfast", "Lunch", "Dinner"];
+// Define custom order arrays outside the component
+const mealOrder = ["Lunch", "Dinner"]; // 'Breakfast' REMOVED
 const dateOrder = ["2025-10-29", "2025-10-30", "2025-10-31", "2025-11-01"];
+const dateOptions = dateOrder.map(date => ({ 
+    value: date, 
+    label: new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) 
+}));
 
+
+// Helper function to sort dates based on the custom order array
 const sortDates = (dateA, dateB) => {
     const indexA = dateOrder.indexOf(dateA);
     const indexB = dateOrder.indexOf(dateB);
-    if (indexA === -1 || indexB === -1) return 0;
+    if (indexA === -1 || indexB === -1) return 0; // Fallback
     return indexA - indexB;
 };
 
-
+// FUNCTION: Filter out duplicates based on the three criteria (Attendee ID, Meal, Date)
 const filterDuplicates = (scans) => {
     const uniqueScans = new Map();
     
+    // Sort scans by 'scannedAt' descending (newest first)
     const sortedScans = scans.sort((a, b) => b.scannedAt.toDate() - a.scannedAt.toDate());
 
     sortedScans.forEach(scan => {
         const key = `${scan.attendeeId}|${scan.meal}|${scan.date}`;
         
+        // Since the array is sorted newest first, we only keep the first entry found for the key
         if (!uniqueScans.has(key)) {
             uniqueScans.set(key, scan);
         }
@@ -35,10 +44,24 @@ const SortedLiveScans = () => {
     const [scans, setScans] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const uniqueFilteredScans = filterDuplicates(scans);
+    // NEW FILTER STATES: Initialized to the first available options
+    const [selectedDate, setSelectedDate] = useState(dateOrder[0]);
+    const [selectedMeal, setSelectedMeal] = useState(mealOrder[0]);
+
+    // Use useMemo to filter and memoize the unique scans based on filter criteria
+    const uniqueFilteredScans = useMemo(() => {
+        // Step 1: Filter for unique entries across all data
+        const uniqueScans = filterDuplicates(scans);
+
+        // Step 2: Apply Date and Meal filters
+        return uniqueScans.filter(scan => 
+            scan.date === selectedDate && scan.meal === selectedMeal
+        );
+    }, [scans, selectedDate, selectedMeal]);
 
 
     useEffect(() => {
+        // Fetch all scanned data in real-time, ordered by newest scan first
         const q = query(collection(db, 'scanned_coupons'), orderBy('scannedAt', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const scannedData = snapshot.docs.map(doc => ({
@@ -65,6 +88,7 @@ const SortedLiveScans = () => {
         const headers = ["Attendee ID", "Attendee Name", "Meal", "Date", "Scanned At"];
         const csvRows = [headers.join(',')];
 
+        // Format data into CSV rows
         dataToDownload.forEach(scan => {
             const timestamp = scan.scannedAt ? scan.scannedAt.toDate().toLocaleString() : 'N/A';
             const row = [
@@ -79,18 +103,20 @@ const SortedLiveScans = () => {
 
         const csvString = csvRows.join('\n');
         
-
+        // Use BOM ('\ufeff') and standard CSV MIME type
         const blob = new Blob(['\ufeff', csvString], { type: 'text/csv;charset=utf-8;' });
         
+        // Trigger download
         const link = document.createElement("a");
         link.setAttribute("href", URL.createObjectURL(blob));
-        link.setAttribute("download", `unique-scans.csv`);
+        link.setAttribute("download", `unique-scans-${selectedDate}-${selectedMeal}.csv`);
         
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
+    // This grouping function is now simplified since uniqueFilteredScans already contains only one date/meal type
     const groupAndSortScans = (data) => {
         const grouped = data.reduce((acc, scan) => {
             const date = scan.date;
@@ -123,11 +149,44 @@ const SortedLiveScans = () => {
         return <p>Loading live scans...</p>;
     }
 
-    
     const sortedScans = groupAndSortScans(uniqueFilteredScans);
 
     return (
-        <div>
+        <div style={{ padding: '1rem' }}>
+            {/* --- Filtering Dropdowns --- */}
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                {/* Date Dropdown */}
+                <div className="input-group" style={{ flex: 1, minWidth: '150px' }}>
+                    <label htmlFor="scan-date-filter" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Filter by Date</label>
+                    <select 
+                        id="scan-date-filter" 
+                        value={selectedDate} 
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        style={{ width: '100%', padding: '0.75rem', borderRadius: '8px' }}
+                    >
+                        {dateOptions.map(option => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                        ))}
+                    </select>
+                </div>
+                
+                {/* Meal Dropdown */}
+                <div className="input-group" style={{ flex: 1, minWidth: '150px' }}>
+                    <label htmlFor="meal-filter" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Filter by Meal</label>
+                    <select 
+                        id="meal-filter" 
+                        value={selectedMeal} 
+                        onChange={(e) => setSelectedMeal(e.target.value)}
+                        style={{ width: '100%', padding: '0.75rem', borderRadius: '8px' }}
+                    >
+                        {mealOrder.map(meal => (
+                            <option key={meal} value={meal}>{meal}</option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                 <h2>Live Scan Summary</h2>
                 
@@ -140,7 +199,7 @@ const SortedLiveScans = () => {
             </div>
             
             {Object.keys(sortedScans).length === 0 ? (
-                <p>No unique coupons have been scanned yet.</p>
+                <p>No unique coupons have been scanned yet for {selectedMeal} on {new Date(selectedDate).toLocaleDateString()}.</p>
             ) : (
                 <div className="sorted-scans-container">
                     {Object.keys(sortedScans).map(date => (
