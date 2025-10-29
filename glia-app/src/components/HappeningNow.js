@@ -253,7 +253,7 @@ const HappeningNow = () => {
 
                         {hasLunchEvent && ( 
               <div className="live-display-column">
-                <h3>-</h3> {/* Consolidated Title */}
+                
                 <EventDisplayCard event={lunchEvent} /> 
               </div>
             )}
