@@ -2307,5 +2307,13 @@
   {
     "reg_no": "IAN/2025/439",
     "name": "ANJU KRISHNAN"
+  },
+   {
+    "reg_no": "IAN/2025/X1",
+    "name": "Delegates"
+  },
+  {
+    "reg_no": "IAN/2025/X2",
+    "name": "Attendee"
   }
 ]
