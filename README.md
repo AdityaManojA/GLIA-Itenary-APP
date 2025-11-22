@@ -1,109 +1,117 @@
-# 🗓️ IAN 2025 Conference App
+# 🧠 IAN 2025 Conference Platform (Official)
 
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Status](https://img.shields.io/badge/Status-Production_Complete-success)
+![Scale](https://img.shields.io/badge/Scale-1.2M_Requests-blue)
+![Stack](https://img.shields.io/badge/Tech-React_%7C_Firebase-orange)
 
-A dynamic, real-time event schedule application built for the **XLIII Annual Meeting of the Indian Academy of Neurosciences (IAN 2025)**. This app provides a seamless experience for attendees to view the conference schedule and a secure, easy-to-use dashboard for administrators to manage events.
+The official Progressive Web App (PWA) developed for the **XLIII Annual Meeting of the Indian Academy of Neurosciences (IAN 2025)**. 
 
-![App Screenshot](https://via.placeholder.com/800x450.png?text=Add+A+Screenshot+Of+Your+App+Here)
-*(Suggestion: Take a screenshot of your running application and replace the link above!)*
-
-## ✨ Features
-
--   **🗓️ Real-time Schedule:** View the full conference schedule, grouped by date.
--   **⏰ Happening Now:** A special tab that automatically shows events currently in session or starting within the next hour.
--   **🔐 Secure Admin Panel:** A separate, password-protected route for conference organizers.
--   **➕ Easy Event Management:** Admins can add new events, including details like title, speaker, designation, venue, and start/end times.
--   **🖼️ Image Uploads:** Admins can upload speaker images, which are displayed on the schedule.
--   **⚛️ Built with React:** A modern, component-based frontend for a fast user experience.
--   **🔥 Firebase Powered:** Uses Firebase for the backend, including Firestore database, Authentication, and Storage.
-
-## 🛠️ Tech Stack
-
--   **Frontend:** [React.js](https://reactjs.org/)
--   **Backend & Database:** [Firebase](https://firebase.google.com/) (Firestore, Firebase Authentication, Cloud Storage)
--   **Styling:** Plain CSS
-
-## 🚀 Getting Started
-
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-You need to have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed on your computer.
-
-### Installation & Setup
-
-1.  **Clone the repository**
-    ```sh
-    git clone [https://github.com/your-github-username/your-repo-name.git](https://github.com/your-github-username/your-repo-name.git)
-    cd your-repo-name
-    ```
-
-2.  **Install NPM packages**
-    ```sh
-    npm install
-    ```
-
-3.  **Set up Firebase**
-    This project requires a Firebase project to handle the backend.
-
-    * Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
-    * In your new project, enable the following services:
-        * **Firestore Database**
-        * **Authentication** (enable the "Email/Password" sign-in method)
-        * **Storage**
-    * Go to your Project Settings and in the "General" tab, scroll down to "Your apps". Click on the web icon `</>` to register a new web app.
-    * Firebase will provide you with a `firebaseConfig` object. Copy these keys.
-
-4.  **Create an environment file**
-    * In the root of the project, create a new file named `.env`.
-    * Copy the contents of `.env.example` (if you have one) or use the template below and fill it in with your keys from the previous step.
-
-    ```env
-    # .env file
-
-    REACT_APP_FIREBASE_API_KEY="YOUR_API_KEY_HERE"
-    REACT_APP_FIREBASE_AUTH_DOMAIN="YOUR_AUTH_DOMAIN_HERE"
-    REACT_APP_FIREBASE_PROJECT_ID="YOUR_PROJECT_ID_HERE"
-    REACT_APP_FIREBASE_STORAGE_BUCKET="YOUR_STORAGE_BUCKET_HERE"
-    REACT_APP_FIREBASE_MESSAGING_SENDER_ID="YOUR_SENDER_ID_HERE"
-    REACT_APP_FIREBASE_APP_ID="YOUR_APP_ID_HERE"
-    ```
-
-### Running the Application
-
-Once the setup is complete, you can run the app with:
-
-```sh
-npm start
-```
-
-This will run the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will reload when you make changes.
-
-## 📜 License
-
-This project is licensed under the MIT License. See the text below for more information.
+This platform served as the digital operating system for the international conference hosted by **RGCB**, handling real-time scheduling, logistics, and dining management for hundreds of delegates.
 
 ---
 
-### MIT License
+## 🚀 Impact & Scale (Oct 29 - Nov 1)
 
-Copyright (c) 2025 [Your Name Here]
+This system was deployed live at the Uday Samudra Leisure Beach Hotel, managing high-concurrency traffic with zero downtime.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+| Metric | Value | Description |
+| :--- | :--- | :--- |
+| **Total Database Reads** | **1,200,000+** | Powered by Firestore real-time snapshot listeners |
+| **Meals Scanned** | **2,275** | Digital tracking for lunch & dinner via QR Code |
+| **Active Connections** | **100+ Concurrent** | Sustained traffic during session breaks |
+| **Uptime** | **100%** | Zero crashes during the 4-day event |
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+![Firebase Analytics Graph](./screenshots/Firebasedata.png)
+*(Real-time traffic analysis showing 1.2M reads peak)*
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+---
+
+## ✨ Key Features
+
+### 📱 For Attendees (Public View)
+* **Live Schedule:** Real-time synchronization of sessions across multiple halls.
+* **"Happening Now" Logic:** Auto-detects current time to display ongoing sessions instantly.
+* **Venue Navigation:** Integrated Google Maps for shuttle routes and venue layout.
+* **Live Alerts:** Instant notifications for schedule changes or lost & found items.
+
+### 🛡️ For Organizers (Admin Dashboard)
+* **Food Coupon Scanner:** A built-in QR Code scanner (using `html5-qrcode`) that validated meal eligibility in <1 second.
+* **Digital Signage Control:** Manual override controls to change displays in the main halls (Vizhinjam & Light House) remotely.
+* **Data Export:** One-click CSV generation for attendance and meal consumption reports.
+* **Crisis Management:** Push alert system to broadcast urgent messages to all connected devices.
+
+---
+
+## 📸 Screenshots
+
+| Admin Dashboard | Food Scanner |
+|:---:|:---:|
+| ![Admin Dash](./screenshots/Homepage-admin.png) | ![Scanner](./screenshots/CouponScanner.png) |
+| *Central control for events & alerts* | *Processed 2,275 meals* |
+
+| Live Display Override | Real-time Alerts |
+|:---:|:---:|
+| ![Override](./screenshots/LiveDisplay.png) | ![Alerts](./screenshots/Alerts.png) |
+| *Remote control for hall screens* | *Instant communication channel* |
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+**Frontend:**
+* **React.js:** Component-based architecture for seamless state management.
+* **HTML5-QRCode:** For browser-based camera access and QR decoding.
+* **CSS3:** Custom responsive design.
+
+**Backend (Serverless):**
+* **Firebase Firestore:** NoSQL database using **Snapshot Listeners** for real-time data sync across client devices.
+* **Firebase Authentication:** Secure login for admin personnel.
+* **Firebase Hosting:** Fast content delivery.
+
+**Why the Reads were so high (1.2M)?**
+The app utilized aggressive real-time listeners. Every time a schedule change occurred or an alert was pushed, every connected client updated instantly without refreshing the page, ensuring delegates never saw outdated info.
+
+---
+
+## 🚀 Local Development Setup
+
+1.  **Clone the repository**
+    ```bash
+    git clone [https://github.com/AdityaManojA/ian-2025-conference-app.git](https://github.com/AdityaManojA/ian-2025-conference-app.git)
+    cd ian-2025-conference-app
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Configure Firebase**
+    Create a `.env` file in the root directory:
+    ```env
+    REACT_APP_FIREBASE_API_KEY=your_api_key
+    REACT_APP_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+    REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+    REACT_APP_FIREBASE_STORAGE_BUCKET=your_bucket.appspot.com
+    REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+    REACT_APP_FIREBASE_APP_ID=your_app_id
+    ```
+
+4.  **Run Locally**
+    ```bash
+    npm start
+    ```
+
+---
+
+## 👤 Author
+
+**Aditya Manoj**
+* Full Stack Developer & AI/ML Engineer
+* [LinkedIn Profile]([https://linkedin.com/in/your-profile](https://www.linkedin.com/in/aditya-manoj-a-0a930b256/))
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
